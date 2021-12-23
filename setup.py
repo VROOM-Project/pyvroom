@@ -1,21 +1,5 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext
-
-
-extra_compile_args = [
-    # "-DBOOST_TEST_DYN_LINK",
-    # "-DBOOST_SPIRIT_USE_PHOENIX_V3",
-    # "-DBOOST_RESULT_OF_USE_DECLTYPE",
-    # "-DBOOST_FILESYSTEM_NO_DEPRECATED",
-    # "-D USE_LIBOSRM=true",
-    # "-D USE_LIBGLPK=true",
-    # "-L/usr/local/lib",
-    # "-losrm", "-fuse-ld=gold", "-Wl,--disable-new-dtags",
-    # "-Wl,--gc-sections", "-Wl,-O1", "-Wl,--hash-style=gnu",
-    # "-Wl,--sort-common", "-lboost_system",
-    # "-lboost_filesystem", "-lboost_iostreams",
-    # "-lboost_thread", "-lrt", "-ltbb", "-lglpk",
-]
 
 ext_modules = [
     Pybind11Extension(
@@ -42,13 +26,15 @@ ext_modules = [
             "-lssl",
             "-lcrypto",
         ],
-        # extra_objects=glob.glob("vroom/src/**/*.c", recursive=True),
     ),
 ]
 
 setup(
     name="pyvroom",
+    version="0.0.1",
+    packages=find_packages(),
     cmdclass={"build_ext": build_ext},
+    install_requires=["numpy"],
     ext_modules=ext_modules,
     package_dir={"": "src"},
     zip_safe=False,

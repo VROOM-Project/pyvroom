@@ -135,10 +135,9 @@ PYBIND11_MODULE(_vroom, m) {
     .value("MISSING_BREAK", vroom::VIOLATION::MISSING_BREAK)
     .export_values();
 
-  py::class_<vroom::Amount>(m, "Amount", "The amount in the viechle.")
+  py::class_<vroom::Amount>(m, "_Amount", "The amount in the viechle.")
     .def(py::init([](std::size_t size) { return new vroom::Amount(size); }),
         "Class initializer.", py::arg("size") = 0)
-    .def("copy", [](vroom::Amount amount) { return new vroom::Amount(amount); }, "Make a copy of the class")
     .def(py::self += py::self)
     .def(py::self -= py::self)
     .def(py::self == py::self)
@@ -147,9 +146,9 @@ PYBIND11_MODULE(_vroom, m) {
     .def("__setitem__", [](vroom::Amount &a, const std::size_t i, int64_t v){ a[i] = v; })
     .def("empty", &vroom::Amount::empty)
     .def("push_back", &vroom::Amount::push_back)
-    .def("size", &vroom::Amount::size);
+    .def("_size", &vroom::Amount::size);
 
-  py::class_<vroom::Break>(m, "Break")
+  py::class_<vroom::Break>(m, "_Break")
     .def(py::init<vroom::Id,
                   std::vector<vroom::TimeWindow>&,
                   vroom::Duration,
@@ -168,13 +167,9 @@ PYBIND11_MODULE(_vroom, m) {
   py::register_exception<vroom::Exception>(m, "VroomException");
 
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
-    .def(py::init<vroom::HEURISTIC, vroom::INIT, float>(),
-         "Heuristic parameters.",
-         py::arg("heuristic"),
-         py::arg("init") = vroom::INIT::NONE,
-         py::arg("heuristic") = vroom::HEURISTIC::INIT_ROUTES);
+    .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
 
-  py::class_<vroom::Input>(m, "Input")
+  py::class_<vroom::Input>(m, "_Input")
     .def(
         py::init([](
             unsigned amount_size,
@@ -188,6 +183,8 @@ PYBIND11_MODULE(_vroom, m) {
         py::arg("servers") = std::map<std::string, vroom::io::Servers>(),
         py::arg("router") = vroom::ROUTER::OSRM
     )
+    .def_readonly("jobs", &vroom::Input::jobs)
+    .def_readonly("vehicles", &vroom::Input::vehicles)
     .def("set_geometry", &vroom::Input::set_geometry)
     .def("add_job", &vroom::Input::add_job)
     .def("add_shipment", &vroom::Input::add_shipment)
@@ -218,17 +215,20 @@ PYBIND11_MODULE(_vroom, m) {
     )
     .def("check", &vroom::Input::check);
 
-  py::class_<vroom::TimeWindow>(m, "TimeWindow")
+  py::class_<vroom::TimeWindow>(m, "_TimeWindow")
     .def(py::init([](vroom::Duration start, vroom::Duration end){
           return new vroom::TimeWindow(start, end); }),
         "Class initializer.",
         py::arg("start") = 0,
         py::arg("end") = vroom::TimeWindow::default_length)
-    .def("contains", &vroom::TimeWindow::contains)
+    .def("__contains__", &vroom::TimeWindow::contains)
     .def("is_default", &vroom::TimeWindow::is_default)
-    .def(py::self < py::self);
+    .def(py::self < py::self)
+    .def_readwrite("start", &vroom::TimeWindow::start)
+    .def_readwrite("end", &vroom::TimeWindow::end)
+    .def_readwrite("length", &vroom::TimeWindow::length);
 
-  py::class_<vroom::Job>(m, "Job")
+  py::class_<vroom::Job>(m, "_Job")
     .def(py::init<vroom::Id,
                   vroom::Location&,
                   vroom::Duration,
@@ -272,16 +272,27 @@ PYBIND11_MODULE(_vroom, m) {
         py::arg("tws") = std::vector<vroom::TimeWindow>(1, vroom::TimeWindow()),
         py::arg("description") = "")
     .def("index", &vroom::Job::index)
-    .def("is_valid_start", &vroom::Job::is_valid_start);
+    .def("is_valid_start", &vroom::Job::is_valid_start)
+    .def_readonly("id", &vroom::Job::id)
+    .def_readwrite("_location", &vroom::Job::location)
+    .def_readonly("type", &vroom::Job::type)
+    .def_readonly("setup", &vroom::Job::setup)
+    .def_readonly("service", &vroom::Job::service)
+    .def_readonly("delivery", &vroom::Job::delivery)
+    .def_readonly("pickup", &vroom::Job::pickup)
+    .def_readonly("skills", &vroom::Job::skills)
+    .def_readonly("priority", &vroom::Job::priority)
+    .def_readonly("_tws", &vroom::Job::tws)
+    .def_readonly("description", &vroom::Job::description);
 
-  py::class_<vroom::Location>(m, "Location")
+  py::class_<vroom::Location>(m, "_Location")
     .def(py::init<vroom::Index>(), py::arg("index"))
     .def(py::init<vroom::Coordinates>(), py::arg("coords"))
     .def(py::init<vroom::Index, vroom::Coordinates>(), py::arg("index"), py::arg("coords"))
     .def(py::self == py::self)
     .def("set_index", &vroom::Location::set_index)
     .def("has_coordinates", &vroom::Location::has_coordinates)
-    .def("index", &vroom::Location::index)
+    .def("_index", &vroom::Location::index)
     .def("lon", &vroom::Location::lon)
     .def("lat", &vroom::Location::lat)
     .def("user_index", &vroom::Location::user_index);
@@ -401,7 +412,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readwrite("violations", &vroom::Summary::violations)
     ;
 
-  py::class_<vroom::Vehicle>(m, "Vehicle")
+  py::class_<vroom::Vehicle>(m, "_Vehicle")
     .def(py::init<vroom::Id,
                   std::optional<vroom::Location>&,
                   std::optional<vroom::Location>&,
@@ -431,15 +442,30 @@ PYBIND11_MODULE(_vroom, m) {
     .def("has_start", &vroom::Vehicle::has_start)
     .def("has_end", &vroom::Vehicle::has_end)
     .def("has_same_locations", &vroom::Vehicle::has_same_locations)
-    .def("has_same_profile", &vroom::Vehicle::has_same_profile);
+    .def("has_same_profile", &vroom::Vehicle::has_same_profile)
+    .def_readonly("id", &vroom::Vehicle::id)
+    .def_readwrite("_start", &vroom::Vehicle::start)
+    .def_readwrite("_end", &vroom::Vehicle::end)
+    .def_readonly("profile", &vroom::Vehicle::profile)
+    .def_readonly("capacity", &vroom::Vehicle::capacity)
+    .def_readonly("skills", &vroom::Vehicle::skills)
+    .def_readonly("tw", &vroom::Vehicle::tw)
+    .def_readonly("breaks", &vroom::Vehicle::breaks)
+    .def_readonly("description", &vroom::Vehicle::description)
+    .def_readonly("max_tasks", &vroom::Vehicle::max_tasks)
+    .def_readonly("steps", &vroom::Vehicle::steps);
 
-  py::class_<vroom::VehicleStep>(m, "VehicleStep")
+  py::class_<vroom::VehicleStep>(m, "_VehicleStep")
     .def(py::init([](vroom::STEP_TYPE type, vroom::ForcedService &forced_service){
       return new vroom::VehicleStep(type, std::move(forced_service)); }))
     .def(py::init([](vroom::STEP_TYPE type, vroom::Id id, vroom::ForcedService &forced_service){
       return new vroom::VehicleStep(type, id, std::move(forced_service)); }))
     .def(py::init([](vroom::JOB_TYPE job_type, vroom::Id id, vroom::ForcedService &forced_service){
-      return new vroom::VehicleStep(job_type, id, std::move(forced_service)); }));
+      return new vroom::VehicleStep(job_type, id, std::move(forced_service)); }))
+    .def_readonly("id", &vroom::VehicleStep::id)
+    .def_readonly("type", &vroom::VehicleStep::type)
+    .def_readonly("job_type", &vroom::VehicleStep::job_type)
+    .def_readonly("forced_service", &vroom::VehicleStep::forced_service);
 
   py::class_<vroom::Violations>(m, "Violations")
     .def(py::init<>())
@@ -449,11 +475,14 @@ PYBIND11_MODULE(_vroom, m) {
           return new vroom::Violations(lead_time, delay, std::move(types)); }))
     .def(py::self += py::self);
 
-  py::class_<vroom::ForcedService>(m, "ForcedService")
+  py::class_<vroom::ForcedService>(m, "_ForcedService")
     .def(py::init<>())
     .def(py::init<std::optional<vroom::Duration>,
                   std::optional<vroom::Duration>,
-                  std::optional<vroom::Duration>>());
+                  std::optional<vroom::Duration>>())
+    .def_readwrite("at", &vroom::ForcedService::at)
+    .def_readwrite("after", &vroom::ForcedService::after)
+    .def_readwrite("before", &vroom::ForcedService::before);
 
   py::class_<vroom::routing::HttpWrapper>(m, "HttpWrapper");
   py::class_<vroom::routing::OrsWrapper>(m, "OrsWrapper");
