@@ -1,3 +1,3 @@
 [submodule "vroom"]
 	path = vroom
-	url = git@github.com:VROOM-Project/vroom
+	url = https://github.com/jonathf/vroom
