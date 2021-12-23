@@ -4,7 +4,7 @@ _Good solution, fast... in Python._
 
 ---
 
-Pyvroom is an Python wrapper to the excellent optimization engine for solving
+Pyvroom is an Python wrapper to the excellent [VROOM](https://github.com/VROOM-Project/vroom) optimization engine for solving
 [vehicle routing problems](https://en.wikipedia.org/wiki/Vehicle_routing_problem).
 
 The library aims to solve several well-known types of vehicle routing problems, including:

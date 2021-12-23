@@ -1,6 +1,6 @@
 version-tags: &version-tags
   tags:
-    only: /v\d+\.\d+(\.\d+|-(alpha|beta|rc|dev|post)\d+)/
+    only: /\d+\.\d+(\.\d+|-(alpha|beta|rc|dev|post)\d+)/
 
 version: 2.1
 executors:
@@ -29,6 +29,9 @@ jobs:
       - run:
           name: "Build python wheel"
           command: |
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              echo "$CIRCLE_TAG" > VERSION
+            fi
             source /home/circleci/venv/bin/activate
             pip install -U auditwheel build pip
             python -m build
@@ -52,9 +55,17 @@ jobs:
           name: "Publish to PyPI"
           command: |
             if [[ -n "$CIRCLE_TAG" ]]; then
+              for ABI_TAG in $(ls /opt/python | grep '^cp'); do
+                echo "building wheel for $ABI_TAG"
+                /opt/python/${ABI_TAG}/bin/python -m venv /home/circleci/${ABI_TAG}
+                source /home/circleci/${ABI_TAG}/bin/activate
+                pip install -U build pip auditwheel
+                python -m build
+                auditwheel repair dist/pyvroom-${CIRCLE_TAG}-${ABI_TAG}-linux_x86_64.whl
+              done
               source /home/circleci/venv/bin/activate
               pip install twine
-              twine upload -u jonathf -p $PYPI_PASSWORD --non-interactive wheelhouse/*
+              twine upload -u jonathf -p ${PYPI_PASSWORD} --non-interactive wheelhouse/*
             else
               echo "Not a tag release; skipping"
             fi

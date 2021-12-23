@@ -1,5 +1,5 @@
 import os
-from setuptools import setup, find_packages
+from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 ext_modules = [
@@ -25,15 +25,7 @@ ext_modules = [
 ]
 
 setup(
-    name="pyvroom",
-    version="0.0.1",
-    author="Jonathan Feinberg",
-    author_email="jonathf@gmail.com",
-    packages=find_packages("src"),
     cmdclass={"build_ext": build_ext},
-    install_requires=["numpy"],
     ext_modules=ext_modules,
-    package_dir={"": "src"},
     include_dirs=[os.path.join("vroom", "src")],
-    zip_safe=False,
 )
