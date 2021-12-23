@@ -1,0 +1,67 @@
+version-tags: &version-tags
+  tags:
+    only: /v\d+\.\d+(\.\d+|-(alpha|beta|rc|dev|post)\d+)/
+
+version: 2.1
+executors:
+  python-container:
+    docker:
+      - image: quay.io/pypa/manylinux2014_x86_64
+    working_directory: /home/circleci/project
+
+jobs:
+  pipeline:
+    executor: python-container
+    steps:
+      - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
+      - run:
+          name: "Install system dependencies"
+          command: |
+            yum update -y
+            yum install -y epel-release
+            yum install -y openssl-devel asio-devel
+      - run:
+          name: "Install python environment"
+          command: |
+            /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
+      - run:
+          name: "Build python wheel"
+          command: |
+            source /home/circleci/venv/bin/activate
+            pip install -U auditwheel build pip
+            python -m build
+            auditwheel show dist/*.whl
+            auditwheel repair dist/pyvroom*.whl
+      - run:
+          name: "Test wheel installability"
+          command: |
+            /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv2
+            source /home/circleci/venv2/bin/activate
+            pip install wheelhouse/pyvroom*.whl
+            python -c "from vroom import Input"
+      - run:
+          name: "Run tests"
+          command: |
+            source /home/circleci/venv/bin/activate
+            pip install pytest
+            pip install -e .
+            pytest --doctest-modules test src/vroom
+      - run:
+          name: "Publish to PyPI"
+          command: |
+            if [[ -n "$CIRCLE_TAG" ]]; then
+              source /home/circleci/venv/bin/activate
+              pip install twine
+              twine upload -u jonathf -p $PYPI_PASSWORD --non-interactive wheelhouse/*
+            else
+              echo "Not a tag release; skipping"
+            fi
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - pipeline:
+          filters:
+            <<: *version-tags
