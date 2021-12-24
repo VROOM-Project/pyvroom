@@ -1,0 +1,23 @@
+trigger:
+- main
+
+strategy:
+  matrix:
+    linux:
+      platform: linux
+      imageName: 'quay.io/pypa/manylinux2014_x86_64'
+    mac:
+      platform: mac
+      imageName: 'macOS-latest'
+    windows:
+      platform: windows
+      imageName: 'windows-latest'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+- checkout: none
+- script: |
+    echo $(platform)
+    echo $(imageName)
