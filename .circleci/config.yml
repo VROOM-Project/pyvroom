@@ -65,7 +65,7 @@ jobs:
               done
               source /home/circleci/venv/bin/activate
               pip install twine
-              twine upload -u jonathf -p ${PYPI_PASSWORD} --non-interactive wheelhouse/*
+              twine upload -u jonathf -p ${PYPI_PASSWORD} --non-interactive wheelhouse/pyvroom-* dist/pyvroom-*.tar.gz
             else
               echo "Not a tag release; skipping"
             fi

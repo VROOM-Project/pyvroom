@@ -28,4 +28,5 @@ setup(
     cmdclass={"build_ext": build_ext},
     ext_modules=ext_modules,
     include_dirs=[os.path.join("vroom", "src")],
+    use_scm_version = True,
 )
