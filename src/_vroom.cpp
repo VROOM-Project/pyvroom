@@ -138,8 +138,8 @@ PYBIND11_MODULE(_vroom, m) {
   py::class_<vroom::Amount>(m, "_Amount", "The amount in the viechle.")
     .def(py::init([](std::size_t size) { return new vroom::Amount(size); }),
         "Class initializer.", py::arg("size") = 0)
-    .def(py::self += py::self)
-    .def(py::self -= py::self)
+    // .def(py::self += py::self)
+    // .def(py::self -= py::self)
     .def(py::self == py::self)
     .def("__lshift__", [](const vroom::Amount &a, const vroom::Amount &b){ return a << b; })
     .def("__getitem__", [](const vroom::Amount &a, std::size_t i){ return a[i]; })

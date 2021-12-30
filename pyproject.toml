@@ -8,3 +8,34 @@ requires = [
 ]
 
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+manylinux-x86_64-image = "manylinux2014"
+test-command = 'python -c "import vroom"'
+build = "cp*"
+archs = "native"
+
+[tool.cibuildwheel.linux]
+before-all = """
+yum update -y
+yum install -y epel-release
+yum install -y openssl-devel asio-devel
+"""
+
+[[tool.cibuildwheel.overrides]]
+select = "*-musllinux*"
+before-all = """
+apk add asio-dev
+apk add openssl-dev
+"""
+
+[tool.cibuildwheel.macos]
+
+before-all = """
+brew install asio
+"""
+
+[tool.cibuildwheel.windows]
+before-all = """
+choco install -y openssl
+"""

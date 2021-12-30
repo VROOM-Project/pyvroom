@@ -27,48 +27,12 @@ jobs:
           command: |
             /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
       - run:
-          name: "Build python wheel"
-          command: |
-            if [[ -n "$CIRCLE_TAG" ]]; then
-              echo "$CIRCLE_TAG" > VERSION
-            fi
-            source /home/circleci/venv/bin/activate
-            pip install -U auditwheel build pip
-            python -m build
-            auditwheel show dist/*.whl
-            auditwheel repair dist/pyvroom*.whl
-      - run:
-          name: "Test wheel installability"
-          command: |
-            /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv2
-            source /home/circleci/venv2/bin/activate
-            pip install wheelhouse/pyvroom*.whl
-            python -c "from vroom import Input"
-      - run:
           name: "Run tests"
           command: |
             source /home/circleci/venv/bin/activate
             pip install pytest
             pip install -e .
             pytest --doctest-modules test src/vroom
-      - run:
-          name: "Publish to PyPI"
-          command: |
-            if [[ -n "$CIRCLE_TAG" ]]; then
-              for ABI_TAG in $(ls /opt/python | grep '^cp'); do
-                echo "building wheel for $ABI_TAG"
-                /opt/python/${ABI_TAG}/bin/python -m venv /home/circleci/${ABI_TAG}
-                source /home/circleci/${ABI_TAG}/bin/activate
-                pip install -U build pip auditwheel
-                python -m build
-                auditwheel repair dist/pyvroom-${CIRCLE_TAG}-${ABI_TAG}-linux_x86_64.whl
-              done
-              source /home/circleci/venv/bin/activate
-              pip install twine
-              twine upload -u jonathf -p ${PYPI_PASSWORD} --non-interactive wheelhouse/pyvroom-* dist/pyvroom-*.tar.gz
-            else
-              echo "Not a tag release; skipping"
-            fi
 workflows:
   version: 2
   workflow:
