@@ -13,7 +13,7 @@ extra_compile_args = [
     "-DASIO_STANDALONE",
     "-DNDEBUG",
 ]
-extra_link_args=[
+extra_link_args = [
     "-lpthread",
     "-lssl",
     "-lcrypto",
@@ -21,7 +21,7 @@ extra_link_args=[
 include_dirs = [os.path.join("vroom", "src")]
 
 if platform.system() == "Darwin":
-    # Homebrew places include folders in a weird places.
+    # Homebrew puts include folders in weird places.
     include_dirs.append("/usr/local/opt/openssl@1.1/include")
     extra_link_args.insert(0, "-L/usr/local/opt/openssl@1.1/lib")
 

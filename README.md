@@ -19,6 +19,8 @@ VROOM can also solve any mix of the above problem types.
 
 ## Installation
 
+Pyvroom currently makes binaries for on MacOS and Linux.
+
 Installation should be as simple as:
 
 ```bash

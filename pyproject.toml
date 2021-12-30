@@ -10,9 +10,9 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-manylinux-x86_64-image = "manylinux2014"
 test-command = 'python -c "import vroom"'
 build = "cp*"
+skip = "*-musllinux_*"
 archs = "native"
 
 [tool.cibuildwheel.linux]
