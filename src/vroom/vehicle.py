@@ -1,5 +1,9 @@
-from _vroom import _Vehicle
 from typing import List, Optional, Sequence, Set, Union
+
+import numpy
+
+from _vroom import _Vehicle
+import vroom
 
 from .amount import Amount
 from .break_ import Break
@@ -23,7 +27,7 @@ class Vehicle(_Vehicle):
         start: Union[None, Location, int, Sequence[Union[int, float]]] = None,
         end: Union[None, Location, int, Sequence[Union[int, float]]] = None,
         profile: Optional[str] = None,
-        capacity: int = 0,
+        capacity: vroom.Amount = vroom.Amount(),
         skills: Optional[Set[int]] = None,
         time_window: Optional[TimeWindow] = None,
         breaks: Sequence[Break] = (),
@@ -37,7 +41,7 @@ class Vehicle(_Vehicle):
             start=start,
             end=end,
             profile=profile,
-            capacity=capacity,
+            capacity=vroom.Amount(capacity),
             skills=skills,
             time_window=time_window,
             breaks=breaks,
@@ -49,7 +53,6 @@ class Vehicle(_Vehicle):
         kwargs = {key: value for key, value in kwargs.items()
                   if value or key == "id"}
         self._kwargs = kwargs.copy()
-        kwargs["capacity"] = Amount(capacity)
         kwargs["start"] = None if start is None else Location.from_args(start)
         kwargs["end"] = None if end is None else Location.from_args(end)
         if "time_window" in kwargs:

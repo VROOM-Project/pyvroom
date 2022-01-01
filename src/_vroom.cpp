@@ -135,18 +135,49 @@ PYBIND11_MODULE(_vroom, m) {
     .value("MISSING_BREAK", vroom::VIOLATION::MISSING_BREAK)
     .export_values();
 
-  py::class_<vroom::Amount>(m, "_Amount", "The amount in the viechle.")
+  py::class_<vroom::Amount>(m, "Amount", py::buffer_protocol())
     .def(py::init([](std::size_t size) { return new vroom::Amount(size); }),
-        "Class initializer.", py::arg("size") = 0)
-    // .def(py::self += py::self)
-    // .def(py::self -= py::self)
+        py::arg("size") = 0)
+    .def(py::init([](vroom::Amount &a){ return a; }), py::arg("amount"))
+    .def(py::init([](const py::buffer &b){
+            py::buffer_info info = b.request();
+            if (info.format != py::format_descriptor<int64_t>::format() || info.ndim != 1)
+              throw std::runtime_error("Incompatible buffer format!");
+            auto v = new vroom::Amount(info.shape[0]);
+            memcpy(v->get_data(), info.ptr,
+                   sizeof(int64_t) * (size_t) v->size());
+            return v;
+
+        }), py::arg("array"))
+    .def_buffer([](vroom::Amount &a) -> py::buffer_info {
+        return py::buffer_info(
+          a.get_data(),
+          sizeof(int64_t),
+          py::format_descriptor<int64_t>::format(),
+          1,
+          {a.size()},
+          {sizeof(int64_t)}
+        );
+    })
     .def(py::self == py::self)
+    .def("__add__", [](const vroom::Amount &a, const vroom::Amount &b){
+        vroom::Amount c = vroom::Amount(a.size());
+        c += a;
+        c += b;
+        return c;
+    })
+    .def("__iadd__", [](vroom::Amount &a, const vroom::Amount &b){ a += b; return a; })
+    .def("__sub__", [](const vroom::Amount &a, const vroom::Amount &b){
+        vroom::Amount c = vroom::Amount(a.size());
+        c += a;
+        c -= b;
+        return c;
+    })
+    .def("__isub__", [](vroom::Amount &a, const vroom::Amount &b){ a -= b; return a; })
     .def("__lshift__", [](const vroom::Amount &a, const vroom::Amount &b){ return a << b; })
-    .def("__getitem__", [](const vroom::Amount &a, std::size_t i){ return a[i]; })
-    .def("__setitem__", [](vroom::Amount &a, const std::size_t i, int64_t v){ a[i] = v; })
-    .def("empty", &vroom::Amount::empty)
-    .def("push_back", &vroom::Amount::push_back)
-    .def("_size", &vroom::Amount::size);
+    .def("__le__", [](const vroom::Amount &a, const vroom::Amount &b){ return a <= b; })
+    .def("append", &vroom::Amount::push_back)
+    .def("__len__", &vroom::Amount::size);
 
   py::class_<vroom::Break>(m, "_Break")
     .def(py::init<vroom::Id,
@@ -371,7 +402,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readonly("unassigned", &vroom::Solution::unassigned);
 
 
-  py::class_<vroom::Step>(m, "Step")
+  py::class_<vroom::Step>(m, "_Step")
     .def(py::init<vroom::STEP_TYPE,
                   vroom::Location,
                   vroom::Amount>())
