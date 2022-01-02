@@ -79,8 +79,26 @@ jobs:
       run: git diff --exit-code
       shell: bash
 
+    - name: Upload wheels
+      uses: actions/upload-artifact@v2
+      with:
+        path: wheelhouse/*.whl
+
+  upload_all:
+    name: Upload if release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/setup-python@v2
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: dist
+
     - uses: pypa/gh-action-pypi-publish@v1.4.2
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       with:
         user: jonathf
         password: ${{ secrets.pypi_password }}
