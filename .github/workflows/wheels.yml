@@ -2,8 +2,10 @@ name: Wheels
 
 on:
   push:
+    branches:
+      - 'master'
     tags:
-     - '*'
+      - '*'
     paths-ignore:
       - '*.md'
   pull_request:
@@ -12,7 +14,7 @@ on:
     paths-ignore:
       - '*.md'
 
-
+jobs:
   build_wheels:
     name: Wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
