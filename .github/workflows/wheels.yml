@@ -31,11 +31,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
     - uses: pypa/cibuildwheel@v2.3.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14

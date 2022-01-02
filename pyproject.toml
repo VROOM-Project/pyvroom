@@ -36,11 +36,11 @@ brew install asio
 """
 
 [tool.cibuildwheel.windows]
-before-all = """
-pip install pip --upgrade
-pip install conan
-conan profile update "settings.compiler=Visual Studio" default
-conan profile update "settings.compiler.version=16" default
-conan install --build=openssl --install-folder conan_build .
-"""
+before-all = [
+    'pip install pip --upgrade',
+    'pip install conan',
+    'conan profile update "settings.compiler=Visual Studio" default',
+    'conan profile update "settings.compiler.version=16" default',
+    'conan install --build=openssl --install-folder conan_build .'
+]
 test-command = ''
