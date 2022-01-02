@@ -39,6 +39,7 @@ Optionally the dependencies can be installed with [`conan`](https://github.com/c
 conan install --build=openssl --install-folder conan_build .
 
 # note, on Windows you might have to execute the following before
+conan profile new default --detect
 conan profile update "settings.compiler=Visual Studio" default
 conan profile update "settings.compiler.version=16" default
 ```

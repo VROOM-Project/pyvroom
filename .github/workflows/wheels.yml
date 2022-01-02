@@ -15,6 +15,22 @@ on:
       - '*.md'
 
 jobs:
+  build_sdist:
+    name: Build SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - name: Check metadata
+        run: pipx run twine check dist/*
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dist/*.tar.gz
+
   build_wheels:
     name: Wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -22,8 +38,8 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          # - ubuntu-latest
-          # - macos-latest
+          - ubuntu-latest
+          - macos-latest
           - windows-latest
 
     steps:
@@ -32,22 +48,39 @@ jobs:
         submodules: recursive
 
     - name: Cache Conan dependencies
-      if: matrix.os == 'windows-latest'
+      id: cache-conan
       uses: actions/cache@v2
+      if: matrix.os == 'windows-latest'
       with:
         path: $USERPROFILE/.conan
         key: conan-${{ hashFiles('conanfile.txt') }}
 
+    - name: Set up Windows Python ${{ matrix.python_version }}
+      uses: actions/setup-python@v2
+      if: matrix.os == 'windows-latest'
+      with:
+        python-version: ${{ matrix.python_version }}
+
+    - name: Install conan for Windows
+      if: matrix.os == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
+      run: |
+        pip install pip --upgrade
+        pip install conan
+        conan profile new default --detect
+        conan profile update "settings.compiler=Visual Studio" default
+        conan profile update "settings.compiler.version=16" default
+        conan install --build=openssl --install-folder conan_build .
+
     - uses: pypa/cibuildwheel@v2.3.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_TEST_COMMAND_WINDOWS: ''
 
     - name: Verify clean directory
       run: git diff --exit-code
       shell: bash
 
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
+    - uses: pypa/gh-action-pypi-publish@v1.4.2
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       with:
-        path: wheelhouse/*.whl
+        user: jonathf
+        password: ${{ secrets.pypi_password }}
