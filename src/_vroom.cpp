@@ -246,18 +246,17 @@ PYBIND11_MODULE(_vroom, m) {
     )
     .def("check", &vroom::Input::check);
 
-  py::class_<vroom::TimeWindow>(m, "_TimeWindow")
+  py::class_<vroom::TimeWindow>(m, "TimeWindow")
     .def(py::init([](vroom::Duration start, vroom::Duration end){
           return new vroom::TimeWindow(start, end); }),
-        "Class initializer.",
         py::arg("start") = 0,
         py::arg("end") = vroom::TimeWindow::default_length)
-    .def("__contains__", &vroom::TimeWindow::contains)
-    .def("is_default", &vroom::TimeWindow::is_default)
+    .def("_contains", &vroom::TimeWindow::contains)
+    // .def("_is_default", &vroom::TimeWindow::is_default)
     .def(py::self < py::self)
     .def_readwrite("start", &vroom::TimeWindow::start)
     .def_readwrite("end", &vroom::TimeWindow::end)
-    .def_readwrite("length", &vroom::TimeWindow::length);
+    .def_readonly("_length", &vroom::TimeWindow::length);
 
   py::class_<vroom::Job>(m, "_Job")
     .def(py::init<vroom::Id,

@@ -1,81 +1,91 @@
-"""Time window for when a delivery/pickup is possible."""
-from typing import Optional, Sequence, Union
-from _vroom import _TimeWindow
+"""Time window for when a delivery/pickup/task is possible."""
+from __future__ import annotations
+from typing import Union
+
+import numpy
+import _vroom
+
+MAX_VAL = numpy.iinfo(numpy.uint32).max
 
 
-class TimeWindow(_TimeWindow):
-    """Time window for when a delivery/pickup is possible.
+class TimeWindow(_vroom.TimeWindow):
+    """Time window for when a delivery/pickup/task is possible.
+
+    Relative values, e.g. `[0, 14400]` for a 4 hours time window starting at
+    the beginning of the planning horizon. In that case all times reported in
+    output with the arrival key are relative to the start of the planning
+    horizon;
+
+    Supprt the following features:
+
+    * No arguments implies no time constraints.
+    * Equality operator `==` based on both start and end time are the same.
+    * Normal compare operator `<, >, <=, >=` based on start time.
+    * Shift `<<, >>` based on non-overlap intervals.
+    * Contains `X in Y` based on if number/interval inside other interval.
+    * Length `len(X)` give length of interval.
+    * Falsy on no constrained interval.
 
     Attributes:
         start:
             Start point (inclusice) of the time window.
         end:
             End point (inclusive) of the time window.
-        length:
-            Length of the time interval.
+
+    Args:
+        start:
+            Start point (inclusive) of the time window. In
+            seconds from the starting time. Assumed `0 < start`.
+        end:
+            End point (inclusive) of the time window. In
+            seconds from the starting time. Assumes `start < end`.
 
     Examples:
-        >>> tw = vroom.TimeWindow(4, 6)
+        >>> tw = vroom.TimeWindow(2200, 8800)
         >>> tw
-        vroom.TimeWindow(4, 6)
-        >>> tw.start, tw.end, tw.length
-        (4, 6, 2)
-        >>> 10 in tw, 5 in tw
+        vroom.TimeWindow(2200, 8800)
+        >>> tw.start, tw.end, len(tw)
+        (2200, 8800, 6600)
+        >>> 1000 in tw, 5000 in tw
         (False, True)
+
     """
 
     def __init__(
         self,
-        start: int = 0,
-        end: Optional[int] = None,
+        start: Union[_vroom.TimeWindow, int] = 0,
+        end: int = MAX_VAL,
     ) -> None:
-        """Class initializer.
+        assert isinstance(end, int)
+        if isinstance(start, _vroom.TimeWindow):
+            if end != MAX_VAL:
+                raise TypeError("Only one arg when input is vroom.TimeWindow.")
+            start, end = start.start, start.end
+        _vroom.TimeWindow.__init__(self, start=start, end=end)
 
-        Args:
-            start:
-                Start point (inclusice) of the time window. In
-                seconds from the starting time.
-            end:
-                End point (inclusive) of the time window. In
-                seconds from the starting time. If included, have `start < end`
-        """
-        kwargs = {"start": int(start)}
-        if end is not None:
-            assert start < end
-            kwargs["end"] = int(end)
-        _TimeWindow.__init__(self, **kwargs)
+    def __bool__(self) -> bool:
+        return self.start != 0 or self.end != MAX_VAL
 
-    @staticmethod
-    def from_args(
-        args: Union["TimeWindow", int, Sequence[int]],
-    ) -> "TimeWindow":
-        """Convenience constructor.
+    def __contains__(self, other: Union[_vroom.TimeWindow, int]) -> bool:
+        if isinstance(other, int):
+            return self._contains(other)
+        return self.start < other.start and other.end < self.end
 
-        Allows for short-hand construction.
+    def __eq__(self, other: TimeWindow) -> bool:
+        return self.start == other.start and self.end == other.end
 
-        -----------  ------------------------------
-        condition    initializer
-        -----------  ------------------------------
-        TimeWindow   start=args.start, end=args.end
-        integer      start=args
-        length == 2  start=args[0], end=args[1]
-        -----------  ------------------------------
+    def __le__(self, other: TimeWindow) -> bool:
+        return self.start <= other.start
 
-        Args:
-            args:
-                Input to interpret as start, end or TimeWindow pair.
+    def __lshift__(self, other: TimeWindow) -> bool:
+        return self.end < other.start
 
-        Examples:
-            >>> vroom.TimeWindow.from_args([8, 16])
-            vroom.TimeWindow(8, 16)
-            >>> vroom.TimeWindow.from_args(TimeWindow(8, 16))
-            vroom.TimeWindow(8, 16)
-
-        """
-        if isinstance(args, _TimeWindow):
-            return TimeWindow(args.start, args.end)
-        assert len(args) == 2
-        return TimeWindow(*args)
+    def __len__(self):
+        return self._length
 
     def __repr__(self):
-        return f"vroom.{self.__class__.__name__}({self.start}, {self.end})"
+        args = f"{self.start}, {self.end}" if self else ""
+        return f"vroom.{self.__class__.__name__}({args})"
+
+    def __rshift__(self, other: TimeWindow) -> bool:
+        return self.start > other.end

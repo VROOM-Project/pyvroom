@@ -55,14 +55,14 @@ class Amount(_vroom.Amount):
     def __getitem__(self, key: int) -> int:
         return numpy.asarray(self)[key]
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         return not (self.__le__(other))
 
     def __repr__(self) -> str:
         return (f"vroom.{self.__class__.__name__}"
                 f"({numpy.asarray(self).tolist()})")
 
-    def __rshift__(self, other):
+    def __rshift__(self, other) -> bool:
         return Amount(other).__lshift__(self)
 
     def __setitem__(self, key: int, value: int) -> None:

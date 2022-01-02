@@ -1,4 +1,5 @@
-from typing import Sequence, Tuple, Union
+from __future__ import annotations
+from typing import Sequence, Tuple, Type, Union
 
 import _vroom
 
@@ -32,7 +33,7 @@ class LocationIndex(_vroom.Location):
 
     def __init__(
             self,
-            index: Union[int, _vroom.Location],
+            index: Union[int, Location],
     ) -> None:
         if isinstance(index, _vroom.Location):
             if not index._user_index():
@@ -82,7 +83,7 @@ class LocationCoordinates(_vroom.Location):
 
     def __init__(
         self,
-        coords: Union[_vroom.Location, Sequence[float]],
+        coords: Union[Location, Sequence[float]],
     ) -> None:
         if isinstance(coords, _vroom.Location):
             if not coords._has_coordinates():
@@ -149,35 +150,38 @@ class Location(LocationIndex, LocationCoordinates):
 
     __init__ = _vroom.Location.__init__
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(
+        cls,
+        *args,
+        **kwargs,
+    ):
         if cls is Location and len(args)+len(kwargs) == 1:
 
-            if args and isinstance(args[0], Location):
-                args = [args[0].index, args[0].coords]
-            elif args and isinstance(args[0], LocationIndex):
-                args = [args[0].index]
-            elif args and isinstance(args[0], LocationCoordinates):
-                args = [args[0].coords]
-            elif args and isinstance(args[0], _vroom.Location):
-                args, [loc] = [], args
+            # extract args from Location{,Index,Coordinates}
+            if args and isinstance(args[0], _vroom.Location):
+                args, [loc] = (), args
                 if loc._user_index():
-                    args.append(loc._index())
+                    args += (loc._index(),)
                 if loc._has_coordinates():
-                    args.append([loc._lon(), loc._lat()])
+                    args += ([loc._lon(), loc._lat()],)
 
+            # single positional int -> LocationIndex
             if "index" in kwargs or args and isinstance(args[0], int):
                 instance = _vroom.Location.__new__(
                     LocationIndex, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
+
+            # single positional sequence -> LocationCoordinates
             elif ("coords" in kwargs or args and isinstance(args[0], Sequence)
                   and len(args[0]) == 2):
                 instance = _vroom.Location.__new__(
                     LocationCoordinates, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
+
         return _vroom.Location.__new__(cls, *args, **kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         args = f"index={self.index}, coords={self.coords}"
         return f"vroom.{self.__class__.__name__}({args})"
