@@ -4,23 +4,13 @@ on:
   push:
     tags:
      - '*'
-
-jobs:
-  build_sdist:
-    name: Build SDist
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build SDist
-      run: pipx run build --sdist
-
-    - name: Check metadata
-      run: pipx run twine check dist/*
-
-    - uses: actions/upload-artifact@v2
-      with:
-        path: dist/*.tar.gz
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '*.md'
 
 
   build_wheels:
@@ -30,14 +20,20 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - macos-latest
-          # - windows-latest
+          # - ubuntu-latest
+          # - macos-latest
+          - windows-latest
 
     steps:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+
+    - name: Install conan dependencies
+      if: matrix.os == 'windows-latest'
+      run: |
+        pip install conan
+        conan install . --build=openssl --install-folder $PWD/conan_build --remote conancenter
 
     - uses: pypa/cibuildwheel@v2.3.1
       env:
@@ -51,22 +47,3 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: wheelhouse/*.whl
-
-
-  upload_all:
-    name: Upload if release
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/setup-python@v2
-
-    - uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: dist
-
-    - uses: pypa/gh-action-pypi-publish@v1.4.2
-      with:
-        user: jonathf
-        password: ${{ secrets.pypi_password }}
