@@ -52,8 +52,10 @@ jobs:
       uses: actions/cache@v2
       if: matrix.os == 'windows-latest'
       with:
-        path: $USERPROFILE/.conan
-        key: conan-${{ hashFiles('conanfile.txt') }}
+        path:
+          $USERPROFILE/.conan
+          conan-build
+        key: conan-${{ hashFiles('conanfile.txt') }}-v1.1
 
     - name: Set up Windows Python ${{ matrix.python_version }}
       uses: actions/setup-python@v2
