@@ -32,11 +32,17 @@ if conanfile:
         conan_deps = json.load(f)['dependencies']
     for dep in conan_deps:
         include = dep['include_paths']
-        libraries = dep['lib_paths']
+        libs = dep['libs']
+        system_libs = dep['system_libs']
+        libdirs = dep['lib_paths']
 
         include_dirs.extend(include)
-        if libraries:
-            library_dirs.extend(libraries)
+        if libs:
+            libraries.extend(libs)
+        if system_libs:
+            libraries.extend(system_libs)
+        if libdirs:
+            library_dirs.extend(libdirs)
 else:
     print('WARN: Conan not installed and/or no conan build detected. Assuming dependencies are installed.')
 
@@ -45,7 +51,12 @@ if platform.system() == "Darwin":
     include_dirs.append("/usr/local/opt/openssl@1.1/include")
     extra_link_args.insert(0, "-L/usr/local/opt/openssl@1.1/lib")
 elif platform.system() == "Windows":
-    extra_compile_args = ["-DNOGDI", "-DNOMINMAX", "-DASIO_STANDALONE"]
+    extra_compile_args = [
+        "-DNOGDI",
+        "-DNOMINMAX",
+        "-DWIN32_LEAN_AND_MEAN",
+        "-DASIO_STANDALONE"
+    ]
     extra_link_args = []
 
 ext_modules = [
@@ -53,6 +64,7 @@ ext_modules = [
         "_vroom",
         [os.path.join("src", "_vroom.cpp")],
         library_dirs=library_dirs,
+        libraries=libraries,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
     ),
