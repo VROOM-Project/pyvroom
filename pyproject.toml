@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 test-command = 'python -c "import vroom"'
 build = "cp*"
-skip = "*-musllinux_*"
+skip = "*musllinux*"
 archs = "native"
 
 [tool.cibuildwheel.linux]
@@ -23,7 +23,7 @@ yum install -y openssl-devel asio-devel
 """
 
 [[tool.cibuildwheel.overrides]]
-select = "*-musllinux*"
+select = "*musllinux*"
 before-all = """
 apk add asio-dev
 apk add openssl-dev
