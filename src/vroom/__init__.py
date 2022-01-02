@@ -4,7 +4,7 @@ from _vroom import JOB_TYPE, STEP_TYPE
 from .amount import Amount
 from .break_ import Break
 from .job import Job
-from .location import Location
+from .location import Location, LocationCoordinates, LocationIndex
 from .time_window import TimeWindow
 from .vehicle import Vehicle
 

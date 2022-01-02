@@ -2,6 +2,7 @@ from typing import List, Optional, Sequence, Set, Union
 
 import numpy
 
+import _vroom
 from _vroom import _Vehicle
 import vroom
 
@@ -24,8 +25,8 @@ class Vehicle(_Vehicle):
     def __init__(
         self,
         id: int,
-        start: Union[None, Location, int, Sequence[Union[int, float]]] = None,
-        end: Union[None, Location, int, Sequence[Union[int, float]]] = None,
+        start: Union[None, _vroom.Location, int, Sequence[float]] = None,
+        end: Union[None, _vroom.Location, int, Sequence[float]] = None,
         profile: Optional[str] = None,
         capacity: vroom.Amount = vroom.Amount(),
         skills: Optional[Set[int]] = None,
@@ -53,8 +54,8 @@ class Vehicle(_Vehicle):
         kwargs = {key: value for key, value in kwargs.items()
                   if value or key == "id"}
         self._kwargs = kwargs.copy()
-        kwargs["start"] = None if start is None else Location.from_args(start)
-        kwargs["end"] = None if end is None else Location.from_args(end)
+        kwargs["start"] = None if start is None else Location(start)
+        kwargs["end"] = None if end is None else Location(end)
         if "time_window" in kwargs:
             kwargs["tw"] = kwargs.pop("time_window")
         _Vehicle.__init__(self, **kwargs)
@@ -68,11 +69,11 @@ class Vehicle(_Vehicle):
 
     @property
     def start(self) -> Optional[Location]:
-        return Location.from_args(self._start) if self.has_start() else None
+        return Location(self._start) if self.has_start() else None
 
     @property
     def end(self) -> Optional[Location]:
-        return Location.from_args(self._end) if self.has_end() else None
+        return Location(self._end) if self.has_end() else None
 
     @property
     def time_window(self) -> TimeWindow:

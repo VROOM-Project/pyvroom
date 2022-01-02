@@ -316,17 +316,18 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readonly("_tws", &vroom::Job::tws)
     .def_readonly("description", &vroom::Job::description);
 
-  py::class_<vroom::Location>(m, "_Location")
+  py::class_<vroom::Location>(m, "Location")
     .def(py::init<vroom::Index>(), py::arg("index"))
     .def(py::init<vroom::Coordinates>(), py::arg("coords"))
     .def(py::init<vroom::Index, vroom::Coordinates>(), py::arg("index"), py::arg("coords"))
+    .def(py::init([](vroom::Location &l){return l;}), py::arg("location"))
     .def(py::self == py::self)
-    .def("set_index", &vroom::Location::set_index)
-    .def("has_coordinates", &vroom::Location::has_coordinates)
+    // .def("_set_index", &vroom::Location::set_index)
+    .def("_has_coordinates", &vroom::Location::has_coordinates)
     .def("_index", &vroom::Location::index)
-    .def("lon", &vroom::Location::lon)
-    .def("lat", &vroom::Location::lat)
-    .def("user_index", &vroom::Location::user_index);
+    .def("_lon", &vroom::Location::lon)
+    .def("_lat", &vroom::Location::lat)
+    .def("_user_index", &vroom::Location::user_index);
 
   py::class_<vroom::Matrix<uint32_t>>(m, "Matrix", py::buffer_protocol())
     .def(py::init<std::size_t>(), py::arg("size") = 0)

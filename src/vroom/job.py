@@ -11,14 +11,14 @@ class Job(_vroom._Job):
     """A job with deliver and/or pickup that has to be performed.
 
     Examples:
-        >>> vroom.Job(0, [4., 5.], delivery=4, pickup=7)
-        vroom.Job(0, [4.0, 5.0], delivery=4, pickup=7)
+        >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
+        vroom.Job(0, [4.0, 5.0], delivery=[4], pickup=[7])
     """
 
     def __init__(
         self,
         id: int,
-        location: Union[Location, int, Sequence[Union[int, float]]],
+        location: Union[_vroom.Location, int, Sequence[float]],
         type: _vroom.JOB_TYPE = _vroom.JOB_TYPE.SINGLE,
         setup: int = 0,
         service: int = 0,
@@ -38,9 +38,8 @@ class Job(_vroom._Job):
                 The type of job that has to be performed.
             location:
                 Location of the job. If iterger, value interpreted as an the
-                column in duration matrix. If pair of floats, value interpreted
-                as longitude and latitude coordinates respectively. If a
-                triplet, it is interpreted as `(index, longitude, latitude)`.
+                column in duration matrix. If pair of numbers, value
+                interpreted as longitude and latitude coordinates respectively.
             setup:
                 The cost of preparing the vehicle before actually going out for
                 a job.
@@ -83,7 +82,7 @@ class Job(_vroom._Job):
         kwargs = {key: value for key, value in kwargs.items()
                   if value or key == "id"}
         self._kwargs = kwargs.copy()
-        kwargs["location"] = Location.from_args(location)
+        kwargs["location"] = Location(kwargs["location"])
         if time_windows is not None:
             kwargs["tws"] = [TimeWindow.from_args(tw)
                              for tw in kwargs.pop("time_windows")]
@@ -118,7 +117,7 @@ class Job(_vroom._Job):
         Either by index (used with duration matrix) or
         by coordinate (used with map server).
         """
-        return Location.from_args(self._kwargs["location"])
+        return Location(self._location)
 
     @property
     def time_windows(self) -> List[TimeWindow]:
