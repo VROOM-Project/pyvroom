@@ -64,7 +64,7 @@ ext_modules = [
         "_vroom",
         [os.path.join("src", "_vroom.cpp")],
         library_dirs=library_dirs,
-        extra_libraries=libraries,
+        libraries=libraries,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
     ),
