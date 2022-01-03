@@ -1,10 +1,9 @@
 """VROOM input definition."""
+import numpy as np
 from numpy.typing import ArrayLike
 from typing import Dict, Optional, Union
 
-import numpy
-
-from _vroom import _Input, Matrix, ROUTER, Server
+from .._vroom import _Input, Matrix, ROUTER, Server
 
 
 class Input(_Input):
@@ -71,9 +70,9 @@ class Input(_Input):
         return f"{self.__class__.__name__}({', '.join(args)})"
 
     def set_durations_matrix(
-            self,
-            profile: str,
-            matrix_input: ArrayLike,
+        self,
+        profile: str,
+        matrix_input: ArrayLike,
     ) -> None:
         """Set durations matrix.
 
@@ -87,5 +86,5 @@ class Input(_Input):
         """
         assert isinstance(profile, str)
         if not isinstance(matrix_input, Matrix):
-            matrix_input = Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+            matrix_input = Matrix(np.asarray(matrix_input, dtype="uint32"))
         _Input.set_durations_matrix(self, profile, matrix_input)

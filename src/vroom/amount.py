@@ -1,15 +1,68 @@
-from _vroom import _Amount
+"""An array of integers describing multidimensional quantities."""
+from typing import Sequence, Union
+import numpy
+
+from ._vroom import Amount as _Amount
 
 
 class Amount(_Amount):
+    """An array of integers describing multidimensional quantities.
 
-    def __init__(self, size: int = 0) -> None:
-        _Amount.__init__(self, size=size)
+    Use amounts  to describe a problem with capacity restrictions. Those arrays
+    can be used to model custom restrictions for several metrics at once, e.g.
+    number of items, weight, volume etc. A vehicle is only allowed to serve a
+    set of tasks if the resulting load at each route step is lower than the
+    matching value in capacity for each metric. When using multiple components
+    for amounts, it is recommended to put the most important/limiting metrics
+    first.
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.size})"
+    It is assumed that all delivery-related amounts for jobs are loaded at
+    vehicle start, while all pickup-related amounts for jobs are brought back
+    at vehicle end.
 
-    @property
-    def size(self) -> int:
-        return self._size()
+    Supports the following features:
 
+    * Numpy style indexing.
+    * Appending with `.append`.
+    * Addition and subtraction when the lengths are equal.
+    * Lexicographical compare with `>>` and `<<`.
+    * "For all" compare with `<=` and `=<`.
+    * "For any" compare with `<` and `>`.
+
+    Args:
+        amount:
+            Sequence of quantities to support for. No restriction if omitted.
+
+    Examples:
+        >>> amount = vroom.Amount([1, 2])
+        >>> amount[1] = 3
+        >>> amount.append(4)
+        >>> print(amount)
+        vroom.Amount([1, 3, 4])
+    """
+
+    def __init__(
+        self,
+        amount: Union[None, Sequence[int]] = None,
+    ) -> None:
+        args = []
+        if isinstance(amount, _Amount):
+            args.append(amount)
+        elif amount is not None:
+            args.append(numpy.asarray(amount, dtype="longlong"))
+        _Amount.__init__(self, *args)
+
+    def __getitem__(self, key: int) -> int:
+        return numpy.asarray(self)[key]
+
+    def __gt__(self, other) -> bool:
+        return not (self.__le__(other))
+
+    def __repr__(self) -> str:
+        return f"vroom.{self.__class__.__name__}" f"({numpy.asarray(self).tolist()})"
+
+    def __rshift__(self, other) -> bool:
+        return Amount(other).__lshift__(self)
+
+    def __setitem__(self, key: int, value: int) -> None:
+        numpy.asarray(self)[key] = value

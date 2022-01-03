@@ -26,12 +26,23 @@ jobs:
           name: "Install python environment"
           command: |
             /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
+            source /home/circleci/venv/bin/activate
+            pip install flake8 pytest black
+            pip install -e .
+      - run:
+          name: "run formatter check"
+          command: |
+            source /home/circleci/venv/bin/activate
+            black --check src/vroom
+      - run:
+          name: "run linting"
+          command: |
+            source /home/circleci/venv/bin/activate
+            flake8 src/vroom
       - run:
           name: "Run tests"
           command: |
             source /home/circleci/venv/bin/activate
-            pip install pytest
-            pip install -e .
             pytest --doctest-modules test src/vroom
 workflows:
   version: 2

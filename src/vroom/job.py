@@ -1,8 +1,8 @@
 from typing import List, Optional, Sequence, Set, Union
 
-from _vroom import _Job, JOB_TYPE
-
 from .amount import Amount
+from ._vroom import _Job, JOB_TYPE as _JOB_TYPE, Location as _Location
+
 from .location import Location
 from .time_window import TimeWindow
 
@@ -11,18 +11,19 @@ class Job(_Job):
     """A job with deliver and/or pickup that has to be performed.
 
     Examples:
-        >>> vroom.Job(0, [4., 5.], delivery=4, pickup=7)
-        vroom.Job(0, [4.0, 5.0], delivery=4, pickup=7)
+        >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
+        vroom.Job(0, [4.0, 5.0], delivery=[4], pickup=[7])
     """
+
     def __init__(
         self,
         id: int,
-        location: Union[Location, int, Sequence[Union[int, float]]],
-        type: JOB_TYPE = JOB_TYPE.SINGLE,
+        location: Union[_Location, int, Sequence[float]],
+        type: _JOB_TYPE = _JOB_TYPE.SINGLE,
         setup: int = 0,
         service: int = 0,
-        delivery: Union[int, Amount] = 0,
-        pickup: Union[int, Amount] = 0,
+        delivery: Amount = Amount(),
+        pickup: Amount = Amount(),
         skills: Optional[Set[int]] = None,
         priority: int = 0,
         time_windows: Optional[Sequence[TimeWindow]] = None,
@@ -37,9 +38,8 @@ class Job(_Job):
                 The type of job that has to be performed.
             location:
                 Location of the job. If iterger, value interpreted as an the
-                column in duration matrix. If pair of floats, value interpreted
-                as longitude and latitude coordinates respectively. If a
-                triplet, it is interpreted as `(index, longitude, latitude)`.
+                column in duration matrix. If pair of numbers, value
+                interpreted as longitude and latitude coordinates respectively.
             setup:
                 The cost of preparing the vehicle before actually going out for
                 a job.
@@ -66,8 +66,6 @@ class Job(_Job):
                 Optional string descriping the job.
         """
         assert isinstance(id, int)
-        assert isinstance(pickup, int)
-        assert isinstance(delivery, int)
         kwargs = dict(
             id=id,
             location=location,
@@ -81,31 +79,28 @@ class Job(_Job):
             time_windows=time_windows,
             description=description,
         )
-        kwargs = {key: value for key, value in kwargs.items()
-                  if value or key == "id"}
+        kwargs = {key: value for key, value in kwargs.items() if value or key == "id"}
         self._kwargs = kwargs.copy()
-        kwargs["location"] = Location.from_args(location)
+        kwargs["location"] = Location(kwargs["location"])
         if time_windows is not None:
-            kwargs["tws"] = [TimeWindow.from_args(tw)
-                             for tw in kwargs.pop("time_windows")]
-        assert isinstance(type, JOB_TYPE)
-        if type == JOB_TYPE.SINGLE:
+            kwargs["tws"] = [TimeWindow.from_args(tw) for tw in kwargs.pop("time_windows")]
+        assert isinstance(type, _JOB_TYPE)
+        if type == _JOB_TYPE.SINGLE:
             kwargs["delivery"] = Amount(delivery)
             kwargs["pickup"] = Amount(pickup)
             del kwargs["type"]
             del self._kwargs["type"]
-        elif type == JOB_TYPE.DELIVERY:
+        elif type == _JOB_TYPE.DELIVERY:
             kwargs["delivery"] = Amount(delivery)
             assert "pickup" not in kwargs
-        elif type == JOB_TYPE.PICKUP:
+        elif type == _JOB_TYPE.PICKUP:
             kwargs["pickup"] = Amount(pickup)
             assert "delivery" not in kwargs
 
         _Job.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
-        kwargs = {key: value for key, value in self._kwargs.items()
-                  if value or key == "id"}
+        kwargs = {key: value for key, value in self._kwargs.items() if value or key == "id"}
         id = kwargs.pop("id")
         location = kwargs.pop("location")
         args = ", ".join(f"{key}={value}" for key, value in kwargs.items())
@@ -119,7 +114,7 @@ class Job(_Job):
         Either by index (used with duration matrix) or
         by coordinate (used with map server).
         """
-        return Location.from_args(self._kwargs["location"])
+        return Location(self._location)
 
     @property
     def time_windows(self) -> List[TimeWindow]:
