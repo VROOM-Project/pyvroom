@@ -26,6 +26,7 @@ jobs:
           name: "Install python environment"
           command: |
             /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
+            source /home/circleci/venv/bin/activate
             pip install pytest black
             pip install -e .
       - run:
