@@ -1,13 +1,13 @@
 from typing import List, Optional, Sequence, Set, Union
 
-import vroom
-import _vroom
+from .amount import Amount
+from ._vroom import _Job, JOB_TYPE as _JOB_TYPE, Location as _Location
 
 from .location import Location
 from .time_window import TimeWindow
 
 
-class Job(_vroom._Job):
+class Job(_Job):
     """A job with deliver and/or pickup that has to be performed.
 
     Examples:
@@ -18,12 +18,12 @@ class Job(_vroom._Job):
     def __init__(
         self,
         id: int,
-        location: Union[_vroom.Location, int, Sequence[float]],
-        type: _vroom.JOB_TYPE = _vroom.JOB_TYPE.SINGLE,
+        location: Union[_Location, int, Sequence[float]],
+        type: _JOB_TYPE = _JOB_TYPE.SINGLE,
         setup: int = 0,
         service: int = 0,
-        delivery: vroom.Amount = vroom.Amount(),
-        pickup: vroom.Amount = vroom.Amount(),
+        delivery: Amount = Amount(),
+        pickup: Amount = Amount(),
         skills: Optional[Set[int]] = None,
         priority: int = 0,
         time_windows: Optional[Sequence[TimeWindow]] = None,
@@ -86,20 +86,20 @@ class Job(_vroom._Job):
         if time_windows is not None:
             kwargs["tws"] = [TimeWindow.from_args(tw)
                              for tw in kwargs.pop("time_windows")]
-        assert isinstance(type, _vroom.JOB_TYPE)
-        if type == _vroom.JOB_TYPE.SINGLE:
-            kwargs["delivery"] = vroom.Amount(delivery)
-            kwargs["pickup"] = vroom.Amount(pickup)
+        assert isinstance(type, _JOB_TYPE)
+        if type == _JOB_TYPE.SINGLE:
+            kwargs["delivery"] = Amount(delivery)
+            kwargs["pickup"] = Amount(pickup)
             del kwargs["type"]
             del self._kwargs["type"]
-        elif type == _vroom.JOB_TYPE.DELIVERY:
-            kwargs["delivery"] = vroom.Amount(delivery)
+        elif type == _JOB_TYPE.DELIVERY:
+            kwargs["delivery"] = Amount(delivery)
             assert "pickup" not in kwargs
-        elif type == _vroom.JOB_TYPE.PICKUP:
-            kwargs["pickup"] = vroom.Amount(pickup)
+        elif type == _JOB_TYPE.PICKUP:
+            kwargs["pickup"] = Amount(pickup)
             assert "delivery" not in kwargs
 
-        _vroom._Job.__init__(self, **kwargs)
+        _Job.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = {key: value for key, value in self._kwargs.items()

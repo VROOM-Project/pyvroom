@@ -1,10 +1,6 @@
 from typing import List, Optional, Sequence, Set, Union
 
-import numpy
-
-import _vroom
-from _vroom import _Vehicle
-import vroom
+from ._vroom import _Vehicle, Location
 
 from .amount import Amount
 from .break_ import Break
@@ -17,7 +13,7 @@ class Vehicle(_Vehicle):
     """Vehicle for performing transport.
 
     Examples:
-        >>> vehicle = vroom.Vehicle(1, end=1)
+        >>> vehicle = Vehicle(1, end=1)
         >>> vehicle
         vroom.Vehicle(1, end=1)
     """
@@ -25,10 +21,10 @@ class Vehicle(_Vehicle):
     def __init__(
         self,
         id: int,
-        start: Union[None, _vroom.Location, int, Sequence[float]] = None,
-        end: Union[None, _vroom.Location, int, Sequence[float]] = None,
+        start: Union[None, Location, int, Sequence[float]] = None,
+        end: Union[None, Location, int, Sequence[float]] = None,
         profile: Optional[str] = None,
-        capacity: vroom.Amount = vroom.Amount(),
+        capacity: Amount = Amount(),
         skills: Optional[Set[int]] = None,
         time_window: Optional[TimeWindow] = None,
         breaks: Sequence[Break] = (),
@@ -42,7 +38,7 @@ class Vehicle(_Vehicle):
             start=start,
             end=end,
             profile=profile,
-            capacity=vroom.Amount(capacity),
+            capacity=Amount(capacity),
             skills=skills,
             time_window=time_window,
             breaks=breaks,

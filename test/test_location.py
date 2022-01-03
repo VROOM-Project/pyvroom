@@ -1,6 +1,6 @@
 import pytest
 import vroom
-import _vroom
+from vroom import _vroom
 
 LOC_INDEX0 = _vroom.Location(index=4)
 LOC_INDEX1 = vroom.LocationIndex(4)

@@ -1,7 +1,6 @@
 from typing import Optional, Sequence, Union
 
-from _vroom import _VehicleStep, JOB_TYPE, STEP_TYPE
-
+from .._vroom import _VehicleStep, JOB_TYPE, STEP_TYPE
 from .forced_service import ForcedService
 
 
