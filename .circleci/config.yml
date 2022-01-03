@@ -27,20 +27,25 @@ jobs:
           command: |
             /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
             source /home/circleci/venv/bin/activate
-            pip install flake8 pytest black
+            pip install black flake8 mypy pytest
             pip install -e .
       - run:
-          name: "run formatter check"
+          name: "Run black"
           command: |
             source /home/circleci/venv/bin/activate
             black --check src/vroom
       - run:
-          name: "run linting"
+          name: "Run flake8"
           command: |
             source /home/circleci/venv/bin/activate
             flake8 src/vroom
       - run:
-          name: "Run tests"
+          name: "Run mypy"
+          command: |
+            source /home/circleci/venv/bin/activate
+            mypy src/vroom
+      - run:
+          name: "Run pytest"
           command: |
             source /home/circleci/venv/bin/activate
             pytest --doctest-modules test src/vroom

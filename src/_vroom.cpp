@@ -179,7 +179,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def("append", &vroom::Amount::push_back)
     .def("__len__", &vroom::Amount::size);
 
-  py::class_<vroom::Break>(m, "_Break")
+  py::class_<vroom::Break>(m, "Break")
     .def(py::init<vroom::Id,
                   std::vector<vroom::TimeWindow>&,
                   vroom::Duration,
@@ -200,7 +200,7 @@ PYBIND11_MODULE(_vroom, m) {
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
     .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
 
-  py::class_<vroom::Input>(m, "_Input")
+  py::class_<vroom::Input>(m, "Input")
     .def(
         py::init([](
             unsigned amount_size,
@@ -258,7 +258,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readwrite("end", &vroom::TimeWindow::end)
     .def_readonly("_length", &vroom::TimeWindow::length);
 
-  py::class_<vroom::Job>(m, "_Job")
+  py::class_<vroom::Job>(m, "Job")
     .def(py::init<vroom::Id,
                   vroom::Location&,
                   vroom::Duration,
@@ -402,7 +402,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readonly("unassigned", &vroom::Solution::unassigned);
 
 
-  py::class_<vroom::Step>(m, "_Step")
+  py::class_<vroom::Step>(m, "Step")
     .def(py::init<vroom::STEP_TYPE,
                   vroom::Location,
                   vroom::Amount>())
@@ -443,7 +443,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readwrite("violations", &vroom::Summary::violations)
     ;
 
-  py::class_<vroom::Vehicle>(m, "_Vehicle")
+  py::class_<vroom::Vehicle>(m, "Vehicle")
     .def(py::init<vroom::Id,
                   std::optional<vroom::Location>&,
                   std::optional<vroom::Location>&,
@@ -486,7 +486,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def_readonly("max_tasks", &vroom::Vehicle::max_tasks)
     .def_readonly("steps", &vroom::Vehicle::steps);
 
-  py::class_<vroom::VehicleStep>(m, "_VehicleStep")
+  py::class_<vroom::VehicleStep>(m, "VehicleStep")
     .def(py::init([](vroom::STEP_TYPE type, vroom::ForcedService &forced_service){
       return new vroom::VehicleStep(type, std::move(forced_service)); }))
     .def(py::init([](vroom::STEP_TYPE type, vroom::Id id, vroom::ForcedService &forced_service){
@@ -506,7 +506,7 @@ PYBIND11_MODULE(_vroom, m) {
           return new vroom::Violations(lead_time, delay, std::move(types)); }))
     .def(py::self += py::self);
 
-  py::class_<vroom::ForcedService>(m, "_ForcedService")
+  py::class_<vroom::ForcedService>(m, "ForcedService")
     .def(py::init<>())
     .def(py::init<std::optional<vroom::Duration>,
                   std::optional<vroom::Duration>,

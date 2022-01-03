@@ -3,10 +3,10 @@ import numpy as np
 from numpy.typing import ArrayLike
 from typing import Dict, Optional, Union
 
-from .._vroom import _Input, Matrix, ROUTER, Server
+from .. import _vroom
 
 
-class Input(_Input):
+class Input(_vroom.Input):
     """VROOM input defintion.
 
     Main instance for adding jobs, shipments, vehicles, and cost and duration
@@ -24,8 +24,8 @@ class Input(_Input):
     def __init__(
         self,
         amount_size: int = 0,
-        servers: Optional[Dict[str, Union[str, Server]]] = None,
-        router: ROUTER = ROUTER.OSRM,
+        servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
+        router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
     ) -> None:
         """Class initializer.
 
@@ -47,11 +47,11 @@ class Input(_Input):
             servers = {}
         for key, server in servers.items():
             if isinstance(server, str):
-                servers[key] = Server(*server.split(":"))
+                servers[key] = _vroom.Server(*server.split(":"))
         self._amount_size = amount_size
         self._servers = servers
         self._router = router
-        _Input.__init__(
+        _vroom.Input.__init__(
             self,
             amount_size=amount_size,
             servers=servers,
@@ -65,7 +65,7 @@ class Input(_Input):
             args.append(f"amount_size={self._amount_size}")
         if self._servers:
             args.append(f"servers={self._servers}")
-        if self._router != ROUTER.OSRM:
+        if self._router != _vroom.ROUTER.OSRM:
             args.append(f"router={self._router}")
         return f"{self.__class__.__name__}({', '.join(args)})"
 
@@ -85,6 +85,6 @@ class Input(_Input):
                 interest. Diagonal is canonically set to 0.
         """
         assert isinstance(profile, str)
-        if not isinstance(matrix_input, Matrix):
-            matrix_input = Matrix(np.asarray(matrix_input, dtype="uint32"))
-        _Input.set_durations_matrix(self, profile, matrix_input)
+        if not isinstance(matrix_input, _vroom.Matrix):
+            matrix_input = _vroom.Matrix(np.asarray(matrix_input, dtype="uint32"))
+        _vroom.Input.set_durations_matrix(self, profile, matrix_input)

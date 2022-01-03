@@ -9,7 +9,7 @@ from .input.vehicle_step import VehicleStep
 from . import _vroom
 
 
-class Vehicle(_vroom._Vehicle):
+class Vehicle(_vroom.Vehicle):
     """Vehicle for performing transport.
 
     Examples:
@@ -53,7 +53,7 @@ class Vehicle(_vroom._Vehicle):
         kwargs["end"] = None if end is None else Location(end)
         if "time_window" in kwargs:
             kwargs["tw"] = kwargs.pop("time_window")
-        _vroom._Vehicle.__init__(self, **kwargs)
+        _vroom.Vehicle.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = {key: value for key, value in self._kwargs.items() if key == "id" or value}
