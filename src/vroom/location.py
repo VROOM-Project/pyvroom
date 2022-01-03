@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import Sequence, Tuple, Type, Union
 
-import _vroom
+from ._vroom import Location as _Location
 
 
-class LocationIndex(_vroom.Location):
+class LocationIndex(_Location):
     """Index in the custom duration matrix for where to find distances.
 
     Attributes:
@@ -35,13 +35,13 @@ class LocationIndex(_vroom.Location):
             self,
             index: Union[int, Location],
     ) -> None:
-        if isinstance(index, _vroom.Location):
+        if isinstance(index, _Location):
             if not index._user_index():
                 name = index.__class__.__name__
                 raise TypeError(f"Can not convert {name} to LocationIndex")
             index = index._index()
         assert isinstance(index, int)
-        _vroom.Location.__init__(self, index)
+        _Location.__init__(self, index)
         assert not self._has_coordinates()
 
     @property
@@ -53,7 +53,7 @@ class LocationIndex(_vroom.Location):
         return f"vroom.{self.__class__.__name__}({self.index})"
 
 
-class LocationCoordinates(_vroom.Location):
+class LocationCoordinates(_Location):
     """Location longitude and latitude.
 
     Attributes:
@@ -85,7 +85,7 @@ class LocationCoordinates(_vroom.Location):
         self,
         coords: Union[Location, Sequence[float]],
     ) -> None:
-        if isinstance(coords, _vroom.Location):
+        if isinstance(coords, _Location):
             if not coords._has_coordinates():
                 name = coords.__class__.__name__
                 raise TypeError(
@@ -94,7 +94,7 @@ class LocationCoordinates(_vroom.Location):
         assert isinstance(coords, Sequence)
         coords = [float(coord) for coord in coords]
         assert len(coords) == 2
-        _vroom.Location.__init__(self, coords=coords)
+        _Location.__init__(self, coords=coords)
         assert self._has_coordinates()
         assert not self._user_index()
 
@@ -148,7 +148,7 @@ class Location(LocationIndex, LocationCoordinates):
 
     """
 
-    __init__ = _vroom.Location.__init__
+    __init__ = _Location.__init__
 
     def __new__(
         cls,
@@ -158,7 +158,7 @@ class Location(LocationIndex, LocationCoordinates):
         if cls is Location and len(args)+len(kwargs) == 1:
 
             # extract args from Location{,Index,Coordinates}
-            if args and isinstance(args[0], _vroom.Location):
+            if args and isinstance(args[0], _Location):
                 args, [loc] = (), args
                 if loc._user_index():
                     args += (loc._index(),)
@@ -167,7 +167,7 @@ class Location(LocationIndex, LocationCoordinates):
 
             # single positional int -> LocationIndex
             if "index" in kwargs or args and isinstance(args[0], int):
-                instance = _vroom.Location.__new__(
+                instance = _Location.__new__(
                     LocationIndex, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
@@ -175,12 +175,12 @@ class Location(LocationIndex, LocationCoordinates):
             # single positional sequence -> LocationCoordinates
             elif ("coords" in kwargs or args and isinstance(args[0], Sequence)
                   and len(args[0]) == 2):
-                instance = _vroom.Location.__new__(
+                instance = _Location.__new__(
                     LocationCoordinates, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
 
-        return _vroom.Location.__new__(cls, *args, **kwargs)
+        return _Location.__new__(cls, *args, **kwargs)
 
     def __repr__(self) -> str:
         args = f"index={self.index}, coords={self.coords}"

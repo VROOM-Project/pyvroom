@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import Union
 
 import numpy
-import _vroom
+
+from ._vroom import TimeWindow as _TimeWindow
 
 MAX_VAL = numpy.iinfo(numpy.uint32).max
 
 
-class TimeWindow(_vroom.TimeWindow):
+class TimeWindow(_TimeWindow):
     """Time window for when a delivery/pickup/task is possible.
 
     Relative values, e.g. `[0, 14400]` for a 4 hours time window starting at
@@ -53,20 +54,20 @@ class TimeWindow(_vroom.TimeWindow):
 
     def __init__(
         self,
-        start: Union[_vroom.TimeWindow, int] = 0,
+        start: Union[_TimeWindow, int] = 0,
         end: int = MAX_VAL,
     ) -> None:
         assert isinstance(end, int)
-        if isinstance(start, _vroom.TimeWindow):
+        if isinstance(start, _TimeWindow):
             if end != MAX_VAL:
                 raise TypeError("Only one arg when input is vroom.TimeWindow.")
             start, end = start.start, start.end
-        _vroom.TimeWindow.__init__(self, start=start, end=end)
+        _TimeWindow.__init__(self, start=start, end=end)
 
     def __bool__(self) -> bool:
         return self.start != 0 or self.end != MAX_VAL
 
-    def __contains__(self, other: Union[_vroom.TimeWindow, int]) -> bool:
+    def __contains__(self, other: Union[_TimeWindow, int]) -> bool:
         if isinstance(other, int):
             return self._contains(other)
         return self.start < other.start and other.end < self.end

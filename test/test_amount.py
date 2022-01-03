@@ -1,5 +1,5 @@
 import vroom
-import _vroom
+from vroom import _vroom
 
 
 def test_amount_init():

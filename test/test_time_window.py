@@ -1,7 +1,7 @@
 import numpy
 import pytest
 
-import _vroom
+from vroom import _vroom
 import vroom
 
 MAX_VAL = numpy.iinfo(numpy.uint32).max

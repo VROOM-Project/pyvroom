@@ -1,5 +1,5 @@
 """Vehicle routing open-source optimization machine (VROOM)."""
-from _vroom import JOB_TYPE, STEP_TYPE
+from ._vroom import JOB_TYPE, STEP_TYPE
 
 from .amount import Amount
 from .break_ import Break

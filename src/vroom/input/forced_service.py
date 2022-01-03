@@ -1,6 +1,7 @@
-
-from _vroom import _ForcedService
 from typing import Optional
+
+from .._vroom import _ForcedService
+
 
 class ForcedService(_ForcedService):
     """
