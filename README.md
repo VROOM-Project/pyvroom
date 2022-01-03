@@ -34,14 +34,9 @@ Building the source distributions on another OS requires:
 - `asio` headers installed
 - `openssl` & `crypto` libraries & headers installed
 
-Optionally the dependencies can be installed with [`conan`](https://github.com/conan-io/conan):
+Optionally the C++ dependencies can be installed with [`conan`](https://github.com/conan-io/conan):
 ```shell script
 conan install --build=openssl --install-folder conan_build .
-
-# note, on Windows you might have to execute the following before
-conan profile new default --detect
-conan profile update "settings.compiler=Visual Studio" default
-conan profile update "settings.compiler.version=16" default
 ```
 ## Basic usage
 

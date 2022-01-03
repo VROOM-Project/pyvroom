@@ -59,7 +59,7 @@ jobs:
 
     - name: Set up Windows Python ${{ matrix.python_version }}
       uses: actions/setup-python@v2
-      if: matrix.os == 'windows-latest'
+      if: matrix.os == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
         python-version: ${{ matrix.python_version }}
 
@@ -68,10 +68,8 @@ jobs:
       run: |
         pip install pip --upgrade
         pip install conan
-        conan profile new default --detect
-        conan profile update "settings.compiler=Visual Studio" default
-        conan profile update "settings.compiler.version=16" default
-        conan install --build=openssl --install-folder conan_build .
+        call .\conan_install.bat
+      shell: cmd
 
     - uses: pypa/cibuildwheel@v2.3.1
       env:

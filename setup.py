@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import platform
 from pathlib import Path
@@ -25,26 +26,18 @@ libraries = []
 library_dirs = []
 
 # try conan dependency resolution
-conanfile = tuple(Path().rglob('conanbuildinfo.json'))
+conanfile = tuple(Path(__file__).parent.resolve().rglob('conanbuildinfo.json'))
 if conanfile:
-    print("INFO: Using conan to resolve dependencies.")
-    with open(conanfile[0]) as f:
+    logging.info("Using conan to resolve dependencies.")
+    with conanfile[0].open() as f:
         conan_deps = json.load(f)['dependencies']
     for dep in conan_deps:
-        include = dep['include_paths']
-        libs = dep['libs']
-        system_libs = dep['system_libs']
-        libdirs = dep['lib_paths']
-
-        include_dirs.extend(include)
-        if libs:
-            libraries.extend(libs)
-        if system_libs:
-            libraries.extend(system_libs)
-        if libdirs:
-            library_dirs.extend(libdirs)
+        include_dirs.extend(dep['include_paths'])
+        libraries.extend(dep['libs'])
+        libraries.extend(dep['system_libs'])
+        library_dirs.extend(dep['lib_paths'])
 else:
-    print('WARN: Conan not installed and/or no conan build detected. Assuming dependencies are installed.')
+    logging.warning('Conan not installed and/or no conan build detected. Assuming dependencies are installed.')
 
 if platform.system() == "Darwin":
     # Homebrew puts include folders in weird places.
