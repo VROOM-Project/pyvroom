@@ -59,8 +59,7 @@ class Amount(_Amount):
         return not (self.__le__(other))
 
     def __repr__(self) -> str:
-        return (f"vroom.{self.__class__.__name__}"
-                f"({numpy.asarray(self).tolist()})")
+        return f"vroom.{self.__class__.__name__}" f"({numpy.asarray(self).tolist()})"
 
     def __rshift__(self, other) -> bool:
         return Amount(other).__lshift__(self)

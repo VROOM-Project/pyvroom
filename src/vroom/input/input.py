@@ -70,9 +70,9 @@ class Input(_Input):
         return f"{self.__class__.__name__}({', '.join(args)})"
 
     def set_durations_matrix(
-            self,
-            profile: str,
-            matrix_input: ArrayLike,
+        self,
+        profile: str,
+        matrix_input: ArrayLike,
     ) -> None:
         """Set durations matrix.
 

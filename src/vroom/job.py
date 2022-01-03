@@ -79,13 +79,13 @@ class Job(_Job):
             time_windows=time_windows,
             description=description,
         )
-        kwargs = {key: value for key, value in kwargs.items()
-                  if value or key == "id"}
+        kwargs = {key: value for key, value in kwargs.items() if value or key == "id"}
         self._kwargs = kwargs.copy()
         kwargs["location"] = Location(kwargs["location"])
         if time_windows is not None:
-            kwargs["tws"] = [TimeWindow.from_args(tw)
-                             for tw in kwargs.pop("time_windows")]
+            kwargs["tws"] = [
+                TimeWindow.from_args(tw) for tw in kwargs.pop("time_windows")
+            ]
         assert isinstance(type, _JOB_TYPE)
         if type == _JOB_TYPE.SINGLE:
             kwargs["delivery"] = Amount(delivery)
@@ -102,8 +102,9 @@ class Job(_Job):
         _Job.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
-        kwargs = {key: value for key, value in self._kwargs.items()
-                  if value or key == "id"}
+        kwargs = {
+            key: value for key, value in self._kwargs.items() if value or key == "id"
+        }
         id = kwargs.pop("id")
         location = kwargs.pop("location")
         args = ", ".join(f"{key}={value}" for key, value in kwargs.items())

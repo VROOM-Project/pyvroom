@@ -5,7 +5,6 @@ from .forced_service import ForcedService
 
 
 class VehicleStep(_VehicleStep):
-
     def __init__(
         self,
         *,
@@ -20,8 +19,7 @@ class VehicleStep(_VehicleStep):
             job_type=job_type,
             forced_service=forced_service,
         )
-        kwargs = {key: value for key, value in kwargs.items()
-                  if value is not None}
+        kwargs = {key: value for key, value in kwargs.items() if value is not None}
         self._kwargs = kwargs.copy()
         if isinstance(forced_service, Sequence):
             kwargs["forced_service"] = ForcedService(*forced_service)

@@ -17,13 +17,13 @@ class ForcedService(_ForcedService):
         before: Optional[int] = None,
     ) -> None:
         kwargs = dict(at=at, after=after, before=before)
-        self._kwargs = {key: value for key, value in kwargs.items()
-                        if value is not None}
+        self._kwargs = {
+            key: value for key, value in kwargs.items() if value is not None
+        }
         _ForcedService.__init__(self, **self._kwargs)
 
     def __repr__(self) -> str:
-        args = ", ".join(f"{key}={value}"
-                         for key, value in self._kwargs.items())
+        args = ", ".join(f"{key}={value}" for key, value in self._kwargs.items())
         return f"vroom.{self.__class__.__name__}({args})"
 
     @property

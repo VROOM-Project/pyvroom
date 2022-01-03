@@ -32,8 +32,8 @@ class LocationIndex(_Location):
     """
 
     def __init__(
-            self,
-            index: Union[int, Location],
+        self,
+        index: Union[int, Location],
     ) -> None:
         if isinstance(index, _Location):
             if not index._user_index():
@@ -88,8 +88,7 @@ class LocationCoordinates(_Location):
         if isinstance(coords, _Location):
             if not coords._has_coordinates():
                 name = coords.__class__.__name__
-                raise TypeError(
-                    f"Can not convert {name} to LocationCoordinates")
+                raise TypeError(f"Can not convert {name} to LocationCoordinates")
             coords = [coords._lon(), coords._lat()]
         assert isinstance(coords, Sequence)
         coords = [float(coord) for coord in coords]
@@ -155,7 +154,7 @@ class Location(LocationIndex, LocationCoordinates):
         *args,
         **kwargs,
     ):
-        if cls is Location and len(args)+len(kwargs) == 1:
+        if cls is Location and len(args) + len(kwargs) == 1:
 
             # extract args from Location{,Index,Coordinates}
             if args and isinstance(args[0], _Location):
@@ -167,16 +166,18 @@ class Location(LocationIndex, LocationCoordinates):
 
             # single positional int -> LocationIndex
             if "index" in kwargs or args and isinstance(args[0], int):
-                instance = _Location.__new__(
-                    LocationIndex, *args, **kwargs)
+                instance = _Location.__new__(LocationIndex, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
 
             # single positional sequence -> LocationCoordinates
-            elif ("coords" in kwargs or args and isinstance(args[0], Sequence)
-                  and len(args[0]) == 2):
-                instance = _Location.__new__(
-                    LocationCoordinates, *args, **kwargs)
+            elif (
+                "coords" in kwargs
+                or args
+                and isinstance(args[0], Sequence)
+                and len(args[0]) == 2
+            ):
+                instance = _Location.__new__(LocationCoordinates, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance
 

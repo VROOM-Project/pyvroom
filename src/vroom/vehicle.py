@@ -47,8 +47,7 @@ class Vehicle(_Vehicle):
             max_tasks=max_tasks,
             input_steps=input_steps,
         )
-        kwargs = {key: value for key, value in kwargs.items()
-                  if value or key == "id"}
+        kwargs = {key: value for key, value in kwargs.items() if value or key == "id"}
         self._kwargs = kwargs.copy()
         kwargs["start"] = None if start is None else Location(start)
         kwargs["end"] = None if end is None else Location(end)
@@ -57,8 +56,9 @@ class Vehicle(_Vehicle):
         _Vehicle.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
-        kwargs = {key: value for key, value in self._kwargs.items()
-                  if key == "id" or value}
+        kwargs = {
+            key: value for key, value in self._kwargs.items() if key == "id" or value
+        }
         id = kwargs.pop("id")
         args = ", ".join(f"{key}={value!r}" for key, value in kwargs.items())
         return f"vroom.{self.__class__.__name__}({id}, {args})"
