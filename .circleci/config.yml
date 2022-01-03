@@ -34,6 +34,11 @@ jobs:
             source /home/circleci/venv/bin/activate
             black --check src/vroom
       - run:
+          name: "run linting"
+          command: |
+            source /home/circleci/venv/bin/activate
+            flake8 src/vroom
+      - run:
           name: "Run tests"
           command: |
             source /home/circleci/venv/bin/activate

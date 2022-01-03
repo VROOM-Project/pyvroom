@@ -1,15 +1,15 @@
 from typing import List, Optional, Sequence, Set, Union
 
-from ._vroom import _Vehicle, Location
-
 from .amount import Amount
 from .break_ import Break
 from .location import Location
 from .time_window import TimeWindow
 from .input.vehicle_step import VehicleStep
 
+from . import _vroom
 
-class Vehicle(_Vehicle):
+
+class Vehicle(_vroom._Vehicle):
     """Vehicle for performing transport.
 
     Examples:
@@ -21,8 +21,8 @@ class Vehicle(_Vehicle):
     def __init__(
         self,
         id: int,
-        start: Union[None, Location, int, Sequence[float]] = None,
-        end: Union[None, Location, int, Sequence[float]] = None,
+        start: Union[None, _vroom.Location, int, Sequence[float]] = None,
+        end: Union[None, _vroom.Location, int, Sequence[float]] = None,
         profile: Optional[str] = None,
         capacity: Amount = Amount(),
         skills: Optional[Set[int]] = None,
@@ -53,12 +53,10 @@ class Vehicle(_Vehicle):
         kwargs["end"] = None if end is None else Location(end)
         if "time_window" in kwargs:
             kwargs["tw"] = kwargs.pop("time_window")
-        _Vehicle.__init__(self, **kwargs)
+        _vroom.Vehicle.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
-        kwargs = {
-            key: value for key, value in self._kwargs.items() if key == "id" or value
-        }
+        kwargs = {key: value for key, value in self._kwargs.items() if key == "id" or value}
         id = kwargs.pop("id")
         args = ", ".join(f"{key}={value!r}" for key, value in kwargs.items())
         return f"vroom.{self.__class__.__name__}({id}, {args})"

@@ -9,6 +9,18 @@ requires = [
 
 build-backend = "setuptools.build_meta"
 
+[tool.black]
+line-length = 105
+exclude = '''
+/(
+    \..*
+  | dist
+  | wheelhouse
+  | .*build
+  | __pycache__
+)/
+'''
+
 [tool.cibuildwheel]
 test-command = 'python -c "import vroom"'
 build = "cp*"

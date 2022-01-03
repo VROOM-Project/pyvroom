@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Sequence, Tuple, Type, Union
+from typing import Sequence, Tuple, Union
 
 from ._vroom import Location as _Location
 
@@ -171,12 +171,7 @@ class Location(LocationIndex, LocationCoordinates):
                 return instance
 
             # single positional sequence -> LocationCoordinates
-            elif (
-                "coords" in kwargs
-                or args
-                and isinstance(args[0], Sequence)
-                and len(args[0]) == 2
-            ):
+            elif "coords" in kwargs or args and isinstance(args[0], Sequence) and len(args[0]) == 2:
                 instance = _Location.__new__(LocationCoordinates, *args, **kwargs)
                 instance.__init__(*args, **kwargs)
                 return instance

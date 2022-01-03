@@ -17,9 +17,7 @@ class ForcedService(_ForcedService):
         before: Optional[int] = None,
     ) -> None:
         kwargs = dict(at=at, after=after, before=before)
-        self._kwargs = {
-            key: value for key, value in kwargs.items() if value is not None
-        }
+        self._kwargs = {key: value for key, value in kwargs.items() if value is not None}
         _ForcedService.__init__(self, **self._kwargs)
 
     def __repr__(self) -> str:
