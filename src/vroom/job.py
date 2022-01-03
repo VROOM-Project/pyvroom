@@ -1,13 +1,13 @@
 from typing import List, Optional, Sequence, Set, Union
 
-from .amount import Amount
-from ._vroom import _Job, JOB_TYPE as _JOB_TYPE, Location as _Location
+from . import _vroom
 
+from .amount import Amount
 from .location import Location
 from .time_window import TimeWindow
 
 
-class Job(_Job):
+class Job(_vroom.Job):
     """A job with deliver and/or pickup that has to be performed.
 
     Examples:
@@ -18,8 +18,8 @@ class Job(_Job):
     def __init__(
         self,
         id: int,
-        location: Union[_Location, int, Sequence[float]],
-        type: _JOB_TYPE = _JOB_TYPE.SINGLE,
+        location: Union[_vroom.Location, int, Sequence[float]],
+        type: _vroom.JOB_TYPE = _vroom.JOB_TYPE.SINGLE,
         setup: int = 0,
         service: int = 0,
         delivery: Amount = Amount(),
@@ -83,21 +83,21 @@ class Job(_Job):
         self._kwargs = kwargs.copy()
         kwargs["location"] = Location(kwargs["location"])
         if time_windows is not None:
-            kwargs["tws"] = [TimeWindow.from_args(tw) for tw in kwargs.pop("time_windows")]
-        assert isinstance(type, _JOB_TYPE)
-        if type == _JOB_TYPE.SINGLE:
+            kwargs["tws"] = [TimeWindow.from_args(tw) for tw in kwargs.pop("time_windows")]  # type: ignore
+        assert isinstance(type, _vroom.JOB_TYPE)
+        if type == _vroom.JOB_TYPE.SINGLE:
             kwargs["delivery"] = Amount(delivery)
             kwargs["pickup"] = Amount(pickup)
             del kwargs["type"]
             del self._kwargs["type"]
-        elif type == _JOB_TYPE.DELIVERY:
+        elif type == _vroom.JOB_TYPE.DELIVERY:
             kwargs["delivery"] = Amount(delivery)
             assert "pickup" not in kwargs
-        elif type == _JOB_TYPE.PICKUP:
+        elif type == _vroom.JOB_TYPE.PICKUP:
             kwargs["pickup"] = Amount(pickup)
             assert "delivery" not in kwargs
 
-        _Job.__init__(self, **kwargs)
+        _vroom.Job.__init__(self, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = {key: value for key, value in self._kwargs.items() if value or key == "id"}
@@ -119,4 +119,4 @@ class Job(_Job):
     @property
     def time_windows(self) -> List[TimeWindow]:
         """Time window for when job can be delivered."""
-        return [TimeWindow.from_args(tw) for tw in self._kwargs.get("time_windows", [])]
+        return [TimeWindow.from_args(tw) for tw in self._kwargs.get("time_windows", [])]  # type: ignore

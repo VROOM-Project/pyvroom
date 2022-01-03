@@ -1,5 +1,5 @@
-from ._vroom import _Break
+from . import _vroom
 
 
-class Break(_Break):
+class Break(_vroom.Break):
     pass

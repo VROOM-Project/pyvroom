@@ -2,10 +2,10 @@
 from typing import Sequence, Union
 import numpy
 
-from ._vroom import Amount as _Amount
+from . import _vroom  # type: ignore
 
 
-class Amount(_Amount):
+class Amount(_vroom.Amount):
     """An array of integers describing multidimensional quantities.
 
     Use amounts  to describe a problem with capacity restrictions. Those arrays
@@ -46,11 +46,11 @@ class Amount(_Amount):
         amount: Union[None, Sequence[int]] = None,
     ) -> None:
         args = []
-        if isinstance(amount, _Amount):
+        if isinstance(amount, _vroom.Amount):
             args.append(amount)
         elif amount is not None:
             args.append(numpy.asarray(amount, dtype="longlong"))
-        _Amount.__init__(self, *args)
+        _vroom.Amount.__init__(self, *args)
 
     def __getitem__(self, key: int) -> int:
         return numpy.asarray(self)[key]

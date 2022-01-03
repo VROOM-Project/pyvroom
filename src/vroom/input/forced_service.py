@@ -1,9 +1,9 @@
 from typing import Optional
 
-from .._vroom import _ForcedService
+from .. import _vroom
 
 
-class ForcedService(_ForcedService):
+class ForcedService(_vroom.ForcedService):
     """
     Examples:
         >>> vroom.ForcedService()
@@ -18,7 +18,7 @@ class ForcedService(_ForcedService):
     ) -> None:
         kwargs = dict(at=at, after=after, before=before)
         self._kwargs = {key: value for key, value in kwargs.items() if value is not None}
-        _ForcedService.__init__(self, **self._kwargs)
+        _vroom.ForcedService.__init__(self, **self._kwargs)
 
     def __repr__(self) -> str:
         args = ", ".join(f"{key}={value}" for key, value in self._kwargs.items())

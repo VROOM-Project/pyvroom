@@ -1,16 +1,16 @@
 from typing import Optional, Sequence, Union
 
-from .._vroom import _VehicleStep, JOB_TYPE, STEP_TYPE
+from .. import _vroom
 from .forced_service import ForcedService
 
 
-class VehicleStep(_VehicleStep):
+class VehicleStep(_vroom.VehicleStep):
     def __init__(
         self,
         *,
         id: Optional[int] = None,
-        type: Optional[STEP_TYPE] = None,
-        job_type: Optional[JOB_TYPE] = None,
+        type: Optional[_vroom.STEP_TYPE] = None,
+        job_type: Optional[_vroom.JOB_TYPE] = None,
         forced_service: Union[None, Sequence[int], ForcedService] = None,
     ) -> None:
         kwargs = dict(
@@ -23,7 +23,7 @@ class VehicleStep(_VehicleStep):
         self._kwargs = kwargs.copy()
         if isinstance(forced_service, Sequence):
             kwargs["forced_service"] = ForcedService(*forced_service)
-        _VehicleStep(**kwargs)
+        _vroom.VehicleStep(**kwargs)
 
     def __repr__(self) -> str:
         args = [f"{key}={value!r}" for key, value in self._kwargs.items()]
