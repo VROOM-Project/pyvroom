@@ -29,8 +29,8 @@ jobs:
             pip install pytest black
             pip install -e .
       - run:
-          name "run formatter check"
-        command: |
+          name: "run formatter check"
+          command: |
             source /home/circleci/venv/bin/activate
             black --check src/vroom
       - run:
