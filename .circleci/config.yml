@@ -27,7 +27,7 @@ jobs:
           command: |
             /opt/python/cp39-cp39/bin/python -m venv /home/circleci/venv
             source /home/circleci/venv/bin/activate
-            pip install pytest black
+            pip install flake8 pytest black
             pip install -e .
       - run:
           name: "run formatter check"
