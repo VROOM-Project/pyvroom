@@ -47,29 +47,32 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Cache Conan dependencies
+    - name: Cache Conan
       id: cache-conan
       uses: actions/cache@v2
       if: matrix.os == 'windows-latest'
       with:
-        path:
-          $USERPROFILE/.conan
-          conan-build
-        key: conan-${{ hashFiles('conanfile.txt') }}-v1.1
+        path: |
+          conan_build
+          conan_data
+        key: conan-${{ matrix.os }}-${{ hashFiles('conanfile.txt') }}
 
     - name: Set up Windows Python ${{ matrix.python_version }}
       uses: actions/setup-python@v2
       if: matrix.os == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
-        python-version: ${{ matrix.python_version }}
+        python-version: '3.x'
 
     - name: Install conan for Windows
       if: matrix.os == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
         pip install conan
-        call .\conan_install.bat
-      shell: cmd
+        conan profile new default --detect
+        conan profile update "settings.compiler=Visual Studio" default
+        conan profile update "settings.compiler.version=16" default
+        conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
+        conan install --build=openssl --install-folder conan_build .
 
     - uses: pypa/cibuildwheel@v2.3.1
       env:
