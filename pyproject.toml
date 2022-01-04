@@ -46,8 +46,3 @@ apk add openssl-dev
 before-all = """
 brew install asio
 """
-
-[tool.cibuildwheel.windows]
-before-all = """
-choco install -y openssl
-"""

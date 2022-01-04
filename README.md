@@ -19,7 +19,7 @@ VROOM can also solve any mix of the above problem types.
 
 ## Installation
 
-Pyvroom currently makes binaries for on MacOS and Linux.
+Pyvroom currently makes binaries for on MacOS and Linux (Windows is WIP).
 
 Installation should be as simple as:
 
@@ -27,6 +27,17 @@ Installation should be as simple as:
 pip install pyvroom
 ```
 
+## Building
+
+Building the source distributions on another OS requires:
+- the `./build-requirements.txt` Python dependencies
+- `asio` headers installed
+- `openssl` & `crypto` libraries & headers installed
+
+Optionally the C++ dependencies can be installed with [`conan`](https://github.com/conan-io/conan):
+```shell script
+conan install --build=openssl --install-folder conan_build .
+```
 ## Basic usage
 
 ```python

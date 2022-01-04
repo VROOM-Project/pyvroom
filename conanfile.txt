@@ -1,0 +1,6 @@
+[requires]
+openssl/1.1.1m
+asio/1.21.0
+
+[generators]
+json
