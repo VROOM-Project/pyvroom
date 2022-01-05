@@ -1,5 +1,5 @@
 """An array of integers describing multidimensional quantities."""
-from typing import Callable, Sequence, Union
+from typing import Sequence
 import numpy
 
 from . import _vroom  # type: ignore

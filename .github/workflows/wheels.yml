@@ -2,15 +2,8 @@ name: Wheels
 
 on:
   push:
-    branches:
-      - 'main'
     tags:
       - '*'
-    paths-ignore:
-      - '*.md'
-  pull_request:
-    branches:
-      - 'main'
     paths-ignore:
       - '*.md'
 
@@ -32,7 +25,7 @@ jobs:
           path: dist/*.tar.gz
 
   build_wheels:
-    name: Wheels on ${{ matrix.os }}
+    name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
