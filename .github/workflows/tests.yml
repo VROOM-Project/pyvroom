@@ -1,34 +1,23 @@
-name: Wheels
+name: Test
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+  pull-request:
+    branches:
+      - main
     paths-ignore:
       - '*.md'
 
 jobs:
-  build_sdist:
-    name: Build sdist
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build sdist
-        run: pipx run build --sdist
-
-      - name: Check metadata
-        run: pipx run twine check dist/*
-
-      - uses: actions/upload-artifact@v2
-        with:
-          path: dist/*.tar.gz
-
   build_wheels:
     name: ${{ matrix.platform }}
     runs-on: ${{ matrix.image }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - image: ubuntu-latest
@@ -46,7 +35,7 @@ jobs:
     - name: Cache Conan
       id: cache-conan
       uses: actions/cache@v2
-      if: matrix.platform == 'windows'
+      if: matrix.platform == "windows"
       with:
         path: |
           conan_build
@@ -55,12 +44,12 @@ jobs:
 
     - name: Configure Python
       uses: actions/setup-python@v2
-      if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
+      if: matrix.platform == "windows" && steps.cache-conan.outputs.cache-hit != "true"
       with:
-        python-version: '3.x'
+        python-version: "3.x"
 
     - name: Install Conan
-      if: matrix.image == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
+      if: matrix.platform == "windows" && steps.cache-conan.outputs.cache-hit != "true"
       run: |
         pip install pip --upgrade
         pip install conan
@@ -73,31 +62,8 @@ jobs:
     - uses: pypa/cibuildwheel@v2.3.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
+        CIBW_BUILD: "*cp39*"
 
     - name: Verify clean directory
       run: git diff --exit-code
       shell: bash
-
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        path: wheelhouse/*.whl
-
-  upload_all:
-    name: Upload if release
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/setup-python@v2
-
-    - uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: dist
-
-    - uses: pypa/gh-action-pypi-publish@v1.4.2
-      with:
-        user: jonathf
-        password: ${{ secrets.pypi_password }}

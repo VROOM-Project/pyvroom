@@ -27,7 +27,7 @@ Installation should be as simple as:
 pip install pyvroom
 ```
 
-## Building
+## Building from source
 
 Building the source distributions on another OS requires:
 - the `./build-requirements.txt` Python dependencies
