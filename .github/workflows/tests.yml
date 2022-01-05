@@ -35,7 +35,7 @@ jobs:
     - name: Cache Conan
       id: cache-conan
       uses: actions/cache@v2
-      if: matrix.platform == "windows"
+      if: matrix.platform == 'windows'
       with:
         path: |
           conan_build
@@ -44,12 +44,12 @@ jobs:
 
     - name: Configure Python
       uses: actions/setup-python@v2
-      if: matrix.platform == "windows" && steps.cache-conan.outputs.cache-hit != "true"
+      if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
-        python-version: "3.x"
+        python-version: '3.x'
 
     - name: Install Conan
-      if: matrix.platform == "windows" && steps.cache-conan.outputs.cache-hit != "true"
+      if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
         pip install conan
@@ -62,7 +62,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.3.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: "*cp39*"
+        CIBW_BUILD: '*cp39*'
 
     - name: Verify clean directory
       run: git diff --exit-code
