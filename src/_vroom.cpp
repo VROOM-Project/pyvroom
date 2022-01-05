@@ -176,7 +176,7 @@ PYBIND11_MODULE(_vroom, m) {
     .def("__isub__", [](vroom::Amount &a, const vroom::Amount &b){ a -= b; return a; })
     .def("__lshift__", [](const vroom::Amount &a, const vroom::Amount &b){ return a << b; })
     .def("__le__", [](const vroom::Amount &a, const vroom::Amount &b){ return a <= b; })
-    .def("append", &vroom::Amount::push_back)
+    .def("_push_back", &vroom::Amount::push_back)
     .def("__len__", &vroom::Amount::size);
 
   py::class_<vroom::Break>(m, "Break")
@@ -303,17 +303,17 @@ PYBIND11_MODULE(_vroom, m) {
         py::arg("description") = "")
     .def("index", &vroom::Job::index)
     .def("is_valid_start", &vroom::Job::is_valid_start)
-    .def_readonly("id", &vroom::Job::id)
+    .def_readonly("_id", &vroom::Job::id)
     .def_readwrite("_location", &vroom::Job::location)
-    .def_readonly("type", &vroom::Job::type)
-    .def_readonly("setup", &vroom::Job::setup)
-    .def_readonly("service", &vroom::Job::service)
-    .def_readonly("delivery", &vroom::Job::delivery)
-    .def_readonly("pickup", &vroom::Job::pickup)
-    .def_readonly("skills", &vroom::Job::skills)
-    .def_readonly("priority", &vroom::Job::priority)
-    .def_readonly("_tws", &vroom::Job::tws)
-    .def_readonly("description", &vroom::Job::description);
+    .def_readonly("_type", &vroom::Job::type)
+    .def_readonly("_setup", &vroom::Job::setup)
+    .def_readonly("_service", &vroom::Job::service)
+    .def_readonly("_delivery", &vroom::Job::delivery)
+    .def_readonly("_pickup", &vroom::Job::pickup)
+    .def_readonly("_skills", &vroom::Job::skills)
+    .def_readonly("_priority", &vroom::Job::priority)
+    .def_readonly("_time_windows", &vroom::Job::tws)
+    .def_readonly("_description", &vroom::Job::description);
 
   py::class_<vroom::Location>(m, "Location")
     .def(py::init<vroom::Index>(), py::arg("index"))

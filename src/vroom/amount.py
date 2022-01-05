@@ -1,5 +1,5 @@
 """An array of integers describing multidimensional quantities."""
-from typing import Sequence, Union
+from typing import Sequence
 import numpy
 
 from . import _vroom  # type: ignore
@@ -43,14 +43,13 @@ class Amount(_vroom.Amount):
 
     def __init__(
         self,
-        amount: Union[None, Sequence[int]] = None,
+        amount: Sequence[int] = (),
     ) -> None:
-        args = []
-        if isinstance(amount, _vroom.Amount):
-            args.append(amount)
-        elif amount is not None:
-            args.append(numpy.asarray(amount, dtype="longlong"))
-        _vroom.Amount.__init__(self, *args)
+        _vroom.Amount.__init__(self, numpy.asarray(amount, dtype="longlong"))
+
+    def append(self, amount: int) -> None:
+        """Append value to the end of array."""
+        self._push_back(amount)
 
     def __getitem__(self, key: int) -> int:
         return numpy.asarray(self)[key]

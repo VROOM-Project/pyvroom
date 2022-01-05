@@ -5,9 +5,9 @@ from vroom import _vroom
 def test_amount_init():
     amo1 = _vroom.Amount()
     assert len(amo1) == 0
-    amo1.append(1)
-    amo1.append(2)
-    amo1.append(3)
+    amo1._push_back(1)
+    amo1._push_back(2)
+    amo1._push_back(3)
     assert len(amo1) == 3
 
     amo2 = vroom.Amount([1, 2, 3])
