@@ -1,6 +1,6 @@
 """Time window for when a delivery/pickup/task is possible."""
 from __future__ import annotations
-from typing import Any, Union
+from typing import Any, Sequence, Union
 
 import numpy
 
@@ -52,9 +52,12 @@ class TimeWindow(_vroom.TimeWindow):
 
     """
 
+    start: int
+    end: int
+
     def __init__(
         self,
-        start: Union[_vroom.TimeWindow, int] = 0,
+        start: Union[_vroom.TimeWindow, Sequence[int], int] = 0,
         end: int = MAX_VAL,
     ) -> None:
         assert isinstance(end, int)
@@ -62,6 +65,10 @@ class TimeWindow(_vroom.TimeWindow):
             if end != MAX_VAL:
                 raise TypeError("Only one arg when input is vroom.TimeWindow.")
             start, end = start.start, start.end
+        if isinstance(start, Sequence):
+            if end != MAX_VAL:
+                raise TypeError("Only one arg when input is a sequence.")
+            start, end = start
         _vroom.TimeWindow.__init__(self, start=start, end=end)
 
     def __bool__(self) -> bool:
