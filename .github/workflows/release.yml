@@ -1,4 +1,4 @@
-name: Wheels
+name: release
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_sdist:
-    name: Build sdist
+    name: sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -83,9 +83,8 @@ jobs:
       with:
         path: wheelhouse/*.whl
 
-  upload_all:
-    name: Upload if release
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+  upload:
+    name: upload
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
 
