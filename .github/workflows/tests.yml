@@ -14,7 +14,7 @@ on:
 
 jobs:
   testsuite:
-    name: testsuite
+    name: suite
     runs-on: ubuntu-latest
     steps:
 
@@ -24,13 +24,13 @@ jobs:
 
     - name: "Install system dependencies"
       run: |
-        apt update -y
-        apt install -y openssl-dev asio-dev
+        sudo apt update -y
+        sudo apt install -y openssl-dev asio-dev
 
     - name: "Install python environment"
       run: |
-        pip install black flake8 mypy pytest
-        pip install -e .
+        pip --user install black flake8 mypy pytest
+        pip --user install -e .
 
     - name: "Run black"
       run: |
