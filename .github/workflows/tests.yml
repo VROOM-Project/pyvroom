@@ -13,15 +13,54 @@ on:
       - '*.md'
 
 jobs:
-  build_wheels:
+  testsuite:
+    name: testsuite
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: "Install system dependencies"
+      run: |
+        apt update -y
+        apt install -y openssl-dev asio-dev
+
+    - name: "Install python environment"
+      run: |
+        pip install black flake8 mypy pytest
+        pip install -e .
+
+    - name: "Run black"
+      run: |
+        black --check src/vroom
+
+    - name: "Run flake8"
+      run: |
+        flake8 src/vroom
+
+    - name: "Run mypy"
+      run: |
+        mypy src/vroom
+
+    - name: "Run pytest"
+      run: |
+        pytest --doctest-modules test src/vroom
+
+    - name: Verify clean directory
+      run: git diff --exit-code
+      shell: bash
+
+  wheel_check:
     name: ${{ matrix.platform }}
     runs-on: ${{ matrix.image }}
     strategy:
       fail-fast: true
       matrix:
         include:
-          - image: ubuntu-latest
-            platform: linux
+          # - image: ubuntu-latest
+          #   platform: linux
           - image: macos-latest
             platform: macos
           - image: windows-latest
@@ -62,7 +101,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.3.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: '*cp39*'
+        CIBW_BUILD: '*cp37*'
 
     - name: Verify clean directory
       run: git diff --exit-code
