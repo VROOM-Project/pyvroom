@@ -25,7 +25,7 @@ jobs:
     - name: "Install system dependencies"
       run: |
         sudo apt update -y
-        sudo apt install -y openssl-dev asio-dev
+        sudo apt install -y libssl-dev libasio-dev
 
     - name: "Install python environment"
       run: |
