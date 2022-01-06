@@ -1,4 +1,4 @@
-name: Test
+name: main push
 
 on:
   push:
@@ -6,56 +6,17 @@ on:
       - main
     paths-ignore:
       - '*.md'
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '*.md'
 
 jobs:
-  testsuite:
-    name: suite
-    runs-on: ubuntu-latest
-    steps:
-
-    - uses: actions/checkout@v2
-      with:
-        submodules: recursive
-
-    - uses: "actions/setup-python@v2"
-      with:
-        python-version: "3.7"
-
-    - name: "Install system dependencies"
-      run: sudo apt update -y && sudo apt install -y python3-pip libssl-dev libasio-dev
-
-    - name: "Install python environment"
-      run: python -m pip install black flake8 mypy pytest && pip install -e .
-
-    - name: "Run black"
-      run: python -m black --check src/vroom
-
-    - name: "Run flake8"
-      run: python -m flake8 src/vroom
-
-    - name: "Run mypy"
-      run: python -m mypy src/vroom
-
-    - name: "Run pytest"
-      run: python -m pytest --doctest-modules test src/vroom
-
-    - name: Verify clean directory
-      run: git diff --exit-code
-
-  wheel_check:
+  check-platform-builds:
     name: ${{ matrix.platform }}
     runs-on: ${{ matrix.image }}
     strategy:
       fail-fast: true
       matrix:
         include:
-          # - image: ubuntu-latest
-          #   platform: linux
+          - image: ubuntu-latest
+            platform: linux
           - image: macos-latest
             platform: macos
           - image: windows-latest
