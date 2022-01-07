@@ -1,10 +1,10 @@
-#include "cpp/amount.cpp"
-#include "cpp/enums.cpp"
-#include "cpp/job.cpp"
-#include "cpp/location.cpp"
-#include "cpp/time_window.cpp"
+#include "bind/amount.cpp"
+#include "bind/enums.cpp"
+#include "bind/job.cpp"
+#include "bind/location.cpp"
+#include "bind/time_window.cpp"
 
-#include "cpp/input/vehicle_step.cpp"
+#include "bind/input/vehicle_step.cpp"
 
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
