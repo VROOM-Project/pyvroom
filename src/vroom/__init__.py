@@ -10,4 +10,13 @@ from .vehicle import Vehicle
 
 from .input.forced_service import ForcedService
 from .input.input import Input
-from .input.vehicle_step import VehicleStep
+from .input.vehicle_step import (
+    VehicleStep,
+    VehicleStepStart,
+    VehicleStepEnd,
+    VehicleStepBreak,
+    VehicleStepSingle,
+    VehicleStepPickup,
+    VehicleStepDelivery,
+    VEHICLE_STEP_TYPE,
+)
