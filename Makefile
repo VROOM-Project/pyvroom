@@ -8,7 +8,7 @@ help:
 .PHONY: help test develop format
 
 develop:
-	CFLAG="-coverage" python -m pip install -e .
+	python -m pip install -e .
 
 test:
 	coverage run -m pytest --doctest-modules test src/vroom
