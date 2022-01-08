@@ -12,7 +12,7 @@ develop:
 
 test:
 	coverage run -m pytest --doctest-modules test src/vroom
-	gcov -abcfu src/_vroom.cpp -o build/temp.*/src
+	gcov -abcfumlr -o build/temp.*/src src/_vroom.cpp
 
 lint:
 	python -m black --check src/vroom

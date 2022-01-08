@@ -40,7 +40,7 @@ jobs:
     - name: "Upload"
       uses: codecov/codecov-action@v2
       with:
-        files: 'coverage.xml,*.gcov'
+        files: 'coverage.xml,_vroom.cpp*.gcov'
         fail_ci_if_error: true
 
     - name: Verify clean directory
