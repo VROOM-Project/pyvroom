@@ -30,12 +30,14 @@ jobs:
         make develop
 
     - name: "Run tests"
-      run: make test
+      run: |
+        make test
+        coverage xml
 
     - name: "Upload"
       uses: codecov/codecov-action@v2
       with:
-        files: ./*.gcov,.coverage
+        files: 'coverage.xml'
 
     - name: Verify clean directory
       run: git diff --exit-code
