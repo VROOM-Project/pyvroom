@@ -37,7 +37,8 @@ jobs:
     - name: "Upload"
       uses: codecov/codecov-action@v2
       with:
-        files: 'coverage.xml'
+        files: 'coverage.xml,*.gcov'
+        fail_ci_if_error: true
 
     - name: Verify clean directory
       run: git diff --exit-code
