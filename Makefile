@@ -10,10 +10,10 @@ develop:
 	python -m pip install -e .
 
 test:
+	python -m pytest --doctest-modules test src/vroom
 	python -m black --check src/vroom
 	python -m flake8 src/vroom
 	python -m mypy src/vroom
-	python -m pytest --doctest-modules test src/vroom
 
 format:
 	@echo format python code with black

@@ -15,15 +15,15 @@ class Vehicle(_vroom.Vehicle):
     Examples:
         >>> vehicle = Vehicle(1, end=1)
         >>> vehicle
-        vroom.Vehicle(1, end=1)
+        vroom.Vehicle(1, end=1, profile='car')
     """
 
     def __init__(
         self,
         id: int,
-        start: Union[None, _vroom.Location, int, Sequence[float]] = None,
-        end: Union[None, _vroom.Location, int, Sequence[float]] = None,
-        profile: Optional[str] = None,
+        start: Union[None, Location, int, Sequence[float]] = None,
+        end: Union[None, Location, int, Sequence[float]] = None,
+        profile: str = "car",
         capacity: Amount = Amount(),
         skills: Optional[Set[int]] = None,
         time_window: Optional[TimeWindow] = None,
@@ -63,16 +63,40 @@ class Vehicle(_vroom.Vehicle):
 
     @property
     def start(self) -> Optional[Location]:
-        return Location(self._start) if self.has_start() else None
+        return Location(self._start) if self._start else None
 
     @property
     def end(self) -> Optional[Location]:
-        return Location(self._end) if self.has_end() else None
+        return Location(self._end) if self._end else None
+
+    @property
+    def profile(self) -> str:
+        return self._profile
+
+    @property
+    def capacity(self) -> Amount:
+        return Amount(self._capacity)
+
+    @property
+    def skills(self) -> Set[int]:
+        return self._skills
 
     @property
     def time_window(self) -> TimeWindow:
-        return TimeWindow.from_args(self.tw)
+        return TimeWindow(self._time_window)
 
     @property
-    def input_steps(self) -> List[VehicleStep]:
-        return [VehicleStep.from_args(step) for step in self.steps]
+    def breaks(self) -> List[Break]:
+        return Break(self._break)
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @property
+    def max_tasks(self) -> str:
+        return self._max_tasks
+
+    @property
+    def steps(self) -> List[VehicleStep]:
+        return [VehicleStep(step) for step in self._steps]
