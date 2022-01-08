@@ -1,16 +1,20 @@
 help:
-		@echo "test      Run all tests"
-		@echo "develop   Install package in developer mode"
-		@echo "format    Format code"
+		@echo "develop   Install package in developer mode with coverage support"
+		@echo "test      Run all tests with coverage (pytest, coverage.py, gcov)"
+		@echo "lint      Run all linting (black, flake8, mypy)"
+		@echo "format    Format code (black, clang-format-10)"
 
 
 .PHONY: help test develop format
 
 develop:
-	python -m pip install -e .
+	CFLAG="-coverage" python -m pip install -e .
 
 test:
-	python -m pytest --doctest-modules test src/vroom
+	coverage run -m pytest --doctest-modules test src/vroom
+	gcov -abcfu src/_vroom.cpp -o build/temp.*/src
+
+lint:
 	python -m black --check src/vroom
 	python -m flake8 src/vroom
 	python -m mypy src/vroom

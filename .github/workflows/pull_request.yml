@@ -25,10 +25,17 @@ jobs:
       run: sudo apt update -y && sudo apt install -y libssl-dev libasio-dev
 
     - name: "Install python environment"
-      run: python -m pip install black flake8 mypy pytest && pip install -e .
+      run: |
+        python -m pip install black coverage flake8 mypy pytest
+        make develop
 
     - name: "Run tests"
       run: make test
+
+    - name: "Upload"
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./*.gcov,.coverage
 
     - name: Verify clean directory
       run: git diff --exit-code
