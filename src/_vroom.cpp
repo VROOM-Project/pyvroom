@@ -1,4 +1,5 @@
 #include "bind/amount.cpp"
+#include "bind/break.cpp"
 #include "bind/enums.cpp"
 #include "bind/job.cpp"
 #include "bind/location.cpp"
@@ -30,7 +31,7 @@
 #include "structures/generic/matrix.cpp"
 #include "structures/generic/undirected_graph.cpp"
 
-#include "structures/vroom/break.cpp"
+// #include "structures/vroom/break.cpp"
 #include "structures/vroom/cost_wrapper.cpp"
 #include "structures/vroom/raw_route.cpp"
 #include "structures/vroom/solution_state.cpp"
@@ -99,11 +100,7 @@ PYBIND11_MODULE(_vroom, m) {
   init_time_window(m);
   init_job(m);
   init_vehicle_step(m);
-
-  py::class_<vroom::Break>(m, "Break")
-      .def(py::init<vroom::Id, std::vector<vroom::TimeWindow> &,
-                    vroom::Duration, std::string &>())
-      .def("is_valid_start", &vroom::Break::is_valid_start);
+  init_break(m);
 
   py::class_<vroom::ComputingTimes>(m, "ComputingTimes").def(py::init<>());
 
@@ -275,22 +272,22 @@ PYBIND11_MODULE(_vroom, m) {
            py::arg("breaks") = std::vector<vroom::Break>(),
            py::arg("description") = "", py::arg("speed_factor") = 1.,
            py::arg("max_tasks") = std::numeric_limits<size_t>::max(),
-           py::arg("input_steps") = std::vector<vroom::VehicleStep>())
-      .def("has_start", &vroom::Vehicle::has_start)
-      .def("has_end", &vroom::Vehicle::has_end)
+           py::arg("steps") = std::vector<vroom::VehicleStep>())
+      // .def("has_start", &vroom::Vehicle::has_start)
+      // .def("has_end", &vroom::Vehicle::has_end)
       .def("has_same_locations", &vroom::Vehicle::has_same_locations)
       .def("has_same_profile", &vroom::Vehicle::has_same_profile)
       .def_readonly("id", &vroom::Vehicle::id)
       .def_readwrite("_start", &vroom::Vehicle::start)
       .def_readwrite("_end", &vroom::Vehicle::end)
-      .def_readonly("profile", &vroom::Vehicle::profile)
-      .def_readonly("capacity", &vroom::Vehicle::capacity)
-      .def_readonly("skills", &vroom::Vehicle::skills)
-      .def_readonly("tw", &vroom::Vehicle::tw)
-      .def_readonly("breaks", &vroom::Vehicle::breaks)
-      .def_readonly("description", &vroom::Vehicle::description)
-      .def_readonly("max_tasks", &vroom::Vehicle::max_tasks)
-      .def_readonly("steps", &vroom::Vehicle::steps);
+      .def_readonly("_profile", &vroom::Vehicle::profile)
+      .def_readonly("_capacity", &vroom::Vehicle::capacity)
+      .def_readonly("_skills", &vroom::Vehicle::skills)
+      .def_readonly("_time_window", &vroom::Vehicle::tw)
+      .def_readonly("_breaks", &vroom::Vehicle::breaks)
+      .def_readonly("_description", &vroom::Vehicle::description)
+      .def_readonly("_max_tasks", &vroom::Vehicle::max_tasks)
+      .def_readonly("_steps", &vroom::Vehicle::steps);
 
   py::class_<vroom::Violations>(m, "Violations")
       .def(py::init<>())
