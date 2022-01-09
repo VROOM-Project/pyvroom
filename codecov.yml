@@ -1,0 +1,25 @@
+coverage:
+  precision: 1
+  range: 80...100
+
+comment:
+  layout: "header, diff, flags"
+  branches:
+    - main
+
+flags:
+  python:
+    paths:
+      - src/vroom/
+  binding:
+    paths:
+      - src/_vroom.cpp
+      - src/bind/
+  vroom:
+    paths:
+      - vroom/src/
+
+parsers:
+  gcov:
+    branch_detection:
+      method: yes
