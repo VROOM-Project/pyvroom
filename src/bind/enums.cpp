@@ -13,12 +13,6 @@ void init_enums(py::module_ &m) {
       .value("VALHALLA", vroom::ROUTER::VALHALLA)
       .export_values();
 
-  py::enum_<vroom::ERROR>(m, "ERROR")
-      .value("INTERNAL", vroom::ERROR::INTERNAL)
-      .value("INPUT", vroom::ERROR::INPUT)
-      .value("ROUTING", vroom::ERROR::ROUTING)
-      .export_values();
-
   py::enum_<vroom::JOB_TYPE>(m, "JOB_TYPE")
       .value("SINGLE", vroom::JOB_TYPE::SINGLE)
       .value("PICKUP", vroom::JOB_TYPE::PICKUP)
