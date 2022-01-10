@@ -40,7 +40,6 @@ class LocationIndex(_vroom.Location):
                 name = index.__class__.__name__
                 raise TypeError(f"Can not convert {name} to LocationIndex")
             index = index._index()
-        assert isinstance(index, int)
         _vroom.Location.__init__(self, index)
         assert not self._has_coordinates()
 
@@ -154,29 +153,43 @@ class Location(LocationIndex, LocationCoordinates):
         *args,
         **kwargs,
     ):
-        if cls is Location and len(args) + len(kwargs) == 1:
+        if len(args) + len(kwargs) > 2:
+            raise TypeError("too many arguents in input.")
+        if args and "index" in kwargs:
+            raise TypeError("index reference twice.")
 
-            # extract args from Location{,Index,Coordinates}
-            if args and isinstance(args[0], _vroom.Location):
-                args, [loc] = (), args
-                if loc._user_index():
-                    args += (loc._index(),)
-                if loc._has_coordinates():
-                    args += ([loc._lon(), loc._lat()],)
+        illegal_kwargs = False
+        if len(args) == 2:
+            illegal_kwargs = bool(kwargs)
+            kwargs["index"], kwargs["coords"] = args
+        elif len(args) == 1:
+            if isinstance(args[0], _vroom.Location):
+                illegal_kwargs = bool(kwargs)
+                if args[0]._user_index():
+                    kwargs["index"] = args[0]._index()
+                if args[0]._has_coordinates():
+                    kwargs["coords"] = [args[0]._lon(), args[0]._lat()]
 
-            # single positional int -> LocationIndex
-            if "index" in kwargs or args and isinstance(args[0], int):
-                instance = _vroom.Location.__new__(LocationIndex, *args, **kwargs)
-                instance.__init__(*args, **kwargs)
-                return instance
+            elif isinstance(args[0], Sequence):
+                illegal_kwargs = bool(kwargs)
+                kwargs["coords"] = args[0]
 
-            # single positional sequence -> LocationCoordinates
-            elif "coords" in kwargs or args and isinstance(args[0], Sequence) and len(args[0]) == 2:
-                instance = _vroom.Location.__new__(LocationCoordinates, *args, **kwargs)
-                instance.__init__(*args, **kwargs)
-                return instance
+            else:
+                kwargs["index"] = args[0]
 
-        return _vroom.Location.__new__(cls, *args, **kwargs)
+        if illegal_kwargs:
+            raise TypeError("too many arguents in input.")
+
+        kwargs = {key: list(value) if isinstance(value, Sequence) else value
+                  for key, value in kwargs.items()}
+
+        if cls is Location and len(kwargs) == 1:
+            cls = LocationIndex if "index" in kwargs else LocationCoordinates
+            instance = _vroom.Location.__new__(cls, **kwargs)
+            instance.__init__(**kwargs)
+        else:
+            instance = _vroom.Location.__new__(cls, **kwargs)
+        return instance
 
     def __repr__(self) -> str:
         args = f"index={self.index}, coords={self.coords}"

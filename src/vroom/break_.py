@@ -22,7 +22,7 @@ class Break(_vroom.Break):
 
     Examples:
         >>> vroom.Break(id=4, time_windows=[vroom.TimeWindow(0, 1000)], service=200, description="lunch")
-        vroom.Break(4, time_window=[vroom.TimeWindow(0, 1000)], service=200, description='lunch')
+        vroom.Break(4, time_windows=[(0, 1000)], service=200, description='lunch')
     """
 
     def __init__(
@@ -36,10 +36,10 @@ class Break(_vroom.Break):
             assert time_windows == ()
             assert service == 0
             assert description == ""
-            time_windows = id.time_windows
-            service = id.service
-            description = id.description
-            id = id.id
+            time_windows = id._time_windows
+            service = id._service
+            description = id._description
+            id = id._id
         _vroom.Break.__init__(
             self,
             id=id,
@@ -86,7 +86,7 @@ class Break(_vroom.Break):
     def __repr__(self) -> str:
         args = [f"{self.id}"]
         if self.time_windows:
-            args.append(f"time_window={self.time_windows}")
+            args.append(f"time_windows={[(tw.start, tw.end) for tw in self.time_windows]}")
         if self.service:
             args.append(f"service={self.service}")
         if self.description:

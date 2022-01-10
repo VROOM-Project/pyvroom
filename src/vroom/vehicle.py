@@ -55,8 +55,9 @@ class Vehicle(_vroom.Vehicle):
             Set of custom steps this vehicle should take.
 
     Examples:
-        >>>  Vehicle(1, end=1)
+        >>> vroom.Vehicle(1, end=1)
         vroom.Vehicle(1, end=1)
+
     """
 
     def __init__(
@@ -65,7 +66,7 @@ class Vehicle(_vroom.Vehicle):
         start: Union[None, Location, int, Sequence[float]] = None,
         end: Union[None, Location, int, Sequence[float]] = None,
         profile: str = "car",
-        capacity: Optional[Amount] = None,
+        capacity: Union[Amount, Sequence[int]] = (),
         skills: Optional[Set[int]] = None,
         time_window: Optional[TimeWindow] = None,
         breaks: Sequence[Break] = (),
@@ -74,45 +75,50 @@ class Vehicle(_vroom.Vehicle):
         max_tasks: int = MAX_VAL,
         steps: Sequence[VehicleStep] = (),
     ) -> None:
+        self._speed_factor = float(speed_factor)
         _vroom.Vehicle.__init__(
             self,
             id=int(id),
             start=(None if start is None else Location(start)),
             end=(None if end is None else Location(end)),
             profile=str(profile),
-            capacity=(Amount([]) if capacity is None else capacity),
+            capacity=Amount(capacity),
             skills=(set([]) if skills is None else skills),
-            time_window=(TimeWindow() if time_window is None else time_window),
+            time_window=(TimeWindow() if time_window is None else TimeWindow(time_window)),
             breaks=[Break(break_) for break_ in breaks],
             description=str(description),
-            speed_factor=float(speed_factor),
+            speed_factor=self._speed_factor,
             max_tasks=max_tasks,
             steps=[VehicleStep(step) for step in steps],
         )
-        self._speed_factor = speed_factor
+        assert isinstance(self.capacity, Amount)
 
     def __repr__(self) -> str:
         args = [f"{self.id}"]
         if self.start is not None:
-            if isinstance(self.start, LocationIndex):
+            if isinstance(self.start, Location):
+                args.append(f"start={self.start}")
+            elif isinstance(self.start, LocationIndex):
                 args.append(f"start={self.start.index}")
             elif isinstance(self.start, LocationCoordinates):
                 args.append(f"start={self.start.coords}")
-            else:
-                args.append(f"start={self.start}")
         if self.end is not None:
+            if isinstance(self.end, Location):
+                args.append(f"end={self.end}")
             if isinstance(self.end, LocationIndex):
                 args.append(f"end={self.end.index}")
             elif isinstance(self.end, LocationCoordinates):
                 args.append(f"end={self.end.coords}")
-            else:
-                args.append(f"end={self.end}")
+        if self.profile != "car":
+            args.append(f"profile={self.profile!r}")
+        if self.capacity != Amount([]):
+            args.append(f"capacity={numpy.asarray(self.capacity).tolist()}")
+        if self.skills:
+            args.append(f"skills={self.skills}")
+        if self.time_window:
+            args.append(f"time_window={self.time_window.start, self.time_window.end}")
 
         for name, default in [
-            ("profile", "car"),
-            ("capacity", Amount([])),
-            ("skills", set()),
-            ("time_window", TimeWindow()),
             ("breaks", []),
             ("description", ""),
             ("speed_factor", 1.),
@@ -168,10 +174,6 @@ class Vehicle(_vroom.Vehicle):
     @property
     def speed_factor(self) -> float:
         return self._speed_factor
-
-    @speed_factor.setter
-    def speed_factor(self, value: float) -> None:
-        self._speed_factor = value
 
     @property
     def max_tasks(self) -> str:

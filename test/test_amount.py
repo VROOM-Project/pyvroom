@@ -20,6 +20,7 @@ def test_amount_init():
     assert not vroom.Amount()
     assert not vroom.Amount([])
 
+    assert vroom.Amount(vroom.Amount([1, 2])) == vroom.Amount([1, 2])
     assert str(amo2) == "vroom.Amount([1, 2, 3])"
 
 
