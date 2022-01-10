@@ -40,6 +40,7 @@ jobs:
     - name: "Upload python coverage"
       uses: codecov/codecov-action@v2
       with:
+        token: ${{ secrets.codecov_token }}
         files: 'coverage/coverage.xml'
         flags: python
         fail_ci_if_error: true
@@ -47,6 +48,7 @@ jobs:
     - name: "Upload binding coverage"
       uses: codecov/codecov-action@v2
       with:
+        token: ${{ secrets.codecov_token }}
         files: 'coverage/src#_vroom.cpp##src#bind#*.gcov'
         flags: binding
         fail_ci_if_error: true
@@ -54,6 +56,7 @@ jobs:
     - name: "Upload VROOM coverage"
       uses: codecov/codecov-action@v2
       with:
+        token: ${{ secrets.codecov_token }}
         files: 'coverage/src#_vroom.cpp##vroom#src#*.gcov'
         flags: vroom
         fail_ci_if_error: true
