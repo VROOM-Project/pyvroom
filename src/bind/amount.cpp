@@ -28,31 +28,6 @@ void init_amount(py::module_ &m) {
                                py::format_descriptor<int64_t>::format(), 1,
                                {a.size()}, {sizeof(int64_t)});
       })
-      // .def(py::self == py::self)
-      // .def("__add__",
-      //      [](const vroom::Amount &a, const vroom::Amount &b) {
-      //        vroom::Amount c = vroom::Amount(a.size());
-      //        c += a;
-      //        c += b;
-      //        return c;
-      //      })
-      // .def("__iadd__",
-      //      [](vroom::Amount &a, const vroom::Amount &b) {
-      //        a += b;
-      //        return a;
-      //      })
-      // .def("__sub__",
-      //      [](const vroom::Amount &a, const vroom::Amount &b) {
-      //        vroom::Amount c = vroom::Amount(a.size());
-      //        c += a;
-      //        c -= b;
-      //        return c;
-      //      })
-      // .def("__isub__",
-      //      [](vroom::Amount &a, const vroom::Amount &b) {
-      //        a -= b;
-      //        return a;
-      //      })
       .def("_lshift", [](const vroom::Amount &a,
                             const vroom::Amount &b) { return a << b; })
       .def("_le", [](const vroom::Amount &a,
