@@ -33,12 +33,10 @@
 #include "structures/generic/matrix.cpp"
 #include "structures/generic/undirected_graph.cpp"
 
-// #include "structures/vroom/break.cpp"
 #include "structures/vroom/cost_wrapper.cpp"
 #include "structures/vroom/raw_route.cpp"
 #include "structures/vroom/solution_state.cpp"
 #include "structures/vroom/tw_route.cpp"
-// #include "structures/vroom/vehicle.cpp"
 
 #include "structures/vroom/solution/computing_times.cpp"
 #include "structures/vroom/solution/route.cpp"
@@ -88,7 +86,6 @@
 #include "problems/tsp/heuristics/local_search.cpp"
 #include "problems/tsp/tsp.cpp"
 
-// #include "utils/exception.cpp"
 #include "utils/helpers.h"
 #include "utils/version.cpp"
 
