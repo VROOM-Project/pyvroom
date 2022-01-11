@@ -31,11 +31,11 @@ jobs:
         python -m pip install -r build-requirements.txt
         CFLAGS="-coverage" python setup.py build_ext --inplace
         python setup.py develop
+        cd vroom/src
+        make python-coverage
 
     - name: "Run tests"
-      run: |
-        make test
-        coverage xml
+      run: make test
 
     - name: "Upload python coverage"
       uses: codecov/codecov-action@v2
