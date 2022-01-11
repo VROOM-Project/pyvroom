@@ -30,7 +30,7 @@ jobs:
         python -m pip install -r build-requirements.txt
 
     - name: "Install pyvroom"
-      run:
+      run: |
         # Because `pip install -e .` does not play nice with gcov, we go old school:
         CFLAGS="-coverage" python setup.py build_ext --inplace
         python setup.py develop
