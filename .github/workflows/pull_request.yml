@@ -6,6 +6,11 @@ on:
       - main
     paths-ignore:
       - '*.md'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
 
 jobs:
   test:
@@ -27,12 +32,13 @@ jobs:
     - name: "Install python environment"
       run: |
         python -m pip install black coverage flake8 mypy pytest
-        # Because `pip install -e .` does not play nice with gcov, we go old school:
         python -m pip install -r build-requirements.txt
+
+    - name: "Install pyvroom"
+      run: |
+        # Because `pip install -e .` does not play nice with gcov, we go old school:
         CFLAGS="-coverage" python setup.py build_ext --inplace
         python setup.py develop
-        cd vroom/src
-        make python-coverage
 
     - name: "Run tests"
       run: make test
@@ -49,16 +55,8 @@ jobs:
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.codecov_token }}
-        files: 'coverage/src#_vroom.cpp##src#bind#*.gcov'
+        files: 'coverage/*.gcov'
         flags: binding
-        fail_ci_if_error: true
-
-    - name: "Upload VROOM coverage"
-      uses: codecov/codecov-action@v2
-      with:
-        token: ${{ secrets.codecov_token }}
-        files: 'coverage/src#_vroom.cpp##vroom#src#*.gcov'
-        flags: vroom
         fail_ci_if_error: true
 
     - name: Verify clean directory
