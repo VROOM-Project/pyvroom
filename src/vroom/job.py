@@ -350,11 +350,11 @@ class Job(JobSingle, JobDelivery, JobPickup):
             The time (in secondes) it takes to pick up/deliver shipment
             when at customer.
         delivery:
-            An interger representation of how much is being carried to
+            Array of intergers representing how much is being carried to
             customer.
         pickup:
-            An interger representation of how much is being carried back
-            from customer.
+            Array of intergers representing how much is being carried back from
+            customer.
         skills:
             Skills required to perform job. Only vehicles which satisfies
             all required skills (i.e. has at minimum all skills values

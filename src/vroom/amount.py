@@ -1,5 +1,7 @@
 """An array of integers describing multidimensional quantities."""
-from typing import Sequence
+from __future__ import annotations
+from typing import Sequence, Union
+
 import numpy
 
 from . import _vroom  # type: ignore
@@ -43,7 +45,7 @@ class Amount(_vroom.Amount):
 
     def __init__(
         self,
-        amount: Sequence[int] = (),
+        amount: Union[Amount, Sequence[int]] = (),
     ) -> None:
         _vroom.Amount.__init__(self, numpy.asarray(amount, dtype="longlong"))
 
@@ -54,13 +56,44 @@ class Amount(_vroom.Amount):
     def __getitem__(self, key: int) -> int:
         return numpy.asarray(self)[key]
 
-    def __gt__(self, other) -> bool:
+    def __eq__(self, other) -> bool:
+        if isinstance(other, _vroom.Amount):
+            if len(self) != len(other):
+                return False
+            return bool(numpy.all(numpy.asarray(self) == numpy.asarray(other)))
+        return NotImplemented
+
+    def __add__(self, other: Amount) -> Amount:
+        other = Amount(other)
+        if len(self) != len(other):
+            raise _vroom.VroomInternalException("Adding two Amount of different length")
+        return Amount(numpy.asarray(self) + numpy.asarray(other))
+
+    def __sub__(self, other: Amount) -> Amount:
+        other = Amount(other)
+        if len(self) != len(other):
+            raise _vroom.VroomInternalException("Subtracting two Amount of different length")
+        return Amount(numpy.asarray(self) - numpy.asarray(other))
+
+    def __le__(self, other: Amount) -> bool:
+        other = Amount(other)
+        if len(self) != len(other):
+            raise _vroom.VroomInternalException("Comparing two Amount of different length")
+        return self._le(other)
+
+    def __gt__(self, other: Amount) -> bool:
         return not (self.__le__(other))
 
     def __repr__(self) -> str:
         return f"vroom.{self.__class__.__name__}" f"({numpy.asarray(self).tolist()})"
 
-    def __rshift__(self, other) -> bool:
+    def __lshift__(self, other: Amount) -> bool:
+        other = Amount(other)
+        if len(self) != len(other):
+            raise _vroom.VroomInternalException("Comparing two Amount of different length")
+        return self._lshift(other)
+
+    def __rshift__(self, other: Amount) -> bool:
         return Amount(other).__lshift__(self)
 
     def __setitem__(self, key: int, value: int) -> None:
