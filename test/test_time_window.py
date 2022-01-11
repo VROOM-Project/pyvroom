@@ -13,7 +13,7 @@ def test_time_window_init():
     assert tw.end == MAX_VAL
     assert _vroom.TimeWindow().end == MAX_VAL
 
-    with pytest.raises(_vroom.VroomException):
+    with pytest.raises(_vroom.VroomInputException):
         vroom.TimeWindow(1000, 0)
 
     with pytest.raises(TypeError):

@@ -5,6 +5,7 @@
 #include "bind/location.cpp"
 #include "bind/time_window.cpp"
 #include "bind/vehicle.cpp"
+#include "bind/exception.cpp"
 
 #include "bind/input/vehicle_step.cpp"
 
@@ -32,12 +33,10 @@
 #include "structures/generic/matrix.cpp"
 #include "structures/generic/undirected_graph.cpp"
 
-// #include "structures/vroom/break.cpp"
 #include "structures/vroom/cost_wrapper.cpp"
 #include "structures/vroom/raw_route.cpp"
 #include "structures/vroom/solution_state.cpp"
 #include "structures/vroom/tw_route.cpp"
-// #include "structures/vroom/vehicle.cpp"
 
 #include "structures/vroom/solution/computing_times.cpp"
 #include "structures/vroom/solution/route.cpp"
@@ -87,7 +86,6 @@
 #include "problems/tsp/heuristics/local_search.cpp"
 #include "problems/tsp/tsp.cpp"
 
-#include "utils/exception.cpp"
 #include "utils/helpers.h"
 #include "utils/version.cpp"
 
@@ -96,6 +94,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(_vroom, m) {
 
   init_enums(m);
+
   init_amount(m);
   init_location(m);
   init_time_window(m);
@@ -103,6 +102,7 @@ PYBIND11_MODULE(_vroom, m) {
   init_vehicle_step(m);
   init_break(m);
   init_vehicle(m);
+  init_exception(m);
 
   py::class_<vroom::ComputingTimes>(m, "ComputingTimes").def(py::init<>());
 
@@ -112,7 +112,6 @@ PYBIND11_MODULE(_vroom, m) {
       .def("set_costs_factor", &vroom::CostWrapper::set_costs_factor)
       .def("set_costs_matrix", &vroom::CostWrapper::set_costs_matrix);
 
-  py::register_exception<vroom::Exception>(m, "VroomException");
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
       .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
   py::class_<vroom::Input>(m, "Input")

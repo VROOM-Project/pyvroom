@@ -3,9 +3,9 @@ import vroom
 
 
 def test_break_init():
-    with pytest.raises(vroom._vroom.VroomException):
+    with pytest.raises(vroom._vroom.VroomInputException):
         vroom.Break(4)
-    with pytest.raises(vroom._vroom.VroomException):
+    with pytest.raises(vroom._vroom.VroomInputException):
         vroom.Break(4, service=500)
 
     break_ = vroom.Break(vroom.Break(4, [(0, 1000)], 500, "hello"))
