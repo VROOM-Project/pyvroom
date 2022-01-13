@@ -15,16 +15,16 @@ void init_input(py::module_ &m){
            py::arg("router") = vroom::ROUTER::OSRM)
       .def_readonly("jobs", &vroom::Input::jobs)
       .def_readonly("vehicles", &vroom::Input::vehicles)
-      .def("set_geometry", &vroom::Input::set_geometry)
-      .def("add_job", &vroom::Input::add_job)
-      .def("add_shipment", &vroom::Input::add_shipment)
-      .def("add_vehicle", &vroom::Input::add_vehicle)
-      .def("set_durations_matrix",
+      .def("_set_geometry", &vroom::Input::set_geometry)
+      .def("_add_job", &vroom::Input::add_job)
+      .def("_add_shipment", &vroom::Input::add_shipment)
+      .def("_add_vehicle", &vroom::Input::add_vehicle)
+      .def("_set_durations_matrix",
            [](vroom::Input &self, const std::string &profile,
               vroom::Matrix<vroom::Duration> &m) {
              self.set_durations_matrix(profile, std::move(m));
            })
-      .def("set_costs_matrix",
+      .def("_set_costs_matrix",
            [](vroom::Input &self, const std::string &profile,
               vroom::Matrix<vroom::Cost> &m) {
              self.set_costs_matrix(profile, std::move(m));
@@ -38,7 +38,7 @@ void init_input(py::module_ &m){
            &vroom::Input::has_homogeneous_locations)
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
       // .def("vehicle_ok_with_job", &vroom::Input::vehicle_ok_with_job)
-      .def("solve", &vroom::Input::solve, "Solve problem.",
+      .def("_solve", &vroom::Input::solve, "Solve problem.",
            py::arg("exploration_level"), py::arg("nb_threads") = 1,
            py::arg("timeout") = vroom::Timeout(),
            py::arg("h_param") = std::vector<vroom::HeuristicParameters>())

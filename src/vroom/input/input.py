@@ -1,9 +1,14 @@
 """VROOM input definition."""
-import numpy as np
+from typing import Dict, Optional, Sequence, Union
+
 from numpy.typing import ArrayLike
-from typing import Dict, Optional, Union
+import numpy
 
 from .. import _vroom
+
+from ..solution.solution import Solution
+from ..job import Job
+from ..vehicle import Vehicle
 
 
 class Input(_vroom.Input):
@@ -69,6 +74,34 @@ class Input(_vroom.Input):
             args.append(f"router={self._router}")
         return f"{self.__class__.__name__}({', '.join(args)})"
 
+    def set_geometry(self):
+        return self._set_geometry()
+
+    def add_job(
+        self,
+        job: Union[Job, Sequence[Job]],
+    ) -> None:
+        if isinstance(job, _vroom.Job):
+            job = [job]
+        for job_ in job:
+            self._add_job(job_)
+
+    def add_shipment(
+        self,
+        pickup: Job,
+        delivery: Job,
+    ) -> None:
+        self._add_shipment(pickup, delivery)
+
+    def add_vehicle(
+        self,
+        vehicle: Union[Vehicle, Sequence[Vehicle]],
+    ) -> None:
+        if isinstance(vehicle, _vroom.Vehicle):
+            vehicle = [vehicle]
+        for vehicle_ in vehicle:
+            self._add_vehicle(vehicle_)
+
     def set_durations_matrix(
         self,
         profile: str,
@@ -86,5 +119,35 @@ class Input(_vroom.Input):
         """
         assert isinstance(profile, str)
         if not isinstance(matrix_input, _vroom.Matrix):
-            matrix_input = _vroom.Matrix(np.asarray(matrix_input, dtype="uint32"))
-        _vroom.Input.set_durations_matrix(self, profile, matrix_input)
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+        self._set_durations_matrix(profile, matrix_input)
+
+    def set_costs_matrix(
+        profile: str,
+        matrix_input: ArrayLike,
+        self,
+    ) -> None:
+        """Set costs matrix.
+
+        Args:
+            profile:
+                Name of the transportation category profile in question.
+                Typically "car", "truck", etc.
+            matrix_input:
+                A square matrix consisting of duration between each location of
+                interest. Diagonal is canonically set to 0.
+        """
+        assert isinstance(profile, str)
+        if not isinstance(matrix_input, _vroom.Matrix):
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+        self._set_costs_matrix(profile, matrix_input)
+
+    def solve(
+        self,
+        exploration_level: int,
+        nb_threads: int,
+    ) -> Solution:
+        return Solution(self._solve(
+            exploration_level=exploration_level,
+            nb_threads=nb_threads,
+        ))

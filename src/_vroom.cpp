@@ -137,7 +137,11 @@ PYBIND11_MODULE(_vroom, m) {
                        const std::unordered_set<vroom::VIOLATION> types) {
         return new vroom::Violations(lead_time, delay, std::move(types));
       }))
-      .def(py::self += py::self);
+      .def(py::self += py::self)
+      .def_readwrite("_lead_time", &vroom::Violations::lead_time)
+      .def_readwrite("_delay", &vroom::Violations::delay)
+      .def_readwrite("_types", &vroom::Violations::types)
+    ;
 
   py::class_<vroom::routing::HttpWrapper>(m, "HttpWrapper");
   py::class_<vroom::routing::OrsWrapper>(m, "OrsWrapper");
