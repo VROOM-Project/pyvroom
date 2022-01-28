@@ -1,4 +1,5 @@
 """Reproduce the libvroom_example as tests."""
+import numpy
 import vroom
 
 
@@ -21,16 +22,16 @@ def test_example_with_custom_matrix():
     solution = problem_instance.solve(
         exploration_level=5, nb_threads=4)
 
-    assert solution.summary.cost == 3206
+    assert solution.summary.cost == 6411
     assert solution.summary.unassigned == 0
     assert solution.unassigned == []
 
     routes = solution.routes
-    assert routes.vehicle_id.drop_duplicates() == [7, 8]
-    assert routes.job_id == [0, 1515, 1414, 0,
-                             0, 1717, 1616, 0]
-    assert routes.task == ["start", "single", "single", "end",
-                           "start", "single", "single", "end"]
-    assert routes.arrival == [0, 2104, 4207, 4207,
-                             0, 1102, 2204, 2204]
-    assert routes.loc_index == [0, 1, 0, 0, 2, 3, 2, 2]
+    assert numpy.all(routes.vehicle_id.drop_duplicates() == [7, 8])
+    assert numpy.all(routes.job_id == [0, 1515, 1414, 0,
+                                       0, 1717, 1616, 0])
+    assert numpy.all(routes.task == ["start", "single", "single", "end",
+                                     "start", "single", "single", "end"])
+    assert numpy.all(routes.arrival == [0, 2104, 4207, 4207,
+                                        0, 1102, 2204, 2204])
+    assert numpy.all(routes.loc_index == [0, 1, 0, 0, 2, 3, 2, 2])

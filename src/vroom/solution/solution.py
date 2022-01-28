@@ -12,7 +12,8 @@ class Solution(_vroom.Solution):
         frame = pandas.DataFrame({
             "vehicle_id": array["vehicle_id"],
             "job_id": array["job_id"],
-            "task": array["task"].astype("U9"),
+            "task": pandas.Categorical(array["task"].astype("U9"),
+                                       categories=["start", "end", "break", "single", "delivery", "pickup"]),
             "arrival": array["arrival"],
             "loc_index": array["loc_index"],
         })
