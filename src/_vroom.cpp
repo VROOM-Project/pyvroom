@@ -17,6 +17,8 @@
 #include "bind/solution/step.cpp"
 #include "bind/solution/summary.cpp"
 
+#include "bind/_main.cpp"
+
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -114,6 +116,8 @@ PYBIND11_MODULE(_vroom, m) {
   init_step(m);
   init_summary(m);
 
+  init_main(m);
+
   py::class_<vroom::ComputingTimes>(m, "ComputingTimes").def(py::init<>());
 
   py::class_<vroom::CostWrapper>(m, "CostWrapper")
@@ -147,4 +151,5 @@ PYBIND11_MODULE(_vroom, m) {
   py::class_<vroom::routing::OrsWrapper>(m, "OrsWrapper");
   py::class_<vroom::routing::OsrmRoutedWrapper>(m, "OsrmRoutedWrapper");
   py::class_<vroom::routing::ValhallaWrapper>(m, "ValhallaWrapper");
+
 }

@@ -74,4 +74,5 @@ setup(
     ext_package="vroom",
     include_dirs=include_dirs,
     use_scm_version=True,
+    entry_points={"console_scripts": ["vroom=vroom:main"]},
 )
