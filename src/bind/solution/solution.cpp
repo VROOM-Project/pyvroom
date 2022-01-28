@@ -73,7 +73,7 @@ void init_solution(py::module_ &m){
           idx++;
         }
       }
-      return std::move(arr);
+      return arr;
     })
     .def_readwrite("code", &vroom::Solution::code)
     .def_readwrite("error", &vroom::Solution::error)
