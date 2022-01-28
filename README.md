@@ -41,29 +41,39 @@ conan install --build=openssl --install-folder conan_build .
 ## Basic usage
 
 ```python
-import vroom
+>>> import vroom
 
-problem_instance = vroom.Input()
+>>> problem_instance = vroom.Input()
 
-problem_instance.set_durations_matrix(
-    profile="car",
-    matrix_input=[[0, 2104, 197, 1299],
-                  [2103, 0, 2255, 3152],
-                  [197, 2256, 0, 1102],
-                  [1299, 3153, 1102, 0]],
-)
-problem_instance.add_vehicle(vroom.Vehicle(0, start=0, end=3))
-problem_instance.add_job(vroom.Job(id=1414, location=1))
-problem_instance.add_job(vroom.Job(id=1515, location=2))
+>>> problem_instance.set_durations_matrix(
+...     profile="car",
+...     matrix_input=[[0, 2104, 197, 1299],
+...                   [2103, 0, 2255, 3152],
+...                   [197, 2256, 0, 1102],
+...                   [1299, 3153, 1102, 0]],
+... )
 
-solution = problem_instance.solve(exploration_level=5, nb_threads=4)
+>>> problem_instance.add_vehicle([vroom.Vehicle(47, start=0, end=0),
+...                               vroom.Vehicle(48, start=2, end=2)])
 
-print(solution.summary.cost)
-# 5461
-for step in solution.routes[0].steps:
-    print(step.step_type, step.duration)
-# STEP_TYPE.START 0
-# STEP_TYPE.JOB 2104
-# STEP_TYPE.JOB 4359
-# STEP_TYPE.END 5461
+>>> problem_instance.add_job([vroom.Job(1414, location=0),
+...                           vroom.Job(1515, location=1),
+...                           vroom.Job(1616, location=2),
+...                           vroom.Job(1717, location=3)])
+
+>>> solution = problem_instance.solve(exploration_level=5, nb_threads=4)
+
+>>> solution.summary.cost
+3206
+
+>>> solution.routes
+   vehicle_id  job_id    task  arrival  loc_index
+0          47       0   start        0          0
+1          47    1515  single     2104          1
+2          47    1414  single     4207          0
+3          47       0     end     4207          0
+4          48       0   start        0          2
+5          48    1717  single     1102          3
+6          48    1616  single     2204          2
+7          48       0     end     2204          2
 ```
