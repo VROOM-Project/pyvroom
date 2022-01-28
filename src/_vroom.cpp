@@ -36,6 +36,7 @@
 #include "routing/valhalla_wrapper.cpp"
 
 #include "structures/typedefs.h"
+#include "structures/cl_args.cpp"
 
 #include "structures/generic/edge.cpp"
 #include "structures/generic/undirected_graph.cpp"
@@ -89,6 +90,10 @@
 
 #include "utils/helpers.h"
 #include "utils/version.cpp"
+#include "utils/output_json.cpp"
+#include "utils/input_parser.cpp"
+
+#include "main.cpp"
 
 namespace py = pybind11;
 
@@ -147,4 +152,15 @@ PYBIND11_MODULE(_vroom, m) {
   py::class_<vroom::routing::OrsWrapper>(m, "OrsWrapper");
   py::class_<vroom::routing::OsrmRoutedWrapper>(m, "OsrmRoutedWrapper");
   py::class_<vroom::routing::ValhallaWrapper>(m, "ValhallaWrapper");
+
+  py::class_<vroom::io::CLArgs>(m, "CLArgs");
+
+  m.def("_main", [](std::vector<std::string> args){
+    char ** argv = new char*[args.size()];
+    for(size_t i = 0; i < args.size(); i++){
+        argv[i] = new char[args[i].size() + 1];
+        strcpy(argv[i], args[i].c_str());
+    }
+    main(args.size(), argv);
+  }, py::arg("args"));
 }
