@@ -17,7 +17,7 @@
 #include "bind/solution/step.cpp"
 #include "bind/solution/summary.cpp"
 
-#include "bind/main.cpp"
+#include "bind/_main.cpp"
 
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
