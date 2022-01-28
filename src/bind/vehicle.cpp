@@ -2,6 +2,8 @@
 
 #include "structures/vroom/vehicle.cpp"
 
+namespace py = pybind11;
+
 
 void init_vehicle(py::module_ &m){
 
