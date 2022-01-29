@@ -64,16 +64,21 @@ conan install --build=openssl --install-folder conan_build .
 >>> solution = problem_instance.solve(exploration_level=5, nb_threads=4)
 
 >>> solution.summary.cost
-3206
+6411
 
->>> solution.routes
-   vehicle_id  job_id    task  arrival  loc_index
-0          47       0   start        0          0
-1          47    1515  single     2104          1
-2          47    1414  single     4207          0
-3          47       0     end     4207          0
-4          48       0   start        0          2
-5          48    1717  single     1102          3
-6          48    1616  single     2204          2
-7          48       0     end     2204          2
+>>> solution.routes.columns
+Index(['vehicle_id', 'type', 'arrival', 'duration', 'setup', 'service',
+       'waiting_time', 'location_index', 'id', 'description'],
+      dtype='object')
+
+>>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id"]]
+   vehicle_id   type  arrival  location_index    id
+0          47  start        0               0  <NA>
+1          47    job     2104               1  1515
+2          47    job     4207               0  1414
+3          47    end     4207               0  <NA>
+4          48  start        0               2  <NA>
+5          48    job     1102               3  1717
+6          48    job     2204               2  1616
+7          48    end     2204               2  <NA>
 ```

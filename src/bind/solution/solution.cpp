@@ -7,17 +7,18 @@
 namespace py = pybind11;
 
 struct _Step{
-  vroom::Id vehicle_id;
-  vroom::Id job_id;
-  char task[9];
-  vroom::Duration arrival;
-  vroom::Duration duration;
-  vroom::Duration waiting_time;
-  vroom::Duration distance;
-
-  vroom::Index loc_index;
-  vroom::Index loc_lon;
-  vroom::Index loc_lat;
+  int64_t vehicle_id;
+  char type[9];
+  int64_t arrival;
+  int64_t duration;
+  int64_t setup;
+  int64_t service;
+  int64_t waiting_time;
+  int64_t distance;
+  int64_t longitude;
+  int64_t latitude;
+  int64_t location_index;
+  int64_t id;
 
   char description[40];
 };
@@ -25,8 +26,8 @@ struct _Step{
 
 void init_solution(py::module_ &m){
 
-  PYBIND11_NUMPY_DTYPE(_Step, vehicle_id, job_id, task, arrival, duration,
-      waiting_time, distance, loc_index, loc_lon, loc_lat, description);
+  PYBIND11_NUMPY_DTYPE(_Step, vehicle_id, type, arrival, duration, setup, service,
+      waiting_time, distance, location_index, longitude, latitude, id, description);
 
   py::class_<vroom::Solution>(m, "Solution")
     .def(py::init([](vroom::Solution s){ return s; }))
@@ -38,8 +39,10 @@ void init_solution(py::module_ &m){
                                   std::move(unassigned));
     }))
     .def("_routes_numpy", [](vroom::Solution solution){
+      const unsigned int NA_SUBSTITUTE = 4293967297;
       size_t idx = 0;
-      std::string task;
+      std::string type;
+      std::string id;
       unsigned int number_of_steps = 0;
       for (auto &route : solution.routes) number_of_steps += route.steps.size();
       auto arr = py::array_t<_Step>(number_of_steps);
@@ -49,26 +52,28 @@ void init_solution(py::module_ &m){
 
           ptr[idx].vehicle_id = route.vehicle;
 
-          if (step.step_type == vroom::STEP_TYPE::START) task = "start";
-          else if (step.step_type == vroom::STEP_TYPE::END) task = "end";
-          else if (step.step_type == vroom::STEP_TYPE::BREAK) task = "break";
-          else if (step.job_type == vroom::JOB_TYPE::SINGLE) task = "single";
-          else if (step.job_type == vroom::JOB_TYPE::PICKUP) task = "pickup";
-          else if (step.job_type == vroom::JOB_TYPE::DELIVERY) task = "delivery";
-          strncpy(ptr[idx].task, task.c_str(), 9);
+          if (step.step_type == vroom::STEP_TYPE::START) type = "start";
+          else if (step.step_type == vroom::STEP_TYPE::END) type = "end";
+          else if (step.step_type == vroom::STEP_TYPE::BREAK) type = "break";
+          else if (step.job_type == vroom::JOB_TYPE::SINGLE) type = "job";
+          else if (step.job_type == vroom::JOB_TYPE::PICKUP) type = "pickup";
+          else if (step.job_type == vroom::JOB_TYPE::DELIVERY) type = "delivery";
 
-          ptr[idx].job_id = step.id;
+          strncpy(ptr[idx].type, type.c_str(), 9);
+          strncpy(ptr[idx].description, step.description.c_str(), 40);
+
+          ptr[idx].longitude = step.location.has_coordinates() ? step.location.lon() : NA_SUBSTITUTE;
+          ptr[idx].latitude = step.location.has_coordinates() ? step.location.lat() : NA_SUBSTITUTE;
+          ptr[idx].location_index = step.location.user_index() ? step.location.index() : NA_SUBSTITUTE;
+
+          ptr[idx].id = (step.step_type == vroom::STEP_TYPE::JOB or
+                         step.step_type == vroom::STEP_TYPE::BREAK) ? step.id : NA_SUBSTITUTE;
+
+          ptr[idx].setup = step.setup;
+          ptr[idx].service = step.service;
+          ptr[idx].waiting_time = step.waiting_time;
           ptr[idx].arrival = step.arrival;
           ptr[idx].duration = step.duration;
-          ptr[idx].waiting_time = step.waiting_time;
-
-          if (step.location.has_coordinates()) {
-            ptr[idx].loc_lon = step.location.lon();
-            ptr[idx].loc_lat = step.location.lat();
-          }
-          ptr[idx].loc_index = step.location.index();
-
-          strncpy(ptr[idx].description, step.description.c_str(), 40);
 
           idx++;
         }
