@@ -1,3 +1,5 @@
+#include "bind/_main.cpp"
+
 #include "bind/amount.cpp"
 #include "bind/break.cpp"
 #include "bind/enums.cpp"
@@ -16,8 +18,6 @@
 #include "bind/solution/solution.cpp"
 #include "bind/solution/step.cpp"
 #include "bind/solution/summary.cpp"
-
-#include "bind/_main.cpp"
 
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
