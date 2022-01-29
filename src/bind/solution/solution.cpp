@@ -80,6 +80,13 @@ void init_solution(py::module_ &m){
       }
       return arr;
     })
+    .def("_solution_json", [](vroom::Solution solution){
+        auto json_output = vroom::io::to_json(solution, false);
+        rapidjson::StringBuffer s;
+        rapidjson::Writer<rapidjson::StringBuffer> r_writer(s);
+        json_output.Accept(r_writer);
+        return s.GetString();
+    })
     .def_readwrite("code", &vroom::Solution::code)
     .def_readwrite("error", &vroom::Solution::error)
     .def_readonly("summary", &vroom::Solution::summary)

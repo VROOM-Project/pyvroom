@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
+from pathlib import Path
 import json
 
 import numpy
@@ -37,3 +38,10 @@ class Solution(_vroom.Solution):
             else:
                 frame.loc[frame[column] == NA_SUBSTITUTE, column] = pandas.NA
         return frame
+
+    def to_dict(self) -> Dict[str, Any]:
+        return json.loads(self._solution_json())
+
+    def to_json(self, filepath: Union[str, Path]) -> None:
+        with open(filepath) as handler:
+            handler.write(self._solution_json())
