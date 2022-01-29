@@ -4,6 +4,7 @@
 #include <string>
 
 #include "structures/vroom/solution/solution.cpp"
+#include "utils/output_json.cpp"
 
 namespace py = pybind11;
 

@@ -6,18 +6,30 @@ import pytest
 
 import vroom
 
-FOLDER = Path(__file__).parent.parent.resolve() / "vroom" / "docs"
-COMMAND = ["vroom", "-i", str(FOLDER / "example_2.json")]
+_FOLDER = Path(__file__).parent.parent.resolve() / "vroom" / "docs"
+INPUT_FILE = _FOLDER / "example_2.json"
+OUTPUT_FILE = _FOLDER / "example_2_sol.json"
+
+
+def assert_equal(solution, reference):
+    del solution["summary"]["computing_times"]
+    assert solution == reference
 
 
 @pytest.fixture
 def example_2_reference():
-    with (FOLDER / "example_2_sol.json").open() as src:
-        return [route["steps"] for route in json.load(src)["routes"]]
+    with OUTPUT_FILE.open() as src:
+        return json.load(src)
 
 
 def test_console_script(example_2_reference, capsys):
     """Run VROOM console script entrypoint."""
-    vroom.main(COMMAND)
+    vroom.main(["vroom", "-i", str(INPUT_FILE)])
     output = json.loads(capsys.readouterr().out)
-    assert [route["steps"] for route in output["routes"]] == example_2_reference
+    assert_equal(output, example_2_reference)
+
+
+def test_loader(example_2_reference):
+    input = vroom.Input.from_json(INPUT_FILE)
+    solution = input.solve(exploration_level=5, nb_threads=4)
+    assert_equal(solution.to_dict(), example_2_reference)
