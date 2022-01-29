@@ -1,5 +1,8 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
+from pathlib import Path
+import io
 import json
+from contextlib import redirect_stdout
 
 import numpy
 import pandas
@@ -37,3 +40,14 @@ class Solution(_vroom.Solution):
             else:
                 frame.loc[frame[column] == NA_SUBSTITUTE, column] = pandas.NA
         return frame
+
+    def to_dict(self) -> Dict[str, Any]:
+        stream = io.StringIO()
+        with redirect_stdout(stream):
+            self._solution_json()
+        return json.loads(stream.getvalue())
+
+    def to_json(self, filepath: Union[str, Path]) -> None:
+        with open(filepath, "w") as handler:
+            with redirect_stdout(handler):
+                self._solution_json()
