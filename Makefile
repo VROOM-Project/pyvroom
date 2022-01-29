@@ -11,7 +11,7 @@ develop:
 	python -m pip install -e .
 
 test:
-	coverage run -m pytest --doctest-modules test src/vroom
+	coverage run -m pytest --doctest-modules README.rst test src/vroom
 	mkdir -p coverage
 	coverage xml -o coverage/coverage.xml
 	gcov -abcfumlpr -o build/temp*/src src/_vroom.cpp
