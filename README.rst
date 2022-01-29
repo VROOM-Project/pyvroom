@@ -87,11 +87,11 @@ Basic usage
 
   >>> solution.routes.columns
   Index(['vehicle_id', 'type', 'arrival', 'duration', 'setup', 'service',
-        'waiting_time', 'location_index', 'id', 'description'],
+         'waiting_time', 'location_index', 'id', 'description'],
         dtype='object')
 
   >>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id"]]
-    vehicle_id   type  arrival  location_index    id
+     vehicle_id   type  arrival  location_index    id
   0          47  start        0               0  <NA>
   1          47    job     2104               1  1515
   2          47    job     4207               0  1414
