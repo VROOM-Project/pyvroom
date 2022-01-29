@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/iostream.h>
 
 #include "structures/cl_args.cpp"
 
@@ -17,6 +18,10 @@ void init_main(py::module_ &m){
         argv[i] = new char[args[i].size() + 1];
         strcpy(argv[i], args[i].c_str());
     }
+    py::scoped_ostream_redirect stream(
+        std::cout,
+        py::module_::import("sys").attr("stdout")
+    );
     main(args.size(), argv);
   }, py::arg("args"));
 
