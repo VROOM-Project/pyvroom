@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '*'
-    paths-ignore:
-      - '*.md'
 
 jobs:
   build_sdist:

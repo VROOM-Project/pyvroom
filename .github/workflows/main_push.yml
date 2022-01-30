@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '*.md'
 
 jobs:
   check-platform-builds:
