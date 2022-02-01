@@ -1,5 +1,7 @@
 """VROOM input definition."""
+from __future__ import annotations
 from typing import Dict, Optional, Sequence, Union
+from pathlib import Path
 
 from numpy.typing import ArrayLike
 import numpy
@@ -38,7 +40,7 @@ class Input(_vroom.Input):
             amount_size:
                 The size of the job to be transported. Used to verify all jobs
                 have the same size limit.
-            server:
+            servers:
                 Assuming no custom duration matrix is provided (from
                 `set_durations_matrix`), use coordinates and a map server to
                 calculate durations matrix. Keys should be identifed by
@@ -56,12 +58,9 @@ class Input(_vroom.Input):
         self._amount_size = amount_size
         self._servers = servers
         self._router = router
-        _vroom.Input.__init__(
-            self,
-            amount_size=amount_size,
-            servers=servers,
-            router=router,
-        )
+        _vroom.Input.__init__(self, servers=servers, router=router)
+        if amount_size:
+            self._set_amount_size(amount_size)
 
     def __repr__(self) -> str:
         """String representation."""
@@ -73,6 +72,41 @@ class Input(_vroom.Input):
         if self._router != _vroom.ROUTER.OSRM:
             args.append(f"router={self._router}")
         return f"{self.__class__.__name__}({', '.join(args)})"
+
+    @staticmethod
+    def from_json(
+        filepath: Path,
+        servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
+        router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
+        geometry: Optional[bool] = None,
+    ) -> Input:
+        """Load model from JSON file.
+
+        Args:
+            filepath:
+                Path to JSON file with problem definition.
+            servers:
+                Assuming no custom duration matrix is provided (from
+                `set_durations_matrix`), use coordinates and a map server to
+                calculate durations matrix. Keys should be identifed by
+                `add_routing_wrapper`. If string, values should be on the
+                format `{host}:{port}`.
+            router:
+                If servers is used, define what kind of server is provided.
+                See `vroom.ROUTER` enum for options.
+            geometry:
+                Use coordinates from server instead of from distance matrix.
+                If omitted, defaults to `servers is not None`.
+
+        Returns:
+            Input instance with all jobs, shipments, etc. added from JSON.
+
+        """
+        geometry = servers is not None
+        instance = Input(servers=servers, router=router)
+        with open(filepath) as handle:
+            instance._from_json(handle.read(), geometry)
+        return instance
 
     def set_geometry(self):
         return self._set_geometry()

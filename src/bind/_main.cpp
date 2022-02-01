@@ -1,10 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/iostream.h>
 
-#include "structures/cl_args.cpp"
-
-#include "utils/output_json.cpp"
-#include "utils/input_parser.cpp"
 #include "main.cpp"
 
 namespace py = pybind11;
