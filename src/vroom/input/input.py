@@ -62,16 +62,6 @@ class Input(_vroom.Input):
         if amount_size:
             self._set_amount_size(amount_size)
 
-    @staticmethod
-    def from_json(path: Union[str, Path]) -> Input:
-        content = _vroom.Input._from_json(str(path))
-        input = Input(
-            amount_size=content._amount_size,
-            servers=content._servers,
-            router=content._router,
-        )
-        return input
-
     def __repr__(self) -> str:
         """String representation."""
         args = []
@@ -88,7 +78,7 @@ class Input(_vroom.Input):
         filepath: Path,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
-        geometry: bool = False,
+        geometry: Optional[bool] = None,
     ) -> Input:
         """Load model from JSON file.
 
@@ -104,6 +94,9 @@ class Input(_vroom.Input):
             router:
                 If servers is used, define what kind of server is provided.
                 See `vroom.ROUTER` enum for options.
+            geometry:
+                Use coordinates from server instead of from distance matrix.
+                If omitted, defaults to `servers is not None`.
 
         Returns:
             Input instance with all jobs, shipments, etc. added from JSON.
