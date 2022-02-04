@@ -28,10 +28,22 @@ skip = "*musllinux*"
 archs = "native"
 
 [tool.cibuildwheel.linux]
+build = "cp39*"
 before-all = """
 yum update -y
 yum install -y epel-release
 yum install -y openssl-devel asio-devel
+yum install -y scl-utils
+yum install -y gcc-toolset-9
+scl enable gcc-toolset-9 bash
+yum install git cmake3 zlib-devel
+git clone https://github.com/Project-OSRM/osrm-backend.git
+cd osrm-backend
+mkdir build
+cd build
+cmake3 .. -DENABLE_MASON=ON -DCMAKE_CXX_COMPILER=/opt/rh/gcc-toolset-9/root/usr/bin/g++
+make
+make install
 """
 
 [[tool.cibuildwheel.overrides]]

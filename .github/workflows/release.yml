@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - '*'
+  push:
+    branches:
+      - libosrm
 
 jobs:
   build_sdist:
@@ -31,8 +34,8 @@ jobs:
         include:
           - image: ubuntu-latest
             platform: linux
-          - image: macos-latest
-            platform: macos
+          # - image: macos-latest
+          #   platform: macos
           # - image: windows-latest
           #   platform: windows
 

@@ -5,6 +5,7 @@ import platform
 from pathlib import Path
 from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension, build_ext
+from subprocess import run, PIPE
 
 include_dirs = ["src", os.path.join("vroom", "src"), os.path.join("vroom", "include")]
 libraries = []
@@ -56,6 +57,18 @@ if conanfile:
         library_dirs.extend(dep["lib_paths"])
 else:
     logging.warning("Conan not installed and/or no conan build detected. Assuming dependencies are installed.")
+
+if run(["shell", "pkg-config", "--exists", "libosrm"],
+       stdout=PIPE).stdout == "1":
+    extra_link_args += run(["shell", "pkg-config", "--libs", "libosrm"]).split()
+    extra_link_args += ["-lboost_system", "-boost_filesystem", "-lboost_iostream", "-lboost_thread -lrt -ltbb"]
+    extra_compile_args += run(["shell", "pkg-config", "--cflags", "libosrm"],
+                              stdout=PIPE).stdout.split()
+    extra_compile_args += ["-D USE_LIBOSRM"]
+else:
+    logging.warning("Libosrm not found. Package not included.")
+
+
 
 ext_modules = [
     Pybind11Extension(
