@@ -59,7 +59,7 @@ if conanfile:
 else:
     logging.warning("Conan not installed and/or no conan build detected. Assuming dependencies are installed.")
 
-if shutil.which("pkg-config") && run(["pkg-config", "--exists", "libosrm"],
+if shutil.which("pkg-config") and run(["pkg-config", "--exists", "libosrm"],
        stdout=PIPE).stdout == "1":
     extra_link_args += run(["pkg-config", "--libs", "libosrm"]).split()
     extra_link_args += ["-lboost_system", "-boost_filesystem", "-lboost_iostream", "-lboost_thread -lrt -ltbb"]
