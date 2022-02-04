@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import shutil
 import platform
 from pathlib import Path
 from setuptools import setup
@@ -58,11 +59,11 @@ if conanfile:
 else:
     logging.warning("Conan not installed and/or no conan build detected. Assuming dependencies are installed.")
 
-if run(["shell", "pkg-config", "--exists", "libosrm"],
+if shutil.whice("pkg-config") && run(["pkg-config", "--exists", "libosrm"],
        stdout=PIPE).stdout == "1":
-    extra_link_args += run(["shell", "pkg-config", "--libs", "libosrm"]).split()
+    extra_link_args += run(["pkg-config", "--libs", "libosrm"]).split()
     extra_link_args += ["-lboost_system", "-boost_filesystem", "-lboost_iostream", "-lboost_thread -lrt -ltbb"]
-    extra_compile_args += run(["shell", "pkg-config", "--cflags", "libosrm"],
+    extra_compile_args += run(["pkg-config", "--cflags", "libosrm"],
                               stdout=PIPE).stdout.split()
     extra_compile_args += ["-D USE_LIBOSRM"]
 else:
