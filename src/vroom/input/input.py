@@ -157,9 +157,9 @@ class Input(_vroom.Input):
         self._set_durations_matrix(profile, matrix_input)
 
     def set_costs_matrix(
+        self,
         profile: str,
         matrix_input: ArrayLike,
-        self,
     ) -> None:
         """Set costs matrix.
 
