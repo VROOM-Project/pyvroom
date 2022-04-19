@@ -132,7 +132,7 @@ PYBIND11_MODULE(_vroom, m) {
 
   py::class_<vroom::Server>(m, "Server")
       .def(py::init<std::string &, std::string &>(),
-           py::arg("host") = "0.0.0.0", py::arg("port") = "5000");
+           py::arg("host")="0.0.0.0", py::arg("port")="5000");
 
   py::class_<vroom::Violations>(m, "Violations")
       .def(py::init<>())
