@@ -9,7 +9,7 @@ import numpy
 from .. import _vroom
 
 from ..solution.solution import Solution
-from ..job import JobDelivery, JobSingle, JobPickup
+from ..job import Job, JobDelivery, JobSingle, JobPickup
 from ..vehicle import Vehicle
 
 
@@ -102,7 +102,8 @@ class Input(_vroom.Input):
             Input instance with all jobs, shipments, etc. added from JSON.
 
         """
-        geometry = servers is not None
+        if geometry is None:
+            geometry = servers is not None
         instance = Input(servers=servers, router=router)
         with open(filepath) as handle:
             instance._from_json(handle.read(), geometry)
@@ -111,14 +112,14 @@ class Input(_vroom.Input):
     def set_geometry(self):
         return self._set_geometry()
 
-    def set_amount_size(self, amount_sizes: Sequence[int]) -> None:
+    def set_amount_size(self, *amount_sizes: int) -> None:
         """Add amount sizes."""
         sizes = set(amount_sizes)
         if self._amount_size is not None:
             sizes.add(self._amount_size)
         if len(sizes) > 1:
             raise _vroom.VroomInputException(
-                f"Inconsistent capacity lengths: {sizes}")
+                f"Inconsistent capacity lengths: {sorted(sizes)}")
         if self._amount_size is None:
             size = sizes.pop()
             self._amount_size = size
@@ -126,15 +127,30 @@ class Input(_vroom.Input):
 
     def add_job(
         self,
-        job: Union[JobSingle, Sequence[JobSingle]],
+        *job: Job,
     ) -> None:
-        """Add job."""
-        jobs = [job] if isinstance(job, _vroom.Job) else job
-        for job_ in jobs:
-            if not isinstance(job_, JobSingle):
+        """Add job.
+
+        Jobs should either be `JobSingle` or consequitive a `JobPickup`
+        followed by a `JobDelivery`.
+        """
+        if len(job) == 1 and not isinstance(job[0], _vroom.Job):
+            job = job[0]
+        jobs = list(job)
+        while jobs:
+            job = jobs.pop(0)
+            if not isinstance(job, Job):
+                raise _vroom.VroomInputException("Job input assumed.")
+            if isinstance(job, JobSingle):
+                self._add_job(job)
+            elif isinstance(job, JobPickup):
+                if not jobs:
+                    raise _vroom.VroomInputException(
+                        "A JobPickup should always be followed by JobDelivery.")
+                self.add_shipment(job, jobs.pop(0))
+            else:
                 raise _vroom.VroomInputException(
-                    f"Wrong type for {job_}; vroom.JobSingle expected.")
-            self._add_job(job_)
+                    "Jobs must either be SingleJob, or JobPickup followed by a JobDelivery.")
 
     def add_shipment(
         self,
@@ -148,7 +164,7 @@ class Input(_vroom.Input):
         if not isinstance(delivery, JobDelivery):
             raise _vroom.VroomInputException(
                 "Wrong type for delivery; vroom.JobDelivery expected.")
-        self.set_amount_size([len(pickup._pickup), len(delivery._delivery)])
+        self.set_amount_size(len(pickup._pickup), len(delivery._delivery))
         self._add_shipment(pickup, delivery)
 
     def add_vehicle(
@@ -166,7 +182,7 @@ class Input(_vroom.Input):
         vehicles = [vehicle] if isinstance(vehicle, _vroom.Vehicle) else vehicle
         if not vehicles:
             return
-        self.set_amount_size(len(vehicle_.capacity) for vehicle_ in vehicles)
+        self.set_amount_size(*[len(vehicle_.capacity) for vehicle_ in vehicles])
         for vehicle_ in vehicles:
             self._add_vehicle(vehicle_)
 
