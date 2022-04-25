@@ -131,7 +131,7 @@ class Input(_vroom.Input):
         """Add job."""
         jobs = [job] if isinstance(job, _vroom.Job) else job
         for job_ in jobs:
-            if not isinstance(job, JobSingle):
+            if not isinstance(job_, JobSingle):
                 raise _vroom.VroomInputException(
                     f"Wrong type for {job_}; vroom.JobSingle expected.")
             self._add_job(job_)
@@ -148,7 +148,7 @@ class Input(_vroom.Input):
         if not isinstance(delivery, JobDelivery):
             raise _vroom.VroomInputException(
                 "Wrong type for delivery; vroom.JobDelivery expected.")
-        self.set_amount_size({len(pickup._pickup), len(delivery._delivery)})
+        self.set_amount_size([len(pickup._pickup), len(delivery._delivery)])
         self._add_shipment(pickup, delivery)
 
     def add_vehicle(
