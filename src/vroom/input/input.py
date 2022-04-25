@@ -148,7 +148,7 @@ class Input(_vroom.Input):
             amount_sizes.add(self._amount_size)
         if len(amount_sizes) > 1:
             raise _vroom.VroomInputException(
-                f"Incosistent capacity lengths: {amount_sizes}")
+                f"Inconsistent capacity lengths: {amount_sizes}")
         if self._amount_size is None:
             size = amount_sizes.pop()
             self._amount_size = size
