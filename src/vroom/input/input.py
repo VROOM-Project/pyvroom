@@ -9,7 +9,7 @@ import numpy
 from .. import _vroom
 
 from ..solution.solution import Solution
-from ..job import Job
+from ..job import JobDelivery, JobSingle, JobPickup
 from ..vehicle import Vehicle
 
 
@@ -111,20 +111,44 @@ class Input(_vroom.Input):
     def set_geometry(self):
         return self._set_geometry()
 
+    def set_amount_size(self, amount_sizes: Sequence[int]) -> None:
+        """Add amount sizes."""
+        sizes = set(amount_sizes)
+        if self._amount_size is not None:
+            sizes.add(self._amount_size)
+        if len(sizes) > 1:
+            raise _vroom.VroomInputException(
+                f"Inconsistent capacity lengths: {sizes}")
+        if self._amount_size is None:
+            size = sizes.pop()
+            self._amount_size = size
+            self._set_amount_size(size)
+
     def add_job(
         self,
-        job: Union[Job, Sequence[Job]],
+        job: Union[JobSingle, Sequence[JobSingle]],
     ) -> None:
-        if isinstance(job, _vroom.Job):
-            job = [job]
-        for job_ in job:
+        """Add job."""
+        jobs = [job] if isinstance(job, _vroom.Job) else job
+        for job_ in jobs:
+            if not isinstance(job_, JobSingle):
+                raise _vroom.VroomInputException(
+                    f"Wrong type for {job_}; vroom.JobSingle expected.")
             self._add_job(job_)
 
     def add_shipment(
         self,
-        pickup: Job,
-        delivery: Job,
+        pickup: JobPickup,
+        delivery: JobDelivery,
     ) -> None:
+        """Add shipment."""
+        if not isinstance(pickup, JobPickup):
+            raise _vroom.VroomInputException(
+                "Wrong type for pickup; vroom.JobPickup expected.")
+        if not isinstance(delivery, JobDelivery):
+            raise _vroom.VroomInputException(
+                "Wrong type for delivery; vroom.JobDelivery expected.")
+        self.set_amount_size([len(pickup._pickup), len(delivery._delivery)])
         self._add_shipment(pickup, delivery)
 
     def add_vehicle(
@@ -139,21 +163,11 @@ class Input(_vroom.Input):
                 have a recognized profile, and all added vehicle must have the
                 same capacity.
         """
-        if isinstance(vehicle, _vroom.Vehicle):
-            vehicle = [vehicle]
-        if not vehicle:
+        vehicles = [vehicle] if isinstance(vehicle, _vroom.Vehicle) else vehicle
+        if not vehicles:
             return
-        amount_sizes = {len(vehicle_.capacity) for vehicle_ in vehicle}
-        if self._amount_size is not None:
-            amount_sizes.add(self._amount_size)
-        if len(amount_sizes) > 1:
-            raise _vroom.VroomInputException(
-                f"Inconsistent capacity lengths: {amount_sizes}")
-        if self._amount_size is None:
-            size = amount_sizes.pop()
-            self._amount_size = size
-            self._set_amount_size(size)
-        for vehicle_ in vehicle:
+        self.set_amount_size(len(vehicle_.capacity) for vehicle_ in vehicles)
+        for vehicle_ in vehicles:
             self._add_vehicle(vehicle_)
 
     def set_durations_matrix(
