@@ -30,7 +30,7 @@ class Input(_vroom.Input):
 
     def __init__(
         self,
-        amount_size: int = 0,
+        amount_size: Optional[int] = None,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
     ) -> None:
@@ -59,13 +59,13 @@ class Input(_vroom.Input):
         self._servers = servers
         self._router = router
         _vroom.Input.__init__(self, servers=servers, router=router)
-        if amount_size:
+        if amount_size is not None:
             self._set_amount_size(amount_size)
 
     def __repr__(self) -> str:
         """String representation."""
         args = []
-        if self._amount_size:
+        if self._amount_size is not None:
             args.append(f"amount_size={self._amount_size}")
         if self._servers:
             args.append(f"servers={self._servers}")
@@ -131,8 +131,28 @@ class Input(_vroom.Input):
         self,
         vehicle: Union[Vehicle, Sequence[Vehicle]],
     ) -> None:
+        """Add vehicle.
+
+        Args:
+            vehicle:
+                Vehicles to use to solve the vehicle problem. Vehicle type must
+                have a recognized profile, and all added vehicle must have the
+                same capacity.
+        """
         if isinstance(vehicle, _vroom.Vehicle):
             vehicle = [vehicle]
+        if not vehicle:
+            return
+        amount_sizes = {len(vehicle_.capacity) for vehicle_ in vehicle}
+        if self._amount_size is not None:
+            amount_sizes.add(self._amount_size)
+        if len(amount_sizes) > 1:
+            raise _vroom.VroomInputException(
+                f"Incosistent capacity lengths: {amount_sizes}")
+        if self._amount_size is None:
+            size = amount_sizes.pop()
+            self._amount_size = size
+            self._set_amount_size(size)
         for vehicle_ in vehicle:
             self._add_vehicle(vehicle_)
 
