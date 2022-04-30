@@ -74,6 +74,12 @@ class JobBaseclass:
             args.append(f"setup={attributes['setup']}")
         if attributes["service"]:
             args.append(f"service={attributes['service']}")
+        if attributes.get("amount", False):
+            args.append(f"amount={numpy.asarray(attributes['amount']).tolist()}")
+        if attributes.get("delivery", False):
+            args.append(f"delivery={numpy.asarray(attributes['delivery']).tolist()}")
+        if attributes.get("pickup", False):
+            args.append(f"pickup={numpy.asarray(attributes['pickup']).tolist()}")
         if attributes["time_windows"] != [TimeWindow()]:
             windows = [(tw.start, tw.end) for tw in attributes["time_windows"]]
             args.append(f"time_windows={windows}")
@@ -142,7 +148,7 @@ class Job(_vroom.Job, JobBaseclass):
                 delivery = Amount([])
             else:
                 pickup = Amount([0] * len(delivery))
-        else:
+        elif not delivery:
             delivery = Amount([0] * len(pickup))
         _vroom.Job.__init__(
             self,
