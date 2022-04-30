@@ -3,14 +3,14 @@
 #include "bind/amount.cpp"
 #include "bind/break.cpp"
 #include "bind/enums.cpp"
+#include "bind/exception.cpp"
 #include "bind/job.cpp"
 #include "bind/location.cpp"
 #include "bind/time_window.cpp"
 #include "bind/vehicle.cpp"
-#include "bind/exception.cpp"
 
-#include "bind/input/vehicle_step.cpp"
 #include "bind/input/input.cpp"
+#include "bind/input/vehicle_step.cpp"
 
 #include "bind/generic/matrix.cpp"
 
@@ -129,7 +129,6 @@ PYBIND11_MODULE(_vroom, m) {
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
       .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
 
-
   py::class_<vroom::Server>(m, "Server")
       .def(py::init<std::string &, std::string &>(),
            py::arg("host") = "0.0.0.0", py::arg("port") = "5000");
@@ -144,12 +143,10 @@ PYBIND11_MODULE(_vroom, m) {
       .def(py::self += py::self)
       .def_readwrite("_lead_time", &vroom::Violations::lead_time)
       .def_readwrite("_delay", &vroom::Violations::delay)
-      .def_readwrite("_types", &vroom::Violations::types)
-    ;
+      .def_readwrite("_types", &vroom::Violations::types);
 
   py::class_<vroom::routing::HttpWrapper>(m, "HttpWrapper");
   py::class_<vroom::routing::OrsWrapper>(m, "OrsWrapper");
   py::class_<vroom::routing::OsrmRoutedWrapper>(m, "OsrmRoutedWrapper");
   py::class_<vroom::routing::ValhallaWrapper>(m, "ValhallaWrapper");
-
 }

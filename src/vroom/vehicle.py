@@ -121,7 +121,7 @@ class Vehicle(_vroom.Vehicle):
         for name, default in [
             ("breaks", []),
             ("description", ""),
-            ("speed_factor", 1.),
+            ("speed_factor", 1.0),
             ("max_tasks", MAX_VAL),
             ("steps", []),
         ]:

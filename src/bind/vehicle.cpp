@@ -4,8 +4,7 @@
 
 namespace py = pybind11;
 
-
-void init_vehicle(py::module_ &m){
+void init_vehicle(py::module_ &m) {
 
   py::class_<vroom::Vehicle>(m, "Vehicle")
       .def(py::init<vroom::Id, std::optional<vroom::Location> &,
@@ -38,5 +37,4 @@ void init_vehicle(py::module_ &m){
       // .def_readwrite("_speed_factor", &vroom::Vehicle::speed_factor)
       .def_readonly("_max_tasks", &vroom::Vehicle::max_tasks)
       .def_readonly("_steps", &vroom::Vehicle::steps);
-
 }

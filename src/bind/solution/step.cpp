@@ -4,8 +4,7 @@
 
 namespace py = pybind11;
 
-
-void init_step(py::module_ &m){
+void init_step(py::module_ &m) {
 
   py::class_<vroom::Step>(m, "Step")
       .def(py::init<vroom::STEP_TYPE, vroom::Location, vroom::Amount>())

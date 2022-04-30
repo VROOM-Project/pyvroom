@@ -5,7 +5,7 @@ from ._vroom import _main, JOB_TYPE, STEP_TYPE  # type: ignore
 
 from .amount import Amount
 from .break_ import Break
-from .job import Job, JobDelivery, JobPickup, JobSingle
+from .job import Job, ShipmentStep, Shipment
 from .location import Location, LocationCoordinates, LocationIndex
 from .time_window import TimeWindow
 from .vehicle import Vehicle
