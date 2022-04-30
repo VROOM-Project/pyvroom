@@ -180,8 +180,9 @@ class Location(LocationIndex, LocationCoordinates):
         if illegal_kwargs:
             raise TypeError("too many arguents in input.")
 
-        kwargs = {key: list(value) if isinstance(value, Sequence) else value
-                  for key, value in kwargs.items()}
+        kwargs = {
+            key: list(value) if isinstance(value, Sequence) else value for key, value in kwargs.items()
+        }
 
         if cls is Location and len(kwargs) == 1:
             cls = LocationIndex if "index" in kwargs else LocationCoordinates

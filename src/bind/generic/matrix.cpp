@@ -4,8 +4,7 @@
 
 namespace py = pybind11;
 
-
-void init_matrix(py::module_ &m){
+void init_matrix(py::module_ &m) {
 
   py::class_<vroom::Matrix<uint32_t>>(m, "Matrix", py::buffer_protocol())
       .def(py::init<std::size_t>(), py::arg("size") = 0)
@@ -28,5 +27,4 @@ void init_matrix(py::module_ &m){
       })
       .def("get_sub_matrix", &vroom::Matrix<uint32_t>::get_sub_matrix)
       .def("size", &vroom::Matrix<uint32_t>::size);
-
 }

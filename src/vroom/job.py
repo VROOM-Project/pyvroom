@@ -9,22 +9,26 @@ from .location import Location, LocationCoordinates, LocationIndex
 from .time_window import TimeWindow
 
 
-class JobBaseclass(_vroom.Job):
+class JobBaseclass:
     """Baseclass for all Job classes containing common attributes."""
+
+    _id: int
+    _location: Location
+    _setup: int
+    _service: int
+    _time_windows: Sequence[TimeWindow]
+    _description: str
 
     def _get_attributes(self) -> Dict[str, Any]:
         """Arguments to be used in repr view."""
-        attributes: Dict[str, Any] = {
+        return {
             "id": self.id,
             "location": self.location,
             "setup": self.setup,
             "service": self.service,
-            "skills": self.skills,
-            "priority": self.priority,
             "time_windows": self.time_windows,
             "description": self.description,
         }
-        return attributes
 
     @property
     def description(self) -> str:
@@ -45,20 +49,12 @@ class JobBaseclass(_vroom.Job):
         return Location(self._location)
 
     @property
-    def priority(self) -> int:
-        return self._priority
-
-    @property
     def service(self) -> int:
         return self._service
 
     @property
     def setup(self) -> int:
         return self._setup
-
-    @property
-    def skills(self) -> int:
-        return self._skills
 
     @property
     def time_windows(self) -> List[TimeWindow]:
@@ -84,10 +80,6 @@ class JobBaseclass(_vroom.Job):
             args.append(f"delivery={numpy.asarray(attributes['delivery']).tolist()}")
         if attributes.get("pickup", False):
             args.append(f"pickup={numpy.asarray(attributes['pickup']).tolist()}")
-        if attributes["skills"]:
-            args.append(f"skills={attributes['skills']}")
-        if attributes["priority"]:
-            args.append(f"priority={attributes['priority']}")
         if attributes["time_windows"] != [TimeWindow()]:
             windows = [(tw.start, tw.end) for tw in attributes["time_windows"]]
             args.append(f"time_windows={windows}")
@@ -96,7 +88,7 @@ class JobBaseclass(_vroom.Job):
         return f"vroom.{self.__class__.__name__}({', '.join(args)})"
 
 
-class JobSingle(JobBaseclass):
+class Job(_vroom.Job, JobBaseclass):
     """A regular one-stop job with both a deliver and pickup that has to be performed.
 
     Args:
@@ -133,8 +125,8 @@ class JobSingle(JobBaseclass):
             Optional string descriping the job.
 
     Examples:
-        >>> vroom.JobSingle(0, [4., 5.], delivery=[4], pickup=[7])
-        vroom.JobSingle(0, (4.0, 5.0), delivery=[4], pickup=[7])
+        >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
+        vroom.Job(0, (4.0, 5.0), delivery=[4], pickup=[7])
     """
 
     def __init__(
@@ -150,6 +142,14 @@ class JobSingle(JobBaseclass):
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
     ) -> None:
+        if not pickup:
+            if not delivery:
+                pickup = Amount([])
+                delivery = Amount([])
+            else:
+                pickup = Amount([0] * len(delivery))
+        elif not delivery:
+            delivery = Amount([0] * len(pickup))
         _vroom.Job.__init__(
             self,
             id=int(id),
@@ -172,6 +172,14 @@ class JobSingle(JobBaseclass):
     def pickup(self) -> Amount:
         return Amount(self._pickup)
 
+    @property
+    def skills(self) -> int:
+        return self._skills
+
+    @property
+    def priority(self) -> int:
+        return self._priority
+
     def _get_attributes(self) -> Dict[str, Any]:
         """Arguments to be used in repr view."""
         attributes = super()._get_attributes()
@@ -179,10 +187,14 @@ class JobSingle(JobBaseclass):
             attributes["pickup"] = self.pickup
         if self._delivery:
             attributes["delivery"] = self.delivery
+        if self._skills:
+            attributes["skills"] = self.skills
+        if self._priority:
+            attributes["priority"] = self.priority
         return attributes
 
 
-class JobDelivery(JobBaseclass):
+class ShipmentStep(JobBaseclass):
     """A delivery job that has to be performed.
 
     Args:
@@ -216,8 +228,8 @@ class JobDelivery(JobBaseclass):
             Optional string descriping the job.
 
     Examples:
-        >>> vroom.JobDelivery(0, [4., 5.], amount=[4])
-        vroom.JobDelivery(0, (4.0, 5.0), amount=[4])
+        >>> vroom.ShipmentStep(0, [4., 5.])
+        vroom.ShipmentStep(0, (4.0, 5.0))
     """
 
     def __init__(
@@ -226,38 +238,18 @@ class JobDelivery(JobBaseclass):
         location: Union[Location, int, Sequence[float]],
         setup: int = 0,
         service: int = 0,
-        amount: Amount = Amount(),
-        skills: Optional[Set[int]] = None,
-        priority: int = 0,
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
     ) -> None:
-        _vroom.Job.__init__(
-            self,
-            id=int(id),
-            type=_vroom.JOB_TYPE.DELIVERY,
-            location=Location(location),
-            setup=int(setup),
-            service=int(service),
-            amount=Amount(amount),
-            skills=set(skills or []),
-            priority=int(priority),
-            tws=[TimeWindow(tw) for tw in time_windows] or [TimeWindow()],
-            description=str(description),
-        )
-
-    @property
-    def amount(self) -> Amount:
-        return Amount(self._delivery)
-
-    def _get_attributes(self) -> Dict[str, Any]:
-        """Arguments to be used in repr view."""
-        attributes = super()._get_attributes()
-        attributes["amount"] = self.amount
-        return attributes
+        self._id = int(id)
+        self._location = Location(location)
+        self._setup = int(setup)
+        self._service = int(service)
+        self._time_windows = [TimeWindow(tw) for tw in time_windows] or [TimeWindow()]
+        self._description = str(description)
 
 
-class JobPickup(JobBaseclass):
+class Shipment:
     """A pickup job that has to be performed.
 
     Args:
@@ -291,147 +283,34 @@ class JobPickup(JobBaseclass):
             Optional string descriping the job.
 
     Examples:
-        >>> vroom.JobPickup(0, [4., 5.], amount=[7])
-        vroom.JobPickup(0, (4.0, 5.0), amount=[7])
+        >>> pickup = vroom.ShipmentStep(0, [4., 5.])
+        >>> delivery = vroom.ShipmentStep(1, [5., 4.])
+        >>> vroom.Shipment(pickup, delivery, amount=[7])  # doctest: +NORMALIZE_WHITESPACE
+        vroom.Shipment(vroom.ShipmentStep(0, (4.0, 5.0)),
+                       vroom.ShipmentStep(1, (5.0, 4.0)),
+                       amount=[7])
     """
 
     def __init__(
         self,
-        id: int,
-        location: Union[Location, int, Sequence[float]],
-        setup: int = 0,
-        service: int = 0,
+        pickup: ShipmentStep,
+        delivery: ShipmentStep,
         amount: Amount = Amount(),
         skills: Optional[Set[int]] = None,
         priority: int = 0,
-        time_windows: Sequence[TimeWindow] = (),
-        description: str = "",
     ) -> None:
-        _vroom.Job.__init__(
-            self,
-            id=int(id),
-            type=_vroom.JOB_TYPE.PICKUP,
-            location=Location(location),
-            setup=int(setup),
-            service=int(service),
-            amount=Amount(amount),
-            skills=set(skills or []),
-            priority=int(priority),
-            tws=[TimeWindow(tw) for tw in time_windows] or [TimeWindow()],
-            description=str(description),
-        )
+        self.pickup = pickup
+        self.delivery = delivery
+        self.amount = Amount(amount)
+        self.skills = skills or set()
+        self.priority = int(priority)
 
-    @property
-    def amount(self) -> Amount:
-        return Amount(self._pickup)
-
-    def _get_attributes(self) -> Dict[str, Any]:
-        """Arguments to be used in repr view."""
-        attributes = super()._get_attributes()
-        attributes["amount"] = self.amount
-        return attributes
-
-
-class Job(JobSingle, JobDelivery, JobPickup):
-    """A job with deliver and/or pickup that has to be performed.
-
-    Args:
-        id:
-            Job identifier number. Two jobs can not have the same
-            identifier.
-        location:
-            Location of the job. If interger, value interpreted as an the
-            column in duration matrix. If pair of numbers, value
-            interpreted as longitude and latitude coordinates respectively.
-        setup:
-            The cost of preparing the vehicle before actually going out for
-            a job.
-        service:
-            The time (in secondes) it takes to pick up/deliver shipment
-            when at customer.
-        delivery:
-            Array of intergers representing how much is being carried to
-            customer.
-        pickup:
-            Array of intergers representing how much is being carried back from
-            customer.
-        skills:
-            Skills required to perform job. Only vehicles which satisfies
-            all required skills (i.e. has at minimum all skills values
-            required) are allowed to perform this job.
-        priority:
-            The job priority level, where 0 is the most
-            important and 100 is the least important.
-        time_windows:
-            Windows for where service is allowed to begin.
-            Defaults to have not restraints.
-        description:
-            Optional string descriping the job.
-
-    Examples:
-        >>> vroom.Job(0, [4., 5.], delivery=[4])
-        vroom.JobDelivery(0, (4.0, 5.0), amount=[4])
-        >>> vroom.Job(0, [4., 5.], pickup=[7])
-        vroom.JobPickup(0, (4.0, 5.0), amount=[7])
-        >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
-        vroom.JobSingle(0, (4.0, 5.0), delivery=[4], pickup=[7])
-
-    """
-
-    def __new__(
-        cls,
-        id: int,
-        location: Union[Location, int, Sequence[float]],
-        setup: int = 0,
-        service: int = 0,
-        delivery: Amount = Amount(),
-        pickup: Amount = Amount(),
-        skills: Optional[Set[int]] = None,
-        priority: int = 0,
-        time_windows: Sequence[TimeWindow] = (),
-        description: str = "",
-    ):
-        kwargs = dict(
-            id=int(id),
-            location=Location(location),
-            setup=setup,
-            service=service,
-            skills=skills or set([]),
-            priority=priority,
-            time_windows=[TimeWindow(tw) for tw in time_windows] or [TimeWindow()],
-            description=description,
-        )
-        if delivery:
-            if pickup:
-                kwargs["delivery"] = delivery
-                kwargs["pickup"] = pickup
-                cls = JobSingle
-            else:
-                kwargs["amount"] = delivery
-                cls = JobDelivery
-        elif pickup:
-            kwargs["amount"] = pickup
-            cls = JobPickup
-        else:
-            cls = JobSingle
-
-        instance = _vroom.Job.__new__(cls, **kwargs)
-        instance.__init__(**kwargs)
-        return instance
-
-    # present to give correct help signature:
-    def __init__(
-        self,
-        id: int,
-        location: Union[Location, int, Sequence[float]],
-        setup: int = 0,
-        service: int = 0,
-        delivery: Amount = Amount(),
-        pickup: Amount = Amount(),
-        skills: Optional[Set[int]] = None,
-        priority: int = 0,
-        time_windows: Sequence[TimeWindow] = (),
-        description: str = "",
-    ) -> None:
-        """"""
-        pass
+    def __repr__(self) -> str:
+        args = [str(self.pickup), str(self.delivery)]
+        if self.amount:
+            args.append(f"amount={numpy.asarray(self.amount).tolist()}")
+        if self.skills:
+            args.append(f"skills={self.skills}")
+        if self.priority:
+            args.append(f"priority={self.priority}")
+        return f"vroom.{self.__class__.__name__}({', '.join(args)})"

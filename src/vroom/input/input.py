@@ -9,7 +9,7 @@ import numpy
 from .. import _vroom
 
 from ..solution.solution import Solution
-from ..job import Job, JobDelivery, JobSingle, JobPickup
+from ..job import Job, Shipment
 from ..vehicle import Vehicle
 
 
@@ -118,8 +118,7 @@ class Input(_vroom.Input):
         if self._amount_size is not None:
             sizes.add(self._amount_size)
         if len(sizes) > 1:
-            raise _vroom.VroomInputException(
-                f"Inconsistent capacity lengths: {sorted(sizes)}")
+            raise _vroom.VroomInputException(f"Inconsistent capacity lengths: {sizes}")
         if self._amount_size is None:
             size = sizes.pop()
             self._amount_size = size
@@ -127,45 +126,66 @@ class Input(_vroom.Input):
 
     def add_job(
         self,
-        *job: Job,
+        job: Union[Job, Shipment, Sequence[Job], Sequence[Shipment]],
     ) -> None:
-        """Add job.
-
-        Jobs should either be `JobSingle` or consequitive a `JobPickup`
-        followed by a `JobDelivery`.
         """
-        if len(job) == 1 and not isinstance(job[0], _vroom.Job):
-            job = job[0]
-        jobs = list(job)
-        while jobs:
-            job = jobs.pop(0)
-            if not isinstance(job, Job):
-                raise _vroom.VroomInputException("Job input assumed.")
-            if isinstance(job, JobSingle):
-                self._add_job(job)
-            elif isinstance(job, JobPickup):
-                if not jobs:
-                    raise _vroom.VroomInputException(
-                        "A JobPickup should always be followed by JobDelivery.")
-                self.add_shipment(job, jobs.pop(0))
-            else:
-                raise _vroom.VroomInputException(
-                    "Jobs must either be SingleJob, or JobPickup followed by a JobDelivery.")
+        Add jobs that needs to be carried out.
 
-    def add_shipment(
-        self,
-        pickup: JobPickup,
-        delivery: JobDelivery,
-    ) -> None:
-        """Add shipment."""
-        if not isinstance(pickup, JobPickup):
-            raise _vroom.VroomInputException(
-                "Wrong type for pickup; vroom.JobPickup expected.")
-        if not isinstance(delivery, JobDelivery):
-            raise _vroom.VroomInputException(
-                "Wrong type for delivery; vroom.JobDelivery expected.")
-        self.set_amount_size(len(pickup._pickup), len(delivery._delivery))
-        self._add_shipment(pickup, delivery)
+        Args:
+            job:
+                One or more (single) job and/or shipments that the vehicles
+                needs to carry out.
+
+        Example:
+            >>> problem_instance = vroom.Input()
+            >>> problem_instance.add_job(vroom.Job(1, location=1))
+            >>> problem_instance.add_job([
+            ...     vroom.Job(2, location=2),
+            ...     vroom.Shipment(vroom.ShipmentStep(3, location=3),
+            ...                    vroom.ShipmentStep(4, location=4)),
+            ...     vroom.Job(5, location=5),
+            ... ])
+        """
+        jobs = [job] if isinstance(job, (Job, Shipment)) else job
+        for job_ in jobs:
+            if isinstance(job_, Job):
+                if job_._pickup:
+                    self.set_amount_size(len(job_._pickup))
+                if job_._delivery:
+                    self.set_amount_size(len(job_._delivery))
+                self._add_job(job_)
+
+            elif isinstance(job_, Shipment):
+                self.set_amount_size(len(job_.amount))
+                self._add_shipment(
+                    _vroom.Job(
+                        id=job_.pickup.id,
+                        type=_vroom.JOB_TYPE.PICKUP,
+                        location=job_.pickup.location,
+                        setup=job_.pickup.setup,
+                        service=job_.pickup.service,
+                        amount=job_.amount,
+                        skills=job_.skills,
+                        priority=job_.priority,
+                        tws=job_.pickup.time_windows,
+                        description=job_.pickup.description,
+                    ),
+                    _vroom.Job(
+                        id=job_.delivery.id,
+                        type=_vroom.JOB_TYPE.DELIVERY,
+                        location=job_.delivery.location,
+                        setup=job_.delivery.setup,
+                        service=job_.delivery.service,
+                        amount=job_.amount,
+                        skills=job_.skills,
+                        priority=job_.priority,
+                        tws=job_.delivery.time_windows,
+                        description=job_.delivery.description,
+                    ),
+                )
+
+            else:
+                raise _vroom.VroomInputException(f"Wrong type for {job_}; vroom.JobSingle expected.")
 
     def add_vehicle(
         self,
@@ -231,7 +251,9 @@ class Input(_vroom.Input):
         exploration_level: int,
         nb_threads: int,
     ) -> Solution:
-        return Solution(self._solve(
-            exploration_level=exploration_level,
-            nb_threads=nb_threads,
-        ))
+        return Solution(
+            self._solve(
+                exploration_level=exploration_level,
+                nb_threads=nb_threads,
+            )
+        )

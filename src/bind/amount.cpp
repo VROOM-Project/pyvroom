@@ -29,9 +29,9 @@ void init_amount(py::module_ &m) {
                                {a.size()}, {sizeof(int64_t)});
       })
       .def("_lshift", [](const vroom::Amount &a,
-                            const vroom::Amount &b) { return a << b; })
+                         const vroom::Amount &b) { return a << b; })
       .def("_le", [](const vroom::Amount &a,
-                        const vroom::Amount &b) { return a <= b; })
+                     const vroom::Amount &b) { return a <= b; })
       .def("_push_back", &vroom::Amount::push_back)
       .def("__len__", &vroom::Amount::size);
 }

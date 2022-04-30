@@ -4,7 +4,7 @@
 
 namespace py = pybind11;
 
-void init_summary(py::module_ &m){
+void init_summary(py::module_ &m) {
 
   py::class_<vroom::Summary>(m, "Summary")
       .def(py::init<>())

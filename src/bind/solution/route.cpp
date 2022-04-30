@@ -4,8 +4,7 @@
 
 namespace py = pybind11;
 
-
-void init_route(py::module_ &m){
+void init_route(py::module_ &m) {
 
   py::class_<vroom::Route>(m, "Route")
       .def(py::init<>())
