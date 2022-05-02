@@ -211,16 +211,6 @@ class ShipmentStep(JobBaseclass):
         service:
             The time (in secondes) it takes to pick up/deliver shipment
             when at customer.
-        amount:
-            An interger representation of how much is being carried to
-            customer.
-        skills:
-            Skills required to perform job. Only vehicles which satisfies
-            all required skills (i.e. has at minimum all skills values
-            required) are allowed to perform this job.
-        priority:
-            The job priority level, where 0 is the most
-            important and 100 is the least important.
         time_windows:
             Windows for where service is allowed to begin.
             Defaults to have not restraints.
@@ -250,22 +240,13 @@ class ShipmentStep(JobBaseclass):
 
 
 class Shipment:
-    """A pickup job that has to be performed.
+    """A shipment that has to be performed.
 
     Args:
-        id:
-            Job identifier number. Two jobs can not have the same
-            identifier.
-        location:
-            Location of the job. If interger, value interpreted as an the
-            column in duration matrix. If pair of numbers, value
-            interpreted as longitude and latitude coordinates respectively.
-        setup:
-            The cost of preparing the vehicle before actually going out for
-            a job.
-        service:
-            The time (in secondes) it takes to pick up/deliver shipment
-            when at customer.
+        pickup:
+            Description of the pickup part of the shipment.
+        delivery:
+            Description of the delivery part of the shipment.
         amount:
             An interger representation of how much is being carried back
             from customer.
@@ -276,11 +257,6 @@ class Shipment:
         priority:
             The job priority level, where 0 is the most
             important and 100 is the least important.
-        time_windows:
-            Windows for where service is allowed to begin.
-            Defaults to have not restraints.
-        description:
-            Optional string descriping the job.
 
     Examples:
         >>> pickup = vroom.ShipmentStep(0, [4., 5.])

@@ -1,6 +1,6 @@
 """VROOM input definition."""
 from __future__ import annotations
-from typing import Dict, Optional, Sequence, Union
+from typing import Dict, Optional, Sequence, Set, Union
 from pathlib import Path
 
 from numpy.typing import ArrayLike
@@ -8,8 +8,9 @@ import numpy
 
 from .. import _vroom
 
+from ..amount import Amount
 from ..solution.solution import Solution
-from ..job import Job, Shipment
+from ..job import Job, Shipment, ShipmentStep
 from ..vehicle import Vehicle
 
 
@@ -186,6 +187,60 @@ class Input(_vroom.Input):
 
             else:
                 raise _vroom.VroomInputException(f"Wrong type for {job_}; vroom.JobSingle expected.")
+
+    def add_shipment(
+        self,
+        pickup: ShipmentStep,
+        delivery: ShipmentStep,
+        amount: Amount = Amount(),
+        skills: Optional[Set[int]] = None,
+        priority: int = 0,
+    ):
+        """Add a shipment that has to be performed.
+
+        Args:
+            pickup:
+                Description of the pickup part of the shipment.
+            delivery:
+                Description of the delivery part of the shipment.
+            amount:
+                An interger representation of how much is being carried back
+                from customer.
+            skills:
+                Skills required to perform job. Only vehicles which satisfies
+                all required skills (i.e. has at minimum all skills values
+                required) are allowed to perform this job.
+            priority:
+                The job priority level, where 0 is the most
+                important and 100 is the least important.
+        """
+        self.set_amount_size(len(amount))
+        self._add_shipment(
+            _vroom.Job(
+                id=pickup.id,
+                type=_vroom.JOB_TYPE.PICKUP,
+                location=pickup.location,
+                setup=pickup.setup,
+                service=pickup.service,
+                amount=amount,
+                skills=skills,
+                priority=priority,
+                tws=pickup.time_windows,
+                description=pickup.description,
+            ),
+            _vroom.Job(
+                id=delivery.id,
+                type=_vroom.JOB_TYPE.DELIVERY,
+                location=delivery.location,
+                setup=delivery.setup,
+                service=delivery.service,
+                amount=amount,
+                skills=skills,
+                priority=priority,
+                tws=delivery.time_windows,
+                description=delivery.description,
+            ),
+        )
 
     def add_vehicle(
         self,
