@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - windows-release
 
 jobs:
   check-platform-builds:
@@ -13,10 +14,10 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - image: ubuntu-latest
-            platform: linux
-          - image: macos-latest
-            platform: macos
+#          - image: ubuntu-latest
+#            platform: linux
+#          - image: macos-latest
+#            platform: macos
           - image: windows-latest
             platform: windows
 
