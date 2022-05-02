@@ -6,7 +6,12 @@ from pathlib import Path
 from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-include_dirs = ["src", os.path.join("vroom", "src"), os.path.join("vroom", "include")]
+include_dirs = [
+    "src",
+    os.path.join("vroom", "src"),
+    os.path.join("vroom", "include"),
+    os.path.join("vroom", "include", "cxxopts", "include")
+]
 libraries = []
 library_dirs = []
 
