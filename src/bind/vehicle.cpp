@@ -6,20 +6,30 @@ namespace py = pybind11;
 
 void init_vehicle(py::module_ &m) {
 
+  py::class_<vroom::VehicleCosts>(m, "VehicleCosts")
+    .def(py::init<vroom::UserCost, vroom::UserCost>(),
+        "VehicleCost constructor.",
+        py::arg("fixed") = 0, py::arg("per_hour") = 3600)
+      .def_readonly("fixed", &vroom::VehicleCosts::fixed)
+      .def_readonly("per_hour", &vroom::VehicleCosts::per_hour);
+
   py::class_<vroom::Vehicle>(m, "Vehicle")
       .def(py::init<vroom::Id, std::optional<vroom::Location> &,
                     std::optional<vroom::Location> &, std::string &,
                     vroom::Amount &, vroom::Skills &, vroom::TimeWindow &,
-                    std::vector<vroom::Break> &, std::string &, double, size_t,
-                    std::vector<vroom::VehicleStep> &>(),
+                    std::vector<vroom::Break> &, std::string &, vroom::VehicleCosts, double, size_t,
+                    vroom::Duration, std::vector<vroom::VehicleStep> &>(),
            "Vehicle constructor.", py::arg("id"), py::arg("start"),
            py::arg("end"), py::arg("profile") = vroom::DEFAULT_PROFILE,
            py::arg("capacity") = vroom::Amount(0),
            py::arg("skills") = vroom::Skills(),
            py::arg("time_window") = vroom::TimeWindow(),
            py::arg("breaks") = std::vector<vroom::Break>(),
-           py::arg("description") = "", py::arg("speed_factor") = 1.,
+           py::arg("description") = "",
+           py::arg("costs") = vroom::VehicleCosts(),
+           py::arg("speed_factor") = 1.,
            py::arg("max_tasks") = std::numeric_limits<size_t>::max(),
+           py::arg("max_travel_time") = std::numeric_limits<vroom::Duration>::max(),
            py::arg("steps") = std::vector<vroom::VehicleStep>())
       // .def("has_start", &vroom::Vehicle::has_start)
       // .def("has_end", &vroom::Vehicle::has_end)
@@ -36,5 +46,6 @@ void init_vehicle(py::module_ &m) {
       .def_readonly("_description", &vroom::Vehicle::description)
       // .def_readwrite("_speed_factor", &vroom::Vehicle::speed_factor)
       .def_readonly("_max_tasks", &vroom::Vehicle::max_tasks)
+      .def_readonly("_max_travel_time", &vroom::Vehicle::max_travel_time)
       .def_readonly("_steps", &vroom::Vehicle::steps);
 }

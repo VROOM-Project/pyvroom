@@ -11,7 +11,26 @@ from .time_window import TimeWindow
 
 from . import _vroom
 
-MAX_VAL = int(numpy.iinfo(numpy.uintp).max)
+MAX_UINT = int(numpy.iinfo(numpy.uintp).max)
+MAX_INT = int(numpy.iinfo(numpy.intp).max)
+
+
+class VehicleCosts(_vroom.VehicleCosts):
+    """Vehicle cost.
+
+    Args:
+        fixed:
+            A fixed price for the vehicle to be utilized.
+        per_hour:
+            The price per hour to utilize the vehicle.
+    """
+
+    def __init__(self, fixed: int = 0, per_hour: int = 3600):
+        _vroom.VehicleCosts.__init__(
+            self,
+            fixed=int(fixed),
+            per_hour=int(per_hour),
+        )
 
 
 class Vehicle(_vroom.Vehicle):
@@ -71,8 +90,10 @@ class Vehicle(_vroom.Vehicle):
         time_window: Optional[TimeWindow] = None,
         breaks: Sequence[Break] = (),
         description: str = "",
+        costs: VehicleCosts = VehicleCosts(),
         speed_factor: float = 1.0,
-        max_tasks: int = MAX_VAL,
+        max_tasks: int = MAX_UINT,
+        max_travel_time: int = MAX_INT,
         steps: Sequence[VehicleStep] = (),
     ) -> None:
         self._speed_factor = float(speed_factor)
@@ -87,8 +108,10 @@ class Vehicle(_vroom.Vehicle):
             time_window=(TimeWindow() if time_window is None else TimeWindow(time_window)),
             breaks=[Break(break_) for break_ in breaks],
             description=str(description),
+            costs=costs,
             speed_factor=self._speed_factor,
             max_tasks=max_tasks,
+            max_travel_time=max_travel_time,
             steps=[VehicleStep(step) for step in steps],
         )
         assert isinstance(self.capacity, Amount)
@@ -121,8 +144,10 @@ class Vehicle(_vroom.Vehicle):
         for name, default in [
             ("breaks", []),
             ("description", ""),
+            ("costs", VehicleCosts()),
             ("speed_factor", 1.0),
-            ("max_tasks", MAX_VAL),
+            ("max_tasks", MAX_UINT),
+            ("max_travel_time", MAX_INT),
             ("steps", []),
         ]:
             attribute = getattr(self, name)
