@@ -215,6 +215,8 @@ class Input(_vroom.Input):
                 important and 100 is the least important.
         """
         self.set_amount_size(len(amount))
+        if skills is None:
+            skills = set()
         self._add_shipment(
             _vroom.Job(
                 id=pickup.id,
