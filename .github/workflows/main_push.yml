@@ -45,7 +45,7 @@ jobs:
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
-        pip install conan
+        pip install conan==1.59.0
         conan profile new default --detect
         conan profile update "settings.compiler=Visual Studio" default
         conan profile update "settings.compiler.version=17" default
