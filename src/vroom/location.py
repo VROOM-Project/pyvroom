@@ -82,16 +82,15 @@ class LocationCoordinates(_vroom.Location):
 
     def __init__(
         self,
-        coords: Union[Location, Sequence[float]],
+        coords: Union[Location, Sequence[float], _vroom.Coordinates],
     ) -> None:
         if isinstance(coords, _vroom.Location):
             if not coords._has_coordinates():
                 name = coords.__class__.__name__
                 raise TypeError(f"Can not convert {name} to LocationCoordinates")
-            coords = [coords._lon(), coords._lat()]
-        assert isinstance(coords, Sequence)
-        coords = [float(coord) for coord in coords]
-        assert len(coords) == 2
+            coords = coords._coords
+        elif isinstance(coords, Sequence):
+            coords = _vroom.Coordinates(*coords)
         _vroom.Location.__init__(self, coords=coords)
         assert self._has_coordinates()
         assert not self._user_index()
@@ -131,14 +130,14 @@ class Location(LocationIndex, LocationCoordinates):
             Other location to make a smart copy of.
 
     Examples:
-        >>> loc = vroom.Location(index=4, coords=(7., 8.))
+        >>> loc = vroom.Location(index=4, coords=[7., 8.])
         >>> loc
         vroom.Location(index=4, coords=(7.0, 8.0))
         >>> loc.index, loc.coords
         (4, (7.0, 8.0))
         >>> vroom.Location(4)
         vroom.LocationIndex(4)
-        >>> vroom.Location((7., 8.))
+        >>> vroom.Location([7., 8.])
         vroom.LocationCoordinates((7.0, 8.0))
 
     See also:
@@ -150,46 +149,38 @@ class Location(LocationIndex, LocationCoordinates):
 
     def __new__(
         cls,
-        *args,
-        **kwargs,
+        index: Union[None, int, Sequence[float], _vroom.Location, _vroom.Coordinates] = None,
+        coords: Union[None, Sequence[float], _vroom.Coordinates] = None,
     ):
-        if len(args) + len(kwargs) > 2:
-            raise TypeError("too many arguents in input.")
-        if args and "index" in kwargs:
-            raise TypeError("index reference twice.")
-
-        illegal_kwargs = False
-        if len(args) == 2:
-            illegal_kwargs = bool(kwargs)
-            kwargs["index"], kwargs["coords"] = args
-        elif len(args) == 1:
-            if isinstance(args[0], _vroom.Location):
-                illegal_kwargs = bool(kwargs)
-                if args[0]._user_index():
-                    kwargs["index"] = args[0]._index()
-                if args[0]._has_coordinates():
-                    kwargs["coords"] = [args[0]._lon(), args[0]._lat()]
-
-            elif isinstance(args[0], Sequence):
-                illegal_kwargs = bool(kwargs)
-                kwargs["coords"] = args[0]
-
+        if isinstance(index, (Sequence, _vroom.Coordinates)):
+            if coords is not None:
+                raise TypeError("coord can not be provided twice.")
+            coords = index
+            index = None
+        elif isinstance(index, _vroom.Location):
+            if index._has_coordinates():
+                if coords is not None:
+                    raise TypeError("coords can not be provided with Location.")
+                coords = _vroom.Coordinates(index._lon(), index._lat())
+            if index._user_index():
+                index = index._index()
             else:
-                kwargs["index"] = args[0]
+                index = None
+        if isinstance(coords, Sequence):
+            coords = _vroom.Coordinates(*[float(coord) for coord in coords])
 
-        if illegal_kwargs:
-            raise TypeError("too many arguents in input.")
-
-        kwargs = {
-            key: list(value) if isinstance(value, Sequence) else value for key, value in kwargs.items()
-        }
-
-        if cls is Location and len(kwargs) == 1:
-            cls = LocationIndex if "index" in kwargs else LocationCoordinates
-            instance = _vroom.Location.__new__(cls, **kwargs)
-            instance.__init__(**kwargs)
+        kwargs = {}
+        if index is None:
+            cls = LocationCoordinates
         else:
-            instance = _vroom.Location.__new__(cls, **kwargs)
+            kwargs["index"] = index
+        if coords is None:
+            cls = LocationIndex
+        else:
+            kwargs["coords"] = coords
+
+        instance = _vroom.Location.__new__(cls, **kwargs)
+        instance.__init__(**kwargs)
         return instance
 
     def __repr__(self) -> str:

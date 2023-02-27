@@ -6,11 +6,11 @@ LOC_INDEX0 = _vroom.Location(index=4)
 LOC_INDEX1 = vroom.LocationIndex(4)
 LOC_INDEX2 = vroom.Location(index=5)
 
-LOC_COORDS0 = _vroom.Location(coords=[1, 2])
+LOC_COORDS0 = _vroom.Location(coords=_vroom.Coordinates(1, 2))
 LOC_COORDS1 = vroom.LocationCoordinates([1, 2])
 LOC_COORDS2 = vroom.Location(coords=[1, 3])
 
-LOC_BOTH0 = _vroom.Location(index=4, coords=[1, 2])
+LOC_BOTH0 = _vroom.Location(index=4, coords=_vroom.Coordinates(1, 2))
 LOC_BOTH1 = vroom.Location(index=4, coords=[1, 2])
 LOC_BOTH2 = vroom.Location(5, [1, 3])
 
