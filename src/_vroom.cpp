@@ -1,4 +1,5 @@
 #include "bind/_main.cpp"
+#include "bind/utils.cpp"
 
 #include "bind/amount.cpp"
 #include "bind/break.cpp"
@@ -100,6 +101,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(_vroom, m) {
 
+  init_utils(m);
   init_enums(m);
   init_exception(m);
 
