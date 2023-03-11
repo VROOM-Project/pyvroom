@@ -61,8 +61,11 @@ class TimeWindow(_vroom.TimeWindow):
         if isinstance(start, _vroom.TimeWindow):
             if end is not None:
                 raise TypeError("Only one arg when input is vroom.TimeWindow.")
-            end = _vroom.scale_to_user_duration(start._end)
-            start = _vroom.scale_to_user_duration(start._start)
+            if start._is_default():
+                start = end = None
+            else:
+                end = _vroom.scale_to_user_duration(start._end)
+                start = _vroom.scale_to_user_duration(start._start)
         elif isinstance(start, Sequence):
             if end is not None:
                 raise TypeError("Only one arg when input is a sequence.")

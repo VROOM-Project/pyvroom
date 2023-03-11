@@ -8,7 +8,7 @@ from .break_ import Break
 from .job import Job, ShipmentStep, Shipment
 from .location import Location, LocationCoordinates, LocationIndex
 from .time_window import TimeWindow
-from .vehicle import Vehicle
+from .vehicle import Vehicle, VehicleCosts
 
 from .input.forced_service import ForcedService
 from .input.input import Input

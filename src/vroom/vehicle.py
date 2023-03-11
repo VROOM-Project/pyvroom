@@ -23,6 +23,12 @@ class VehicleCosts(_vroom.VehicleCosts):
             A fixed price for the vehicle to be utilized.
         per_hour:
             The price per hour to utilize the vehicle.
+
+    Examples:
+        >>> vroom.VehicleCosts()
+        VehicleCosts()
+        >>> vroom.VehicleCosts(fixed=100, per_hour=50)
+        VehicleCosts(fixed=100, per_hour=50)
     """
 
     def __init__(self, fixed: int = 0, per_hour: int = 3600):
@@ -31,6 +37,21 @@ class VehicleCosts(_vroom.VehicleCosts):
             fixed=int(fixed),
             per_hour=int(per_hour),
         )
+
+    @property
+    def fixed(self) -> int:
+        return _vroom.scale_to_user_cost(self._fixed)
+
+    @property
+    def per_hour(self) -> int:
+        return self._per_hour
+
+    def __bool__(self) -> bool:
+        return self.fixed != 0 or self.per_hour != 3600
+
+    def __repr__(self):
+        args = f"fixed={self.fixed}, per_hour={self.per_hour}" if self else ""
+        return f"{self.__class__.__name__}({args})"
 
 
 class Vehicle(_vroom.Vehicle):
@@ -93,7 +114,7 @@ class Vehicle(_vroom.Vehicle):
         costs: VehicleCosts = VehicleCosts(),
         speed_factor: float = 1.0,
         max_tasks: int = MAX_UINT,
-        max_travel_time: int = MAX_INT,
+        max_travel_time: Optional[int] = None,
         steps: Sequence[VehicleStep] = (),
     ) -> None:
         self._speed_factor = float(speed_factor)
@@ -140,11 +161,12 @@ class Vehicle(_vroom.Vehicle):
             args.append(f"skills={self.skills}")
         if self.time_window:
             args.append(f"time_window={self.time_window.start, self.time_window.end}")
+        if self.costs:
+            args.append(f"costs={self.costs}")
 
         for name, default in [
             ("breaks", []),
             ("description", ""),
-            ("costs", VehicleCosts()),
             ("speed_factor", 1.0),
             ("max_tasks", MAX_UINT),
             ("max_travel_time", MAX_INT),
@@ -197,12 +219,23 @@ class Vehicle(_vroom.Vehicle):
         return self._description
 
     @property
+    def costs(self) -> VehicleCosts:
+        return VehicleCosts(
+            fixed=self._costs._fixed,
+            per_hour=self._costs._per_hour,
+        )
+
+    @property
     def speed_factor(self) -> float:
         return self._speed_factor
 
     @property
     def max_tasks(self) -> str:
         return self._max_tasks
+
+    @property
+    def max_travel_time(self) -> str:
+        return self._max_travel_time
 
     @property
     def steps(self) -> List[VehicleStep]:

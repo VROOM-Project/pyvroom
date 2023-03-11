@@ -126,11 +126,6 @@ PYBIND11_MODULE(_vroom, m) {
 
   py::class_<vroom::ComputingTimes>(m, "ComputingTimes").def(py::init<>());
 
-  py::class_<vroom::CostWrapper>(m, "CostWrapper")
-      .def(py::init<double, vroom::Cost>())
-      .def("set_durations_matrix", &vroom::CostWrapper::set_durations_matrix)
-      .def("set_costs_matrix", &vroom::CostWrapper::set_costs_matrix);
-
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
       .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
 
