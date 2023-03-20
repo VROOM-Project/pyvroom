@@ -56,12 +56,18 @@ class ForcedService(_vroom.ForcedService):
 
     @property
     def service_at(self) -> Optional[int]:
-        return self._service_at
+        if self._service_at is None:
+            return None
+        return _vroom.scale_to_user_duration(self._service_at)
 
     @property
     def service_after(self) -> Optional[int]:
-        return self._service_after
+        if self._service_after is None:
+            return None
+        return _vroom.scale_to_user_duration(self._service_after)
 
     @property
     def service_before(self) -> Optional[int]:
-        return self._service_before
+        if self._service_before is None:
+            return None
+        return _vroom.scale_to_user_duration(self._service_before)

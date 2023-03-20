@@ -50,11 +50,11 @@ class JobBaseclass:
 
     @property
     def service(self) -> int:
-        return self._service
+        return _vroom.scale_to_user_duration(self._service)
 
     @property
     def setup(self) -> int:
-        return self._setup
+        return _vroom.scale_to_user_duration(self._setup)
 
     @property
     def time_windows(self) -> List[TimeWindow]:
@@ -233,8 +233,8 @@ class ShipmentStep(JobBaseclass):
     ) -> None:
         self._id = int(id)
         self._location = Location(location)
-        self._setup = int(setup)
-        self._service = int(service)
+        self._setup = _vroom.scale_from_user_duration(int(setup))
+        self._service = _vroom.scale_from_user_duration(int(service))
         self._time_windows = [TimeWindow(tw) for tw in time_windows] or [TimeWindow()]
         self._description = str(description)
 

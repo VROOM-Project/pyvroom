@@ -29,12 +29,12 @@ void init_input(py::module_ &m) {
       .def("_add_vehicle", &vroom::Input::add_vehicle)
       .def("_set_durations_matrix",
            [](vroom::Input &self, const std::string &profile,
-              vroom::Matrix<vroom::Duration> &m) {
+              vroom::Matrix<vroom::UserDuration> &m) {
              self.set_durations_matrix(profile, std::move(m));
            })
       .def("_set_costs_matrix",
            [](vroom::Input &self, const std::string &profile,
-              vroom::Matrix<vroom::Cost> &m) {
+              vroom::Matrix<vroom::UserCost> &m) {
              self.set_costs_matrix(profile, std::move(m));
            })
       .def("zero_amount", &vroom::Input::zero_amount)

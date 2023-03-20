@@ -21,7 +21,12 @@ class Break(_vroom.Break):
             A string describing this break.
 
     Examples:
-        >>> vroom.Break(id=4, time_windows=[vroom.TimeWindow(0, 1000)], service=200, description="lunch")
+        >>> vroom.Break(
+        ...     id=4,
+        ...     time_windows=[vroom.TimeWindow(0, 1000)],
+        ...     service=200,
+        ...     description="lunch",
+        ... )
         vroom.Break(4, time_windows=[(0, 1000)], service=200, description='lunch')
     """
 
@@ -37,7 +42,7 @@ class Break(_vroom.Break):
             assert service == 0
             assert description == ""
             time_windows = id._time_windows
-            service = id._service
+            service = _vroom.scale_to_user_duration(id._service)
             description = id._description
             id = id._id
         _vroom.Break.__init__(
@@ -66,11 +71,11 @@ class Break(_vroom.Break):
 
     @property
     def service(self) -> int:
-        return self._service
+        return _vroom.scale_to_user_duration(self._service)
 
     @service.setter
     def service(self, value: int) -> None:
-        self._service = value
+        self._service = _vroom.scale_from_user_duration(value)
 
     @property
     def description(self) -> str:
@@ -81,7 +86,8 @@ class Break(_vroom.Break):
         self._description = value
 
     def is_valid_start(self, time: int):
-        return self._is_valid_start(time=time)
+        return self._is_valid_start(
+            time=_vroom.scale_from_user_duration(time))
 
     def __repr__(self) -> str:
         args = [f"{self.id}"]

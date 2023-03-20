@@ -34,15 +34,21 @@ class VehicleStepBaseclass(_vroom.VehicleStep):
 
     @property
     def service_at(self) -> Optional[int]:
-        return self._forced_service._service_at
+        if self._forced_service._service_at is None:
+            return None
+        return _vroom.scale_to_user_duration(self._forced_service._service_at)
 
     @property
     def service_after(self) -> Optional[int]:
-        return self._forced_service._service_after
+        if self._forced_service._service_after is None:
+            return None
+        return _vroom.scale_to_user_duration(self._forced_service._service_after)
 
     @property
     def service_before(self) -> Optional[int]:
-        return self._forced_service._service_before
+        if self._forced_service._service_before is None:
+            return None
+        return _vroom.scale_to_user_duration(self._forced_service._service_before)
 
     def __repr__(self) -> str:
         args = []

@@ -1,12 +1,10 @@
 """Time window for when a delivery/pickup/task is possible."""
 from __future__ import annotations
-from typing import Any, Sequence, Union
+from typing import Any, Optional, Sequence, Union
 
 import numpy
 
 from . import _vroom
-
-MAX_VAL = numpy.iinfo(numpy.uint32).max
 
 
 class TimeWindow(_vroom.TimeWindow):
@@ -52,32 +50,49 @@ class TimeWindow(_vroom.TimeWindow):
 
     """
 
-    start: int
-    end: int
+    _start: int
+    _end: int
 
     def __init__(
         self,
-        start: Union[_vroom.TimeWindow, Sequence[int], int] = 0,
-        end: int = MAX_VAL,
+        start: Union[int, _vroom.TimeWindow, Sequence[int], None] = None,
+        end: Optional[int] = None,
     ) -> None:
-        assert isinstance(end, int)
         if isinstance(start, _vroom.TimeWindow):
-            if end != MAX_VAL:
+            if end is not None:
                 raise TypeError("Only one arg when input is vroom.TimeWindow.")
-            start, end = start.start, start.end
-        if isinstance(start, Sequence):
-            if end != MAX_VAL:
+            if start._is_default():
+                start = end = None
+            else:
+                end = _vroom.scale_to_user_duration(start._end)
+                start = _vroom.scale_to_user_duration(start._start)
+        elif isinstance(start, Sequence):
+            if end is not None:
                 raise TypeError("Only one arg when input is a sequence.")
             start, end = start
-        _vroom.TimeWindow.__init__(self, start=start, end=end)
+        if (start is None) != (end is None):
+            raise TypeError("Either none or both start and end has to be provided")
+        if start is None:
+            _vroom.TimeWindow.__init__(self)
+        else:
+            _vroom.TimeWindow.__init__(self, start=start, end=end)
+
+    @property
+    def start(self):
+        return _vroom.scale_to_user_duration(self._start)
+
+    @property
+    def end(self):
+        return _vroom.scale_to_user_duration(self._end)
+
+    def __len__(self) -> int:
+        return self.end - self.start
+
+    def __contains__(self, value: int) -> bool:
+        return value >= self.start and value <= self.end
 
     def __bool__(self) -> bool:
-        return self.start != 0 or self.end != MAX_VAL
-
-    def __contains__(self, other: Union[_vroom.TimeWindow, int]) -> bool:
-        if isinstance(other, int):
-            return self._contains(other)
-        return self.start < other.start and other.end < self.end
+        return not self._is_default()
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, _vroom.TimeWindow):
@@ -90,11 +105,8 @@ class TimeWindow(_vroom.TimeWindow):
     def __lshift__(self, other: TimeWindow) -> bool:
         return self.end < other.start
 
-    def __len__(self):
-        return self._length
-
     def __repr__(self):
-        args = f"{self.start}, {self.end}" if self else ""
+        args = "" if self._is_default() else f"{self.start}, {self.end}"
         return f"vroom.{self.__class__.__name__}({args})"
 
     def __rshift__(self, other: TimeWindow) -> bool:

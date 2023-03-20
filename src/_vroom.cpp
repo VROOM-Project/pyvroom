@@ -1,4 +1,5 @@
 #include "bind/_main.cpp"
+#include "bind/utils.cpp"
 
 #include "bind/amount.cpp"
 #include "bind/break.cpp"
@@ -56,6 +57,7 @@
 #include "problems/cvrp/operators/intra_exchange.cpp"
 #include "problems/cvrp/operators/intra_mixed_exchange.cpp"
 #include "problems/cvrp/operators/intra_or_opt.cpp"
+#include "problems/cvrp/operators/intra_two_opt.cpp"
 #include "problems/cvrp/operators/intra_relocate.cpp"
 #include "problems/cvrp/operators/mixed_exchange.cpp"
 #include "problems/cvrp/operators/or_opt.cpp"
@@ -63,6 +65,7 @@
 #include "problems/cvrp/operators/relocate.cpp"
 #include "problems/cvrp/operators/reverse_two_opt.cpp"
 #include "problems/cvrp/operators/route_exchange.cpp"
+#include "problems/cvrp/operators/route_split.cpp"
 #include "problems/cvrp/operators/swap_star.cpp"
 #include "problems/cvrp/operators/two_opt.cpp"
 #include "problems/cvrp/operators/unassigned_exchange.cpp"
@@ -73,6 +76,7 @@
 #include "problems/vrptw/operators/intra_exchange.cpp"
 #include "problems/vrptw/operators/intra_mixed_exchange.cpp"
 #include "problems/vrptw/operators/intra_or_opt.cpp"
+#include "problems/vrptw/operators/intra_two_opt.cpp"
 #include "problems/vrptw/operators/intra_relocate.cpp"
 #include "problems/vrptw/operators/mixed_exchange.cpp"
 #include "problems/vrptw/operators/or_opt.cpp"
@@ -80,6 +84,7 @@
 #include "problems/vrptw/operators/relocate.cpp"
 #include "problems/vrptw/operators/reverse_two_opt.cpp"
 #include "problems/vrptw/operators/route_exchange.cpp"
+#include "problems/vrptw/operators/route_split.cpp"
 #include "problems/vrptw/operators/swap_star.cpp"
 #include "problems/vrptw/operators/two_opt.cpp"
 #include "problems/vrptw/operators/unassigned_exchange.cpp"
@@ -96,6 +101,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(_vroom, m) {
 
+  init_utils(m);
   init_enums(m);
   init_exception(m);
 
@@ -119,12 +125,6 @@ PYBIND11_MODULE(_vroom, m) {
   init_main(m);
 
   py::class_<vroom::ComputingTimes>(m, "ComputingTimes").def(py::init<>());
-
-  py::class_<vroom::CostWrapper>(m, "CostWrapper")
-      .def(py::init<double>())
-      .def("set_durations_matrix", &vroom::CostWrapper::set_durations_matrix)
-      .def("set_costs_factor", &vroom::CostWrapper::set_costs_factor)
-      .def("set_costs_matrix", &vroom::CostWrapper::set_costs_matrix);
 
   py::class_<vroom::HeuristicParameters>(m, "HeuristicParameters")
       .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
