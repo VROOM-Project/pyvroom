@@ -28,33 +28,6 @@ including:
 
 VROOM can also solve any mix of the above problem types.
 
-Installation
-------------
-
-Pyvroom currently makes binaries for on MacOS and Linux (Windows is WIP).
-
-Installation should be as simple as:
-
-.. code:: bash
-
-  pip install pyvroom
-
-Building from source
---------------------
-
-Building the source distributions on another OS requires:
-
-* the ``./build-requirements.txt`` Python dependencies
-* ``asio`` headers installed
-* ``openssl`` & ``crypto`` libraries & headers installed
-
-Optionally the C++ dependencies can be installed with `conan
-<https://github.com/conan-io/conan>`_:
-
-.. code:: bash
-
-  conan install --build=openssl --install-folder conan_build .
-
 Basic usage
 -----------
 
@@ -100,3 +73,65 @@ Basic usage
   5          48    job     1102               3  1717
   6          48    job     2204               2  1616
   7          48    end     2204               2  <NA>
+
+
+Installation
+------------
+
+Pyvroom currently makes binaries for on macOS and Linux. There is also a
+Windows build that can be used, but it is somewhat experimental.
+
+Installation of the pre-compiled releases should be as simple as:
+
+.. code:: bash
+
+  pip install pyvroom
+
+Building from source
+====================
+
+Building the source distributions requires:
+
+* Download the Pyvroom repository on you local machine:
+
+  .. code:: bash
+
+    git clone https://github.com/VROOM-Project/pyvroom
+
+* Install the Python dependencies:
+
+  .. code:: bash
+
+    pip install -r pyvroom/build-requirements.txt
+
+* Install ``asio`` headers, and ``openssl`` and ``crypto`` libraries and headers.
+  On Linux and macOS this involve using package managers like ``apt``, ``yum``
+  or ``brew``. The exact package name may vary a bit between systems.
+
+* The installation can then be done with:
+
+  .. code:: bash
+
+    pip install pyvroom/
+
+Alternatively it is also possible to install the package from source using
+`Conan <https://github.com/conan-io/conan>`_. This is also likely the only
+option if installing on Windows.
+
+To install using Conan, do the following:
+
+.. code:: bash
+
+  cd pyvroom/
+  conan install --build=openssl --install-folder conan_build .
+
+Documentation
+-------------
+
+The code is currently only documented with Pydoc. This means that the best way
+to learn Pyvroom for now is to either look at the source code or use ``dir()``
+and ``help()`` to navigate the interface.
+
+It is also useful to take a look at the
+`VROOM API documentation <https://github.com/VROOM-Project/vroom/blob/master/docs/API.md>`_.
+The interface there is mostly the same.
