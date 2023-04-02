@@ -96,7 +96,7 @@ Building the source distributions requires:
 
   .. code:: bash
 
-    git clone https://github.com/VROOM-Project/pyvroom
+    git clone --recurse-submodules https://github.com/VROOM-Project/pyvroom
 
 * Install the Python dependencies:
 
