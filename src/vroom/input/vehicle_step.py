@@ -116,7 +116,7 @@ class VehicleStepStart(VehicleStepBaseclass):
         vroom.VehicleStepStart()
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -162,7 +162,7 @@ class VehicleStepEnd(VehicleStepBaseclass):
         vroom.VehicleStepEnd()
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -212,7 +212,7 @@ class VehicleStepBreak(VehicleStepBaseclass):
         vroom.VehicleStepBreak(1)
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -264,7 +264,7 @@ class VehicleStepSingle(VehicleStepBaseclass):
         vroom.VehicleStepSingle(2)
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -316,7 +316,7 @@ class VehicleStepDelivery(VehicleStepBaseclass):
         vroom.VehicleStepDelivery(2)
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -368,7 +368,7 @@ class VehicleStepPickup(VehicleStepBaseclass):
         vroom.VehicleStepPickup(3)
 
     See also:
-        :cls:`vroom.VehicleStep`
+        :class:`vroom.VehicleStep`
 
     """
 
@@ -437,12 +437,12 @@ class VehicleStep(
         vroom.VehicleStepDelivery(4)
 
     See also:
-        :cls:`vroom.VehicleStepStart`
-        :cls:`vroom.VehicleStepEnd`
-        :cls:`vroom.VehicleStepBreak`
-        :cls:`vroom.VehicleStepSingle`
-        :cls:`vroom.VehicleStepPickup`
-        :cls:`vroom.VehicleStepDelivery`
+        :class:`vroom.VehicleStepStart`
+        :class:`vroom.VehicleStepEnd`
+        :class:`vroom.VehicleStepBreak`
+        :class:`vroom.VehicleStepSingle`
+        :class:`vroom.VehicleStepPickup`
+        :class:`vroom.VehicleStepDelivery`
 
     """
 

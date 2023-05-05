@@ -91,39 +91,6 @@ class JobBaseclass:
 class Job(_vroom.Job, JobBaseclass):
     """A regular one-stop job with both a deliver and pickup that has to be performed.
 
-    Args:
-        id:
-            Job identifier number. Two jobs can not have the same
-            identifier.
-        location:
-            Location of the job. If interger, value interpreted as an the
-            column in duration matrix. If pair of numbers, value
-            interpreted as longitude and latitude coordinates respectively.
-        setup:
-            The cost of preparing the vehicle before actually going out for
-            a job.
-        service:
-            The time (in secondes) it takes to pick up/deliver shipment
-            when at customer.
-        delivery:
-            An interger representation of how much is being carried to
-            customer.
-        pickup:
-            An interger representation of how much is being carried back
-            from customer.
-        skills:
-            Skills required to perform job. Only vehicles which satisfies
-            all required skills (i.e. has at minimum all skills values
-            required) are allowed to perform this job.
-        priority:
-            The job priority level, where 0 is the most
-            important and 100 is the least important.
-        time_windows:
-            Windows for where service is allowed to begin.
-            Defaults to have not restraints.
-        description:
-            Optional string descriping the job.
-
     Examples:
         >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
         vroom.Job(0, (4.0, 5.0), delivery=[4], pickup=[7])
@@ -142,6 +109,38 @@ class Job(_vroom.Job, JobBaseclass):
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
     ) -> None:
+        """
+        Args:
+            id:
+                Job identifier number. Two jobs can not have the same
+                identifier.
+            location:
+                Location of the job. If interger, value interpreted as an the
+                column in duration matrix. If pair of numbers, value
+                interpreted as longitude and latitude coordinates respectively.
+            setup:
+                The cost of preparing the vehicle before actually going out for
+                a job.
+            service:
+                The time (in secondes) it takes to pick up/deliver shipment
+                when at customer.
+            delivery:
+                The amount of how much is being carried to customer.
+            pickup:
+                The amount of how much is being carried back from customer.
+            skills:
+                Skills required to perform job. Only vehicles which satisfies
+                all required skills (i.e. has at minimum all skills values
+                required) are allowed to perform this job.
+            priority:
+                The job priority level, where 0 is the most
+                important and 100 is the least important.
+            time_windows:
+                Windows for where service is allowed to begin.
+                Defaults to have not restraints.
+            description:
+                Optional string descriping the job.
+        """
         if not pickup:
             if not delivery:
                 pickup = Amount([])
@@ -166,18 +165,22 @@ class Job(_vroom.Job, JobBaseclass):
 
     @property
     def delivery(self) -> Amount:
+        """The amount of how much is being carried to customer."""
         return Amount(self._delivery)
 
     @property
     def pickup(self) -> Amount:
+        """The amount of how much is being carried back from customer."""
         return Amount(self._pickup)
 
     @property
     def skills(self) -> int:
+        """Skills required to perform job."""
         return self._skills
 
     @property
     def priority(self) -> int:
+        """The job priority level."""
         return self._priority
 
     def _get_attributes(self) -> Dict[str, Any]:
@@ -197,26 +200,6 @@ class Job(_vroom.Job, JobBaseclass):
 class ShipmentStep(JobBaseclass):
     """A delivery job that has to be performed.
 
-    Args:
-        id:
-            Job identifier number. Two jobs can not have the same
-            identifier.
-        location:
-            Location of the job. If interger, value interpreted as an the
-            column in duration matrix. If pair of numbers, value
-            interpreted as longitude and latitude coordinates respectively.
-        setup:
-            The cost of preparing the vehicle before actually going out for
-            a job.
-        service:
-            The time (in secondes) it takes to pick up/deliver shipment
-            when at customer.
-        time_windows:
-            Windows for where service is allowed to begin.
-            Defaults to have not restraints.
-        description:
-            Optional string descriping the job.
-
     Examples:
         >>> vroom.ShipmentStep(0, [4., 5.])
         vroom.ShipmentStep(0, (4.0, 5.0))
@@ -231,6 +214,27 @@ class ShipmentStep(JobBaseclass):
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
     ) -> None:
+        """
+        Args:
+            id:
+                Job identifier number. Two jobs can not have the same
+                identifier.
+            location:
+                Location of the job. If interger, value interpreted as an the
+                column in duration matrix. If pair of numbers, value
+                interpreted as longitude and latitude coordinates respectively.
+            setup:
+                The cost of preparing the vehicle before actually going out for
+                a job.
+            service:
+                The time (in secondes) it takes to pick up/deliver shipment
+                when at customer.
+            time_windows:
+                Windows for where service is allowed to begin.
+                Defaults to have not restraints.
+            description:
+                Optional string descriping the job.
+        """
         self._id = int(id)
         self._location = Location(location)
         self._setup = _vroom.scale_from_user_duration(int(setup))
@@ -241,22 +245,6 @@ class ShipmentStep(JobBaseclass):
 
 class Shipment:
     """A shipment that has to be performed.
-
-    Args:
-        pickup:
-            Description of the pickup part of the shipment.
-        delivery:
-            Description of the delivery part of the shipment.
-        amount:
-            An interger representation of how much is being carried back
-            from customer.
-        skills:
-            Skills required to perform job. Only vehicles which satisfies
-            all required skills (i.e. has at minimum all skills values
-            required) are allowed to perform this job.
-        priority:
-            The job priority level, where 0 is the most
-            important and 100 is the least important.
 
     Examples:
         >>> pickup = vroom.ShipmentStep(0, [4., 5.])
@@ -275,6 +263,23 @@ class Shipment:
         skills: Optional[Set[int]] = None,
         priority: int = 0,
     ) -> None:
+        """
+        Args:
+            pickup:
+                Description of the pickup part of the shipment.
+            delivery:
+                Description of the delivery part of the shipment.
+            amount:
+                An interger representation of how much is being carried back
+                from customer.
+            skills:
+                Skills required to perform job. Only vehicles which satisfies
+                all required skills (i.e. has at minimum all skills values
+                required) are allowed to perform this job.
+            priority:
+                The job priority level, where 0 is the most
+                important and 100 is the least important.
+        """
         self.pickup = pickup
         self.delivery = delivery
         self.amount = Amount(amount)

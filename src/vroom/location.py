@@ -7,18 +7,6 @@ from . import _vroom
 class LocationIndex(_vroom.Location):
     """Index in the custom duration matrix for where to find distances.
 
-    Attributes:
-        index:
-            Location index referring to column in the duration
-            matrix.
-
-    Args:
-        index:
-            Location index referring to column in the duration
-            matrix.
-        location:
-            Other location with `index` attribute to make a copy of.
-
     Examples:
         >>> loc = LocationIndex(4)
         >>> loc
@@ -27,7 +15,7 @@ class LocationIndex(_vroom.Location):
         4
 
     See also:
-        :cls:`vroom.Location`
+        :class:`vroom.Location`
 
     """
 
@@ -35,6 +23,14 @@ class LocationIndex(_vroom.Location):
         self,
         index: Union[int, Location],
     ) -> None:
+        """
+        Args:
+            index:
+                Location index referring to column in the duration
+                matrix.
+            location:
+                Other location with `index` attribute to make a copy of.
+        """
         if isinstance(index, _vroom.Location):
             if not index._user_index():
                 name = index.__class__.__name__
@@ -45,7 +41,7 @@ class LocationIndex(_vroom.Location):
 
     @property
     def index(self) -> int:
-        """Location index."""
+        """Location index referring to column in the duration matrix."""
         return self._index()
 
     def __repr__(self) -> str:
@@ -55,19 +51,6 @@ class LocationIndex(_vroom.Location):
 class LocationCoordinates(_vroom.Location):
     """Location longitude and latitude.
 
-    Attributes:
-        index:
-            Location index referring to column in the duration
-            matrix.
-        coords:
-            Longitude and latitude coordinate.
-
-    Args:
-        coords:
-            Longitude and latitude coordinate.
-        location:
-            Other location with `coords` attribute to make a copy of.
-
     Examples:
         >>> loc = LocationCoordinates([2., 3.])
         >>> loc
@@ -76,7 +59,7 @@ class LocationCoordinates(_vroom.Location):
         (2.0, 3.0)
 
     See also:
-        :cls:`vroom.Location`
+        :class:`vroom.Location`
 
     """
 
@@ -84,6 +67,11 @@ class LocationCoordinates(_vroom.Location):
         self,
         coords: Union[Location, Sequence[float], _vroom.Coordinates],
     ) -> None:
+        """
+        Args:
+            coords:
+                Longitude and latitude coordinate.
+        """
         if isinstance(coords, _vroom.Location):
             if not coords._has_coordinates():
                 name = coords.__class__.__name__
@@ -110,24 +98,8 @@ class Location(LocationIndex, LocationCoordinates):
     Either as an index referring to a column in the durations matrix, or as
     longitude-latitude coordinates.
 
-    Converts to :cls:`LocationCoordinates` if no `index` is provided, and to
-    :cls:`LocationIndex` if not `coords` is provided.
-
-    Attributes:
-        index:
-            Location index referring to column in the duration
-            matrix.
-        coords:
-            Longitude and latitude coordinate.
-
-    Args:
-        index:
-            Location index referring to column in the duration
-            matrix.
-        coords:
-            Longitude and latitude coordinate.
-        location:
-            Other location to make a smart copy of.
+    Converts to :class:`LocationCoordinates` if no `index` is provided, and to
+    :class:`LocationIndex` if not `coords` is provided.
 
     Examples:
         >>> loc = vroom.Location(index=4, coords=[7., 8.])
@@ -141,11 +113,21 @@ class Location(LocationIndex, LocationCoordinates):
         vroom.LocationCoordinates((7.0, 8.0))
 
     See also:
-        :cls:`vroom.LocationIndex`, :cls:`vroom.LocationCoordinates`
+        :class:`vroom.LocationIndex`, :class:`vroom.LocationCoordinates`
 
     """
 
     __init__ = _vroom.Location.__init__
+    """
+    Args:
+        index:
+            Location index referring to column in the duration
+            matrix.
+        coords:
+            Longitude and latitude coordinate.
+        location:
+            Other location to make a smart copy of.
+    """
 
     def __new__(
         cls,
