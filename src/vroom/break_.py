@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List, Optional, Sequence, Union
 
+import numpy
+
 from .time_window import TimeWindow
 from .amount import Amount
 from . import _vroom
@@ -16,7 +18,7 @@ class Break(_vroom.Break):
         ...     service=200,
         ...     description="lunch",
         ...     max_load=[2, 3],
-        ... )._max_load
+        ... )
         vroom.Break(4, time_windows=[(0, 1000)], service=200, description='lunch', max_load=[2, 3])
     """
 
@@ -119,5 +121,5 @@ class Break(_vroom.Break):
         if self.description:
             args.append(f"description={self.description!r}")
         if self.max_load:
-            args.append(f"max_load={tuple(self.max_load)}")
+            args.append(f"max_load={list(numpy.asarray(self.max_load))}")
         return f"vroom.{self.__class__.__name__}({', '.join(args)})"
