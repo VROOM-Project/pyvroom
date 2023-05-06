@@ -31,10 +31,6 @@ class Amount(_vroom.Amount):
     * "For all" compare with `<=` and `=<`.
     * "For any" compare with `<` and `>`.
 
-    Args:
-        amount:
-            Sequence of quantities to support for. No restriction if omitted.
-
     Examples:
         >>> amount = vroom.Amount([1, 2])
         >>> amount[1] = 3
@@ -47,6 +43,13 @@ class Amount(_vroom.Amount):
         self,
         amount: Union[Amount, Sequence[int]] = (),
     ) -> None:
+        """
+        Initialize.
+
+        Args:
+            amount:
+                Sequence of quantities to support for. No restriction if omitted.
+        """
         _vroom.Amount.__init__(self, numpy.asarray(amount, dtype="longlong"))
 
     def append(self, amount: int) -> None:

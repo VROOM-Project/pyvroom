@@ -1,3 +1,4 @@
+"""The computed solutions."""
 from typing import Any, Dict, Union
 from pathlib import Path
 import io
@@ -13,8 +14,48 @@ NA_SUBSTITUTE = 4293967297
 
 
 class Solution(_vroom.Solution):
+    """
+    The computed solutions.
+
+    Attributes:
+        routes:
+            Frame outlining all routes for all vehicles.
+    """
+
     @property
     def routes(self) -> pandas.DataFrame:
+        """
+        Frame outlining all routes for all vehicles.
+
+        It includes the following columns.
+
+        vehicle_id:
+            Id of the vehicle assigned to this route.
+        type:
+            The activity the vehicle is performing. The available
+            categories are `start`, `end`, `break`, `job`, `delivery`
+            and `pickup`.
+        arrival:
+            Timepoint when the actvity ends.
+        duration:
+            The length of the activity.
+        setup:
+            Total setup time for this route.
+        service:
+            Total service time for this route.
+        waiting_time:
+            Total waiting time for this route.
+        location_index:
+            The index for the location of the destination.
+        longitude:
+            If available, the longitude of the destination.
+        latitude:
+            If available, the latitude of the destination.
+        id:
+            The identifier for the task that was performed.
+        description:
+            Text description provided to this step.
+        """
         array = numpy.asarray(self._routes_numpy())
         frame = pandas.DataFrame(
             {
@@ -43,12 +84,14 @@ class Solution(_vroom.Solution):
         return frame
 
     def to_dict(self) -> Dict[str, Any]:
+        """Convert solution into VROOM compatible dictionary."""
         stream = io.StringIO()
         with redirect_stdout(stream):
             self._solution_json()
         return json.loads(stream.getvalue())
 
     def to_json(self, filepath: Union[str, Path]) -> None:
+        """Store solution into VROOM compatible JSON file."""
         with open(filepath, "w") as handler:
             with redirect_stdout(handler):
                 self._solution_json()

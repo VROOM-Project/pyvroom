@@ -8,11 +8,12 @@ def test_break_init():
     with pytest.raises(vroom._vroom.VroomInputException):
         vroom.Break(4, service=500)
 
-    break_ = vroom.Break(vroom.Break(4, [(0, 1000)], 500, "hello"))
+    break_ = vroom.Break(vroom.Break(4, [(0, 1000)], 500, "hello", [4]))
     assert break_.id == 4
     assert break_.time_windows == [vroom.TimeWindow(0, 1000)]
     assert break_.service == 500
     assert break_.description == "hello"
+    assert break_.max_load == vroom.Amount([4])
 
 
 def test_break_attributes():
@@ -32,3 +33,6 @@ def test_break_attributes():
 
     break_.description = "goodbye"
     assert break_.description == "goodbye"
+
+    break_.max_load = [7, 8]
+    assert break_.max_load == vroom.Amount([7, 8])
