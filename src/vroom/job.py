@@ -133,8 +133,8 @@ class Job(_vroom.Job, JobBaseclass):
                 all required skills (i.e. has at minimum all skills values
                 required) are allowed to perform this job.
             priority:
-                The job priority level, where 0 is the most
-                important and 100 is the least important.
+                The job priority level, where 0 is the lowest priority
+                and 100 is the highest priority.
             time_windows:
                 Windows for where service is allowed to begin.
                 Defaults to have not restraints.
@@ -277,8 +277,8 @@ class Shipment:
                 all required skills (i.e. has at minimum all skills values
                 required) are allowed to perform this job.
             priority:
-                The job priority level, where 0 is the most
-                important and 100 is the least important.
+                The job priority level, where 0 is the lowest priority
+                and 100 is the highest priority.
         """
         self.pickup = pickup
         self.delivery = delivery
