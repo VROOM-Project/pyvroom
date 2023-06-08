@@ -70,8 +70,8 @@ class Solution(_vroom.Solution):
                 "service": array["service"],
                 "waiting_time": array["waiting_time"],
                 "location_index": array["location_index"],
-                "longitude": pandas.array(array["longitude"], dtype="Int64"),
-                "latitude": pandas.array(array["latitude"], dtype="Int64"),
+                "longitude": pandas.array(array["longitude"]),
+                "latitude": pandas.array(array["latitude"]),
                 "id": pandas.array(array["id"], dtype="Int64"),
                 "description": array["description"].astype("U40"),
             }
