@@ -17,8 +17,8 @@ struct _Step {
   int64_t service;
   int64_t waiting_time;
   int64_t distance;
-  int64_t longitude;
-  int64_t latitude;
+  double longitude;
+  double latitude;
   int64_t location_index;
   int64_t id;
 
