@@ -169,7 +169,7 @@ class Vehicle(_vroom.Vehicle):
             ("description", ""),
             ("speed_factor", 1.0),
             ("max_tasks", MAX_UINT),
-            ("max_travel_time", MAX_INT),
+            ("max_travel_time", _vroom.scale_to_user_duration(MAX_INT)),
             ("steps", []),
         ]:
             attribute = getattr(self, name)
@@ -235,7 +235,7 @@ class Vehicle(_vroom.Vehicle):
 
     @property
     def max_travel_time(self) -> str:
-        return self._max_travel_time
+        return _vroom.scale_to_user_duration(self._max_travel_time)
 
     @property
     def steps(self) -> List[VehicleStep]:
