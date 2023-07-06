@@ -466,9 +466,17 @@ class VehicleStep(
             if step_type._step_type in (_vroom.STEP_TYPE.START, _vroom.STEP_TYPE.END):
                 assert id == 0
                 id = None
+            
             service_at = step_type._forced_service._service_at
             service_after = step_type._forced_service._service_after
             service_before = step_type._forced_service._service_before
+
+            if service_at:
+                service_at = _vroom.scale_to_user_duration(service_at)
+            if service_after:
+                service_after = _vroom.scale_to_user_duration(service_after)
+            if service_before:
+                service_before = _vroom.scale_to_user_duration(service_before)
 
             if step_type._step_type == _vroom.STEP_TYPE.JOB:
                 step_type_map = {
