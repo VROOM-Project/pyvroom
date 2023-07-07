@@ -133,7 +133,7 @@ class Vehicle(_vroom.Vehicle):
             speed_factor=self._speed_factor,
             max_tasks=max_tasks,
             max_travel_time=max_travel_time,
-            steps=[VehicleStep(step) for step in steps],
+            steps=steps,
         )
         assert isinstance(self.capacity, Amount)
 
