@@ -37,7 +37,8 @@ else:  # anything *nix
         "-DASIO_STANDALONE",
         "-DNDEBUG",
         "-DUSE_PYTHON_BINDINGS",
-        "-DUSE_ROUTING=true"
+        "-DUSE_ROUTING=true",
+        "-DUSE_LIBGLPK=true"
     ]
     extra_link_args = [
         "-lpthread",
