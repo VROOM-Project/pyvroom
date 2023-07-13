@@ -32,7 +32,7 @@ before-all = """
 dnf update -y
 dnf module enable -y mariadb-devel
 dnf install -y openssl-devel asio-devel
-dnf install -y glpk glpk-utils
+dnf install -y glpk-devel glpk-utils
 """
 archs = ["x86_64", "aarch64"]
 
