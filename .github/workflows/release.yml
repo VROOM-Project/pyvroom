@@ -35,8 +35,8 @@ jobs:
             platform: linux
           - image: macos-latest
             platform: macos
-          - image: windows-latest
-            platform: windows
+          # - image: windows-latest
+          #   platform: windows
 
     steps:
     - uses: actions/checkout@v2
