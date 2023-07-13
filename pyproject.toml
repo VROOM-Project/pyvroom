@@ -32,7 +32,7 @@ before-all = """
 yum update -y
 yum install -y epel-release
 yum install -y openssl-devel asio-devel
-yum install -y glpk
+yum install -y glpk glpk-utils
 """
 
 [[tool.cibuildwheel.overrides]]
