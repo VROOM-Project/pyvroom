@@ -45,6 +45,7 @@ else:  # anything *nix
         "-lpthread",
         "-lssl",
         "-lcrypto",
+        "-lglpk",
     ]
 
     if platform.system() == "Darwin":
