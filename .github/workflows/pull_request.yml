@@ -23,7 +23,7 @@ jobs:
         python-version: "3.7"
 
     - name: "Install system dependencies"
-      run: sudo apt update -y && sudo apt install -y libssl-dev libasio-dev libglpk-dev
+      run: sudo apt update -y && sudo apt install -y libssl-dev libasio-dev libglpk-dev glpk-utils
 
     - name: "Install python environment"
       run: |

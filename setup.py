@@ -22,7 +22,7 @@ if platform.system() == "Windows":
         "-DWIN32_LEAN_AND_MEAN",
         "-DASIO_STANDALONE",
         "-DUSE_PYTHON_BINDINGS",
-        "-DUSE_ROUTING=true"
+        "-DUSE_ROUTING=true",
     ]
     extra_link_args = []
 
@@ -38,7 +38,7 @@ else:  # anything *nix
         "-DNDEBUG",
         "-DUSE_PYTHON_BINDINGS",
         "-DUSE_ROUTING=true",
-        "-DUSE_LIBGLPK=true"
+        "-DUSE_LIBGLPK=true",
     ]
     extra_link_args = [
         "-lpthread",
