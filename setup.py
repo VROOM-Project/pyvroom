@@ -23,6 +23,7 @@ if platform.system() == "Windows":
         "-DASIO_STANDALONE",
         "-DUSE_PYTHON_BINDINGS",
         "-DUSE_ROUTING=true",
+        "-DUSE_LIBGLPK=true",
     ]
     extra_link_args = []
 
