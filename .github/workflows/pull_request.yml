@@ -2,8 +2,8 @@ name: pull request
 
 on:
   pull_request:
-    ignore-branches:
-      - *
+    branches:
+      - main
   push:
     branches:
       - main
