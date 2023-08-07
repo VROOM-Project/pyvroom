@@ -51,7 +51,7 @@ jobs:
         conan profile update "settings.compiler=Visual Studio" default
         conan profile update "settings.compiler.version=17" default
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
-        conan install --build=openssl --install-folder conan_build .
+        conan install --build=missing --install-folder conan_build .
 
     - uses: pypa/cibuildwheel@v2.3.1
       env:
