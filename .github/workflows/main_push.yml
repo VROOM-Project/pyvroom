@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+      - '*.rst'
 
 jobs:
   check-platform-builds:
