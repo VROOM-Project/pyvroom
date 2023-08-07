@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - nn-win-conan
 
 jobs:
   check-platform-builds:
