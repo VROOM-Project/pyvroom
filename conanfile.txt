@@ -1,7 +1,7 @@
 [requires]
 openssl/1.1.1m
 asio/1.21.0
-glpk/5.0:127af201a4cdf8111e2e08540525c245c9b3b99e
+glpk/5.0
 
 [generators]
 json
