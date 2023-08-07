@@ -83,7 +83,7 @@ Usage with a routing engine
 
   >>> problem_instance = vroom.Input(
   ...     servers={"auto": "valhalla1.openstreetmap.de:443"},
-  ...     router=_vroom.ROUTER.VALHALLA
+  ...     router=vroom._vroom.ROUTER.VALHALLA
   ... )
 
   >>> problem.add_vehicle(vroom.Vehicle(1, start=(2.44, 48.81), profile="auto"))
