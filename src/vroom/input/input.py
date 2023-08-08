@@ -43,10 +43,9 @@ class Input(_vroom.Input):
                 have the same size limit.
             servers:
                 Assuming no custom duration matrix is provided (from
-                `set_durations_matrix`), use coordinates and a map server to
-                calculate durations matrix. Keys should be identifed by
-                `add_routing_wrapper`. If string, values should be on the
-                format `{host}:{port}`.
+                `set_durations_matrix`), use this dict to configure the
+                routing servers. The key is the routing profile (e.g. "car"),
+                the value is host and port in the format `{host}:{port}`.
             router:
                 If servers is used, define what kind of server is provided.
                 See `vroom.ROUTER` enum for options.
