@@ -123,7 +123,7 @@ To install using Conan, do the following:
 .. code:: bash
 
   cd pyvroom/
-  conan install --build=openssl --install-folder conan_build .
+  conan install --build=missing --install-folder conan_build .
 
 Documentation
 -------------
