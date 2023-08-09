@@ -32,6 +32,7 @@ before-all = """
 yum update -y
 yum install -y epel-release
 yum install -y openssl-devel asio-devel
+yum install -y glpk-devel glpk-utils
 """
 
 [[tool.cibuildwheel.overrides]]
@@ -39,10 +40,12 @@ select = "*musllinux*"
 before-all = """
 apk add asio-dev
 apk add openssl-dev
+apk add glpk
 """
 
 [tool.cibuildwheel.macos]
 
 before-all = """
 brew install asio
+brew install glpk
 """

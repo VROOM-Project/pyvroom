@@ -30,7 +30,8 @@
 #include "algorithms/heuristics/heuristics.cpp"
 #include "algorithms/local_search/local_search.cpp"
 #include "algorithms/local_search/operator.cpp"
-#include "algorithms/validation/check.h"
+#include "algorithms/validation/check.cpp"
+#include "algorithms/validation/choose_ETA.cpp"
 
 // #include "routing/libosrm_wrapper.cpp"
 #include "routing/http_wrapper.cpp"
