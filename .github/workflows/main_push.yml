@@ -21,13 +21,13 @@ jobs:
             platform: windows
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: recursive
 
     - name: Cache Conan
       id: cache-conan
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       if: matrix.platform == 'windows'
       with:
         path: |
@@ -45,14 +45,14 @@ jobs:
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
-        pip install conan==1.59.0
+        pip install conan<2.0.0
         conan profile new default --detect
         conan profile update "settings.compiler=Visual Studio" default
         conan profile update "settings.compiler.version=17" default
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.3.1
+    - uses: pypa/cibuildwheel@v2.15.0
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
         CIBW_BUILD: '*cp37*'

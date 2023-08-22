@@ -24,14 +24,15 @@ exclude = '''
 [tool.cibuildwheel]
 test-command = 'python -c "import vroom"'
 build = "cp*"
-skip = "*musllinux*"
+skip = "*musllinux* cp312*"
 archs = "native"
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = """
-yum update -y
-yum install -y epel-release
-yum install -y openssl-devel asio-devel
+dnf update -y
+dnf module enable -y mariadb-devel
+dnf install -y openssl-devel asio-devel
 """
 
 [[tool.cibuildwheel.overrides]]
