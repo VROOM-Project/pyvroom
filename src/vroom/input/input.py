@@ -279,7 +279,7 @@ class Input(_vroom.Input):
         """
         assert isinstance(profile, str)
         if not isinstance(matrix_input, _vroom.Matrix):
-            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="u"))
         self._set_durations_matrix(profile, matrix_input)
 
     def set_costs_matrix(
@@ -299,7 +299,7 @@ class Input(_vroom.Input):
         """
         assert isinstance(profile, str)
         if not isinstance(matrix_input, _vroom.Matrix):
-            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="u"))
         self._set_costs_matrix(profile, matrix_input)
 
     def solve(
