@@ -70,7 +70,7 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.15.0
+    - uses: pypa/cibuildwheel@v2.16.5
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
 
