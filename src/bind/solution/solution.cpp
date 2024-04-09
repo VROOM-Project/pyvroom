@@ -99,11 +99,11 @@ void init_solution(py::module_ &m) {
              return arr;
            })
       .def("_solution_json",
-           [](vroom::Solution solution) {
+           [](vroom::Solution solution, bool geometry) {
              py::scoped_ostream_redirect stream(
                  std::cout, py::module_::import("sys").attr("stdout"));
-             vroom::io::write_to_json(solution, false, "");
-           })
+             vroom::io::write_to_json(solution, geometry, "");
+           }, py::arg("solution"), py::arg("geometry") = false)
       .def_readwrite("code", &vroom::Solution::code)
       .def_readwrite("error", &vroom::Solution::error)
       .def_readonly("summary", &vroom::Solution::summary)
