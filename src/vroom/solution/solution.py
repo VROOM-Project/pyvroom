@@ -83,15 +83,15 @@ class Solution(_vroom.Solution):
                 frame.loc[frame[column] == NA_SUBSTITUTE, column] = pandas.NA
         return frame
 
-    def to_dict(self, geometry: bool = False) -> Dict[str, Any]:
+    def to_dict(self) -> Dict[str, Any]:
         """Convert solution into VROOM compatible dictionary."""
         stream = io.StringIO()
         with redirect_stdout(stream):
-            self._solution_json(geometry)
+            self._solution_json()
         return json.loads(stream.getvalue())
 
-    def to_json(self, filepath: Union[str, Path], geometry: bool = False) -> None:
+    def to_json(self, filepath: Union[str, Path]) -> None:
         """Store solution into VROOM compatible JSON file."""
         with open(filepath, "w") as handler:
             with redirect_stdout(handler):
-                self._solution_json(geometry)
+                self._solution_json()
