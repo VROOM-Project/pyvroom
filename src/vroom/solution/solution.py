@@ -22,6 +22,8 @@ class Solution(_vroom.Solution):
             Frame outlining all routes for all vehicles.
     """
 
+    _geometry: bool = False
+
     @property
     def routes(self) -> pandas.DataFrame:
         """
@@ -81,17 +83,25 @@ class Solution(_vroom.Solution):
                 del frame[column]
             else:
                 frame.loc[frame[column] == NA_SUBSTITUTE, column] = pandas.NA
+        if self._geometry:
+            frame["distance"] = array["distance"]
         return frame
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert solution into VROOM compatible dictionary."""
         stream = io.StringIO()
         with redirect_stdout(stream):
-            self._solution_json()
+            if self._geometry:
+                self._geometry_solution_json()
+            else:
+                self._solution_json()
         return json.loads(stream.getvalue())
 
     def to_json(self, filepath: Union[str, Path]) -> None:
         """Store solution into VROOM compatible JSON file."""
         with open(filepath, "w") as handler:
             with redirect_stdout(handler):
-                self._solution_json()
+                if self._geometry:
+                    self._geometry_solution_json()
+                else:
+                    self._solution_json()
