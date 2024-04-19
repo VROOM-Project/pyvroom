@@ -53,8 +53,6 @@ Basic usage
   ...                           vroom.Job(1616, location=2),
   ...                           vroom.Job(1717, location=3)])
 
-  >>> problem_instance.set_geometry()
-
   >>> solution = problem_instance.solve(exploration_level=5, nb_threads=4)
 
   >>> solution.summary.cost
@@ -65,7 +63,7 @@ Basic usage
          'waiting_time', 'location_index', 'id', 'description'],
         dtype='object')
 
-  >>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id", "distance"]]
+  >>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id"]]
      vehicle_id   type  arrival  location_index    id
   0          47  start        0               0  <NA>
   1          47    job     2104               1  1515

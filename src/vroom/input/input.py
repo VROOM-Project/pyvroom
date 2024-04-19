@@ -107,7 +107,7 @@ class Input(_vroom.Input):
         if geometry is None:
             geometry = servers is not None
         if geometry:
-            self._set_geometry()
+            self._set_geometry(True)
         instance = Input(servers=servers, router=router)
         with open(filepath) as handle:
             instance._from_json(handle.read(), geometry)
@@ -115,7 +115,7 @@ class Input(_vroom.Input):
 
     def set_geometry(self):
         self._geometry = True
-        return self._set_geometry()
+        return self._set_geometry(True)
 
     def set_amount_size(self, *amount_sizes: int) -> None:
         """Add amount sizes."""
