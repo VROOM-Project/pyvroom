@@ -29,6 +29,8 @@ class Input(_vroom.Input):
 
     """
 
+    _geometry: bool = False
+
     def __init__(
         self,
         amount_size: Optional[int] = None,
@@ -104,13 +106,16 @@ class Input(_vroom.Input):
         """
         if geometry is None:
             geometry = servers is not None
+        if geometry:
+            self._set_geometry(True)
         instance = Input(servers=servers, router=router)
         with open(filepath) as handle:
             instance._from_json(handle.read(), geometry)
         return instance
 
     def set_geometry(self):
-        return self._set_geometry()
+        self._geometry = True
+        return self._set_geometry(True)
 
     def set_amount_size(self, *amount_sizes: int) -> None:
         """Add amount sizes."""
@@ -307,9 +312,12 @@ class Input(_vroom.Input):
         exploration_level: int,
         nb_threads: int,
     ) -> Solution:
-        return Solution(
+        solution = Solution(
             self._solve(
                 exploration_level=exploration_level,
                 nb_threads=nb_threads,
             )
+
         )
+        solution._geometry = self._geometry
+        return solution

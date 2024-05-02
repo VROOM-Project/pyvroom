@@ -90,6 +90,7 @@ void init_solution(py::module_ &m) {
                  ptr[idx].setup = step.setup;
                  ptr[idx].service = step.service;
                  ptr[idx].waiting_time = step.waiting_time;
+                 ptr[idx].distance = step.distance;
                  ptr[idx].arrival = step.arrival;
                  ptr[idx].duration = step.duration;
 
@@ -103,6 +104,12 @@ void init_solution(py::module_ &m) {
              py::scoped_ostream_redirect stream(
                  std::cout, py::module_::import("sys").attr("stdout"));
              vroom::io::write_to_json(solution, false, "");
+           })
+      .def("_geometry_solution_json",
+           [](vroom::Solution solution) {
+             py::scoped_ostream_redirect stream(
+                 std::cout, py::module_::import("sys").attr("stdout"));
+             vroom::io::write_to_json(solution, true, "");
            })
       .def_readwrite("code", &vroom::Solution::code)
       .def_readwrite("error", &vroom::Solution::error)
