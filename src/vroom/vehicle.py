@@ -113,8 +113,9 @@ class Vehicle(_vroom.Vehicle):
         description: str = "",
         costs: VehicleCosts = VehicleCosts(),
         speed_factor: float = 1.0,
-        max_tasks: int = MAX_UINT,
+        max_tasks: Optional[int] = MAX_UINT,
         max_travel_time: Optional[int] = None,
+        max_distance: Optional[int] = None,
         steps: Sequence[VehicleStep] = (),
     ) -> None:
         self._speed_factor = float(speed_factor)
@@ -133,6 +134,7 @@ class Vehicle(_vroom.Vehicle):
             speed_factor=self._speed_factor,
             max_tasks=max_tasks,
             max_travel_time=max_travel_time,
+            max_distance=max_distance,
             steps=steps,
         )
         assert isinstance(self.capacity, Amount)

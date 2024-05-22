@@ -14,20 +14,21 @@ void init_vehicle(py::module_ &m) {
       .def_readonly("_per_hour", &vroom::VehicleCosts::per_hour);
 
   py::class_<vroom::CostWrapper>(m, "CostWrapper")
-    .def(py::init<double, vroom::Cost>(),
+    .def(py::init<double, vroom::Cost, vroom::Cost>(),
         "CostWrapper constructor",
-        py::arg("speed_factor"), py::arg("per_hour"))
+        py::arg("speed_factor"), py::arg("per_hour"), py::arg("per_km"))
     .def("set_durations_matrix", &vroom::CostWrapper::set_durations_matrix)
-    .def("set_costs_matrix", &vroom::CostWrapper::set_costs_matrix)
-    .def("_get_speed_factor", &vroom::CostWrapper::get_speed_factor)
-    .def("_get_per_hour", &vroom::CostWrapper::get_per_hour);
+    .def("set_distances_matrix", &vroom::CostWrapper::set_distances_matrix)
+    .def("set_costs_matrix", &vroom::CostWrapper::set_costs_matrix);
 
   py::class_<vroom::Vehicle>(m, "Vehicle")
       .def(py::init<vroom::Id, std::optional<vroom::Location> &,
                     std::optional<vroom::Location> &, std::string &,
                     vroom::Amount &, vroom::Skills &, vroom::TimeWindow &,
-                    std::vector<vroom::Break> &, std::string &, vroom::VehicleCosts, double, size_t,
-                    std::optional<vroom::Duration>,
+                    std::vector<vroom::Break> &, std::string &, vroom::VehicleCosts, double, 
+                    std::optional<size_t>&,
+                    std::optional<vroom::UserDuration> &,
+                    std::optional<vroom::UserDistance> &,
                     std::vector<vroom::VehicleStep> &>(),
            "Vehicle constructor.", py::arg("id"), py::arg("start"),
            py::arg("end"), py::arg("profile"),
@@ -40,6 +41,7 @@ void init_vehicle(py::module_ &m) {
            py::arg("speed_factor"),
            py::arg("max_tasks"),
            py::arg("max_travel_time"),
+           py::arg("max_distance"),
            py::arg("steps"))
       // .def("has_start", &vroom::Vehicle::has_start)
       // .def("has_end", &vroom::Vehicle::has_end)
@@ -59,5 +61,6 @@ void init_vehicle(py::module_ &m) {
       // .def_readwrite("_speed_factor", &vroom::Vehicle::speed_factor)
       .def_readonly("_max_tasks", &vroom::Vehicle::max_tasks)
       .def_readonly("_max_travel_time", &vroom::Vehicle::max_travel_time)
+      .def_readonly("_max_distance", &vroom::Vehicle::max_distance)
       .def_readonly("_steps", &vroom::Vehicle::steps);
 }
