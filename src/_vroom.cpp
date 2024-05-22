@@ -30,6 +30,7 @@
 #include "algorithms/heuristics/heuristics.cpp"
 #include "algorithms/local_search/local_search.cpp"
 #include "algorithms/local_search/operator.cpp"
+#include "algorithms/local_search/top_insertions.cpp"
 #include "algorithms/validation/check.h"
 
 // #include "routing/libosrm_wrapper.cpp"
@@ -41,6 +42,7 @@
 #include "structures/typedefs.h"
 
 #include "structures/generic/edge.cpp"
+#include "structures/generic/matrix.cpp"
 #include "structures/generic/undirected_graph.cpp"
 
 #include "structures/vroom/cost_wrapper.cpp"
@@ -50,6 +52,7 @@
 
 #include "structures/vroom/solution/computing_times.cpp"
 #include "structures/vroom/solution/violations.cpp"
+#include "structures/vroom/bbox.cpp"
 
 #include "problems/cvrp/cvrp.cpp"
 #include "problems/cvrp/operators/cross_exchange.cpp"
@@ -62,11 +65,13 @@
 #include "problems/cvrp/operators/mixed_exchange.cpp"
 #include "problems/cvrp/operators/or_opt.cpp"
 #include "problems/cvrp/operators/pd_shift.cpp"
+#include "problems/cvrp/operators/priority_replace.cpp"
 #include "problems/cvrp/operators/relocate.cpp"
 #include "problems/cvrp/operators/reverse_two_opt.cpp"
 #include "problems/cvrp/operators/route_exchange.cpp"
 #include "problems/cvrp/operators/route_split.cpp"
 #include "problems/cvrp/operators/swap_star.cpp"
+#include "problems/cvrp/operators/tsp_fix.cpp"
 #include "problems/cvrp/operators/two_opt.cpp"
 #include "problems/cvrp/operators/unassigned_exchange.cpp"
 #include "problems/vrp.cpp"
@@ -81,11 +86,13 @@
 #include "problems/vrptw/operators/mixed_exchange.cpp"
 #include "problems/vrptw/operators/or_opt.cpp"
 #include "problems/vrptw/operators/pd_shift.cpp"
+#include "problems/vrptw/operators/priority_replace.cpp"
 #include "problems/vrptw/operators/relocate.cpp"
 #include "problems/vrptw/operators/reverse_two_opt.cpp"
 #include "problems/vrptw/operators/route_exchange.cpp"
 #include "problems/vrptw/operators/route_split.cpp"
 #include "problems/vrptw/operators/swap_star.cpp"
+#include "problems/vrptw/operators/tsp_fix.cpp"
 #include "problems/vrptw/operators/two_opt.cpp"
 #include "problems/vrptw/operators/unassigned_exchange.cpp"
 #include "problems/vrptw/vrptw.cpp"
@@ -94,7 +101,7 @@
 #include "problems/tsp/heuristics/local_search.cpp"
 #include "problems/tsp/tsp.cpp"
 
-#include "utils/helpers.h"
+#include "utils/helpers.cpp"
 #include "utils/version.cpp"
 
 namespace py = pybind11;
