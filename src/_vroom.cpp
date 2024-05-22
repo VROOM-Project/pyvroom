@@ -137,7 +137,7 @@ PYBIND11_MODULE(_vroom, m) {
       .def(py::init<>())
       .def(py::init([](const vroom::Duration lead_time,
                        const vroom::Duration delay,
-                       const std::unordered_set<vroom::VIOLATION> types) {
+                       std::unordered_set<vroom::VIOLATION> types) {
         return new vroom::Violations(lead_time, delay, std::move(types));
       }))
       .def(py::self += py::self)
