@@ -28,8 +28,6 @@ void init_amount(py::module_ &m) {
                                py::format_descriptor<int64_t>::format(), 1,
                                {a.size()}, {sizeof(int64_t)});
       })
-      .def("_lshift", [](const vroom::Amount &a,
-                         const vroom::Amount &b) { return a << b; })
       .def("_le", [](const vroom::Amount &a,
                      const vroom::Amount &b) { return a <= b; })
       .def("_push_back", &vroom::Amount::push_back)
