@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include "structures/generic/matrix.cpp"
+#include "structures/generic/matrix.h"
 
 namespace py = pybind11;
 
