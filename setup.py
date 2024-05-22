@@ -72,6 +72,7 @@ ext_modules = [
         libraries=libraries,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
+        cxx_std=20
     ),
 ]
 
