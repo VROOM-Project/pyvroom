@@ -241,6 +241,10 @@ class Vehicle(_vroom.Vehicle):
         return _vroom.scale_to_user_duration(self._max_travel_time)
 
     @property
+    def max_distance(self) -> str:
+        return self._max_distance
+
+    @property
     def steps(self) -> List[VehicleStep]:
         return [VehicleStep(step) for step in self._steps]
 

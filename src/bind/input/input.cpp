@@ -1,4 +1,5 @@
 #include <fstream>
+#include <map>
 
 #include <pybind11/operators.h>
 
@@ -31,6 +32,11 @@ void init_input(py::module_ &m) {
            [](vroom::Input &self, const std::string &profile,
               vroom::Matrix<vroom::UserDuration> &m) {
              self.set_durations_matrix(profile, std::move(m));
+           })
+      .def("_set_distances_matrix",
+           [](vroom::Input &self, const std::string &profile,
+              vroom::Matrix<vroom::UserDistance> &m) {
+             self.set_distances_matrix(profile, std::move(m));
            })
       .def("_set_costs_matrix",
            [](vroom::Input &self, const std::string &profile,

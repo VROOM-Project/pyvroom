@@ -289,6 +289,26 @@ class Input(_vroom.Input):
             matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
         self._set_durations_matrix(profile, matrix_input)
 
+    def set_distances_matrix(
+        self,
+        profile: str,
+        matrix_input: ArrayLike,
+    ) -> None:
+        """Set distances matrix.
+
+        Args:
+            profile:
+                Name of the transportation category profile in question.
+                Typically "car", "truck", etc.
+            matrix_input:
+                A square matrix consisting of distances between each location of
+                interest. Diagonal is canonically set to 0.
+        """
+        assert isinstance(profile, str)
+        if not isinstance(matrix_input, _vroom.Matrix):
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+        self._set_distances_matrix(profile, matrix_input)
+
     def set_costs_matrix(
         self,
         profile: str,
