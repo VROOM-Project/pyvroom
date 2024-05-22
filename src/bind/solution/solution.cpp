@@ -33,7 +33,7 @@ void init_solution(py::module_ &m) {
 
   py::class_<vroom::Solution>(m, "Solution")
       .def(py::init([](vroom::Solution s) { return s; }))
-      .def(py::init([](const vroom::Amount& zero_amount,
+      .def(py::init([](const vroom::Amount &zero_amount,
                        std::vector<vroom::Route> &routes,
                        std::vector<vroom::Job> &unassigned) {
         return new vroom::Solution(zero_amount, std::move(routes),

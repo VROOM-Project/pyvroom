@@ -1,4 +1,5 @@
 """VROOM input definition."""
+
 from __future__ import annotations
 from typing import Dict, Optional, Sequence, Set, Union
 from pathlib import Path
@@ -75,8 +76,9 @@ class Input(_vroom.Input):
             args.append(f"router={self._router}")
         return f"{self.__class__.__name__}({', '.join(args)})"
 
-    @staticmethod
+    @classmethod
     def from_json(
+        cls,
         filepath: Path,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
@@ -107,7 +109,7 @@ class Input(_vroom.Input):
         if geometry is None:
             geometry = servers is not None
         if geometry:
-            self._set_geometry(True)
+            cls._set_geometry(True)
         instance = Input(servers=servers, router=router)
         with open(filepath) as handle:
             instance._from_json(handle.read(), geometry)
@@ -317,7 +319,6 @@ class Input(_vroom.Input):
                 exploration_level=exploration_level,
                 nb_threads=nb_threads,
             )
-
         )
         solution._geometry = self._geometry
         return solution

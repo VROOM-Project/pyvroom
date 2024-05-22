@@ -172,6 +172,7 @@ class Vehicle(_vroom.Vehicle):
             ("speed_factor", 1.0),
             ("max_tasks", MAX_UINT),
             ("max_travel_time", _vroom.scale_to_user_duration(MAX_INT)),
+            ("max_distance", MAX_UINT),
             ("steps", []),
         ]:
             attribute = getattr(self, name)

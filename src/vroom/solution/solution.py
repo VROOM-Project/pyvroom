@@ -1,4 +1,5 @@
 """The computed solutions."""
+
 from typing import Any, Dict, Union
 from pathlib import Path
 import io
@@ -72,9 +73,9 @@ class Solution(_vroom.Solution):
                 "service": array["service"],
                 "waiting_time": array["waiting_time"],
                 "location_index": array["location_index"],
-                "longitude": pandas.array(array["longitude"]),
-                "latitude": pandas.array(array["latitude"]),
-                "id": pandas.array(array["id"], dtype="Int64"),
+                "longitude": pandas.array(array["longitude"].tolist()),
+                "latitude": pandas.array(array["latitude"].tolist()),
+                "id": pandas.array(array["id"].tolist(), dtype="Int64"),
                 "description": array["description"].astype("U40"),
             }
         )
