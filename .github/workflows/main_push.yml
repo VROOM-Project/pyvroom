@@ -21,7 +21,7 @@ jobs:
             platform: windows
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -36,7 +36,7 @@ jobs:
         key: conan-${{ matrix.image }}-${{ hashFiles('conanfile.txt') }}
 
     - name: Configure Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
         python-version: '3.x'
