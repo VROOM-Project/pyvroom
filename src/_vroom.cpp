@@ -50,9 +50,9 @@
 #include "structures/vroom/solution_state.cpp"
 #include "structures/vroom/tw_route.cpp"
 
+#include "structures/vroom/bbox.cpp"
 #include "structures/vroom/solution/computing_times.cpp"
 #include "structures/vroom/solution/violations.cpp"
-#include "structures/vroom/bbox.cpp"
 
 #include "problems/cvrp/cvrp.cpp"
 #include "problems/cvrp/operators/cross_exchange.cpp"
