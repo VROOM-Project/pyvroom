@@ -31,6 +31,7 @@ class Input(_vroom.Input):
     """
 
     _geometry: bool = False
+    _distances: bool = False
 
     def __init__(
         self,
@@ -308,6 +309,7 @@ class Input(_vroom.Input):
         if not isinstance(matrix_input, _vroom.Matrix):
             matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
         self._set_distances_matrix(profile, matrix_input)
+        self._distances = True
 
     def set_costs_matrix(
         self,
@@ -341,4 +343,5 @@ class Input(_vroom.Input):
             )
         )
         solution._geometry = self._geometry
+        solution._distances = self._distances
         return solution
