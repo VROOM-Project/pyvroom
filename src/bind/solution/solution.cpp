@@ -71,12 +71,16 @@ void init_solution(py::module_ &m) {
                  strncpy(ptr[idx].type, type.c_str(), 9);
                  strncpy(ptr[idx].description, step.description.c_str(), 40);
 
-                 ptr[idx].longitude = step.location.has_value()
-                                          ? step.location.value().lat()
-                                          : NA_SUBSTITUTE;
-                 ptr[idx].latitude = step.location.has_value()
-                                         ? step.location.value().lat()
-                                         : NA_SUBSTITUTE;
+                 ptr[idx].longitude =
+                     step.location.has_value() &&
+                             step.location.value().has_coordinates()
+                         ? step.location.value().coordinates().lon
+                         : NA_SUBSTITUTE;
+                 ptr[idx].latitude =
+                     step.location.has_value() &&
+                             step.location.value().has_coordinates()
+                         ? step.location.value().coordinates().lat
+                         : NA_SUBSTITUTE;
                  ptr[idx].location_index = step.location.has_value()
                                                ? step.location.value().index()
                                                : NA_SUBSTITUTE;
