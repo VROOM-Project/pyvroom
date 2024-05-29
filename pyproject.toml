@@ -45,5 +45,5 @@ apk add openssl-dev
 [tool.cibuildwheel.macos]
 
 before-all = """
-brew install asio
+brew install -vd asio
 """
