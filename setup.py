@@ -49,6 +49,8 @@ else:  # anything *nix
         # Homebrew puts include folders in weird places.
         include_dirs.append("/usr/local/opt/openssl@1.1/include")
         extra_link_args.insert(0, "-L/usr/local/opt/openssl@1.1/lib")
+        include_dirs.append("/usr/local/opt/asio/include")
+        extra_link_args.insert(0, "-L/usr/local/opt/asio/lib")
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
