@@ -70,7 +70,18 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.16.5
+    - name: Install Conan (Mac)
+      if: matrix.image == 'macos-latest'
+      run: |
+        pip install pip --upgrade
+        pip install conan<2.0.0
+        conan profile new default --detect
+        conan profile update "settings.compiler=apple-clang" default
+        conan profile update "settings.compiler.version=17" default
+        conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
+        conan install --build=openssl --install-folder conan_build .
+
+    - uses: pypa/cibuildwheel@v2.18.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
 
