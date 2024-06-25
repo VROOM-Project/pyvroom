@@ -73,6 +73,8 @@ jobs:
         conan install --build=openssl --install-folder conan_build .
 
     - uses: pypa/cibuildwheel@v2.19.1
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 10.14
 
     - name: Verify clean directory
       run: git diff --exit-code

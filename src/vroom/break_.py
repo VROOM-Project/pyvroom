@@ -121,5 +121,5 @@ class Break(_vroom.Break):
         if self.description:
             args.append(f"description={self.description!r}")
         if self.max_load:
-            args.append(f"max_load={list(numpy.asarray(self.max_load))}")
+            args.append(f"max_load={[int(load) for load in numpy.asarray(self.max_load)]}")
         return f"vroom.{self.__class__.__name__}({', '.join(args)})"
