@@ -10,7 +10,8 @@ include_dirs = [
     "src",
     os.path.join("vroom", "src"),
     os.path.join("vroom", "include"),
-    os.path.join("vroom", "include", "cxxopts", "include")
+    os.path.join("vroom", "include", "cxxopts", "include"),
+    os.path.join("asio", "asio", "include"),
 ]
 libraries = []
 library_dirs = []

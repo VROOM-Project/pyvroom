@@ -15,13 +15,15 @@ jobs:
         include:
           - image: ubuntu-latest
             platform: linux
-          - image: macos-latest
-            platform: macos
+          - image: macos-13
+            platform: macos-intel
+          - image: macos-14
+            platform: macos-arm
           - image: windows-latest
             platform: windows
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -36,7 +38,7 @@ jobs:
         key: conan-${{ matrix.image }}-${{ hashFiles('conanfile.txt') }}
 
     - name: Configure Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
         python-version: '3.x'
@@ -52,10 +54,9 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.15.0
+    - uses: pypa/cibuildwheel@v2.19.1
       env:
-        MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: '*cp37*'
+        CIBW_BUILD: '*cp311*'
 
     - name: Verify clean directory
       run: git diff --exit-code

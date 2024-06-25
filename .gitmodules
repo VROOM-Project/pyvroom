@@ -1,3 +1,6 @@
 [submodule "vroom"]
 	path = vroom
 	url = https://github.com/VROOM-Project/vroom
+[submodule "asio"]
+	path = asio
+	url = https://github.com/chriskohlhoff/asio
