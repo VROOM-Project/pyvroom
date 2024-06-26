@@ -30,7 +30,8 @@ manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = """
-yum install -y openssl-devel asio-devel
+yum module enable mariadb-devel:10.3
+yum install -y openssl-devel asio
 """
 archs = ["auto", "aarch64"]
 

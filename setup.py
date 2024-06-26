@@ -49,8 +49,10 @@ else:  # anything *nix
     if platform.system() == "Darwin":
         # Homebrew puts include folders in weird places.
         prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]
+        include_dirs.append(f"{prefix}/opt/openssl@1.1/include")
         include_dirs.append(f"{prefix}/include")
         extra_link_args.insert(0, f"-L{prefix}/lib")
+        extra_link_args.insert(0, f"-L{prefix}/opt/openssl@1.1/lib")
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
