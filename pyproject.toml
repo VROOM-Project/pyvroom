@@ -27,13 +27,15 @@ build = "cp3{9,10,11,12}-*"
 skip = "*musllinux*"
 archs = "native"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
+manylinux-aarch64-image = "quay.io/pypa/manylinux_2_28_aarch64"
 
 [tool.cibuildwheel.linux]
 before-all = """
-yum module enable mariadb-devel:10.3
-yum install -y openssl-devel asio
+dnf update -y
+dnf module enable -y mariadb-devel
+dnf install -y openssl-devel asio-devel
 """
-# archs = ["auto", "aarch64"]
+archs = ["x86_64", "aarch64"]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"

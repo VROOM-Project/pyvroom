@@ -72,17 +72,18 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    # - name: Set up QEMU
-    #   if: matrix.platform == 'linux'
-    #   uses: docker/setup-qemu-action@v3
-    #   with:
-    #     platforms: all
+    - name: Set up QEMU
+      if: matrix.platform == 'linux'
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: all
 
     - name: Build wheels
       if: matrix.platform != 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 13.0
+        CIBW_ARCHS_LINUX: x86_64 aarch64
 
     - name: Build wheels
       if: matrix.platform == 'macos-arm'

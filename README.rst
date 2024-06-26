@@ -110,6 +110,16 @@ Installation of the pre-compiled releases should be as simple as:
 
   pip install pyvroom
 
+The current minimal requirements are as follows:
+
+* Python at least version 3.9.
+* Intel MacOS (or Rosetta2) at least version 13.0.
+* Apple Silicon MacOS at least version 14.0.
+* Windows on AMD64.
+* Linux on x86_64 and Aarch64 given glibc at least version 2.28.
+
+Outside this it might be possible to build your own binaries.
+
 Building from source
 ====================
 

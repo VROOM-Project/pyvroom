@@ -57,7 +57,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.19.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: '*cp311*'
+        CIBW_BUILD: '*cp39*'
 
     - name: Verify clean directory
       run: git diff --exit-code
