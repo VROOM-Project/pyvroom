@@ -104,19 +104,21 @@ Installation
 Pyvroom currently makes binaries for on macOS and Linux. There is also a
 Windows build that can be used, but it is somewhat experimental.
 
-The current minimal requirements are as follows:
-
-* Python version 3.9.
-* MacOS 13 for Intel x86_64 and Rosetta and MacOS 14 for Apple Silicon (M1, M2, etc.).
-* x86_64 for both Linux and Windows.
-
-Outside this it might be possible to build your own binaries.
-
 Installation of the pre-compiled releases should be as simple as:
 
 .. code:: bash
 
   pip install pyvroom
+
+The current minimal requirements are as follows:
+
+* Python at least version 3.9.
+* Intel MacOS (or Rosetta2) at least version 13.0.
+* Apple Silicon MacOS at least version 14.0.
+* Windows on AMD64.
+* Linux on x86_64 and Aarch64 given glibc at least version 2.28.
+
+Outside this it might be possible to build your own binaries.
 
 Building from source
 ====================

@@ -35,10 +35,7 @@ dnf update -y
 dnf module enable -y mariadb-devel
 dnf install -y openssl-devel asio-devel
 """
-archs = [
-  "auto",
-  "aarch64"
-]
+archs = ["x86_64", "aarch64"]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
