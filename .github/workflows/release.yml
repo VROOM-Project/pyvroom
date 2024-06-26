@@ -80,7 +80,7 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.19.1
       env:
-        MACOSX_DEPLOYMENT_TARGET: 10.14
+        MACOSX_DEPLOYMENT_TARGET: 10.15
 
     - name: Verify clean directory
       run: git diff --exit-code
