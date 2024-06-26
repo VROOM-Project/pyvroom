@@ -36,7 +36,7 @@ dnf install -y openssl-devel asio-devel
 """
 archs = [
   "auto",
-  # "aarch64"
+  "aarch64"
 ]
 
 [[tool.cibuildwheel.overrides]]
