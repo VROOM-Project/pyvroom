@@ -80,9 +80,6 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.19.1
       env:
-        # configure cibuildwheel to build native archs ('auto'), and some
-        # emulated ones
-        CIBW_ARCHS_LINUX: auto aarch64 ppc64le s390x
         MACOSX_DEPLOYMENT_TARGET: 10.14
 
     - name: Verify clean directory
