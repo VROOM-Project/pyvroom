@@ -32,11 +32,20 @@ manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 before-all = """
 dnf update -y
 dnf module enable -y mariadb-devel
-dnf install -y openssl-devel
+dnf install -y openssl-devel asio-devel
 """
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
 before-all = """
+apk add asio-dev
 apk add openssl-dev
+"""
+
+
+[tool.cibuildwheel.macos]
+
+before-all = """
+brew install openssl
+brew install asio
 """
