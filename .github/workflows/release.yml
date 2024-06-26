@@ -62,7 +62,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install Conan
-      if: matrix.image == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
+      if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
         pip install conan<2.0.0
@@ -78,9 +78,17 @@ jobs:
       with:
         platforms: all
 
-    - uses: pypa/cibuildwheel@v2.19.1
+    - name: Build wheels
+      if: matrix.platform != 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 13.0
+
+    - name: Build wheels
+      if: matrix.platform == 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.1
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 14.0
 
     - name: Verify clean directory
       run: git diff --exit-code
