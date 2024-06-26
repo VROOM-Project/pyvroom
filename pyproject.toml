@@ -24,6 +24,7 @@ exclude = '''
 [tool.cibuildwheel]
 test-command = 'python -c "import vroom"'
 build = "cp*"
+select = "cp3{9,10,11,12}-*"
 skip = "*musllinux*"
 archs = "native"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
