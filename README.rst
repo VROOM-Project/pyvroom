@@ -96,7 +96,7 @@ Usage with a routing engine
 
   >>> sol = problem_instance.solve(exploration_level=5, nb_threads=4)
   >>> print(sol.summary.duration)
-  2704
+  2714
 
 Installation
 ------------
@@ -128,8 +128,20 @@ Building the source distributions requires:
     pip install -r pyvroom/build-requirements.txt
 
 * Install ``asio`` headers, and ``openssl`` and ``crypto`` libraries and headers.
-  On Linux and macOS this involve using package managers like ``apt``, ``yum``
-  or ``brew``. The exact package name may vary a bit between systems.
+  For mac, this would be::
+
+    brew install openssl@1.1
+    brew install asio
+
+  For RHEL::
+
+    yum module enable mariadb-devel:10.3
+    yum install -y openssl-devel asio
+
+  For Musllinux::
+
+    apk add asio-dev
+    apk add openssl-dev
 
 * The installation can then be done with:
 
