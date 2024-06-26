@@ -14,13 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: "3.7"
+        python-version: "3.11"
 
     - name: "Install system dependencies"
       run: sudo apt update -y && sudo apt install -y libssl-dev libasio-dev
@@ -40,7 +40,7 @@ jobs:
       run: make test
 
     - name: "Upload python coverage"
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.codecov_token }}
         files: 'coverage/coverage.xml'
@@ -48,7 +48,7 @@ jobs:
         fail_ci_if_error: true
 
     - name: "Upload binding coverage"
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.codecov_token }}
         files: 'coverage/*.gcov'

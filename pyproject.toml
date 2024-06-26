@@ -23,17 +23,17 @@ exclude = '''
 
 [tool.cibuildwheel]
 test-command = 'python -c "import vroom"'
-build = "cp*"
+build = "cp3{9,10,11,12}-*"
 skip = "*musllinux*"
 archs = "native"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = """
-dnf update -y
-dnf module enable -y mariadb-devel
-dnf install -y openssl-devel asio-devel
+yum module enable mariadb-devel:10.3
+yum install -y openssl-devel asio
 """
+# archs = ["auto", "aarch64"]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
@@ -41,9 +41,9 @@ before-all = """
 apk add asio-dev
 apk add openssl-dev
 """
-
 [tool.cibuildwheel.macos]
 
 before-all = """
-brew install asio
+brew install openssl@1.1
+brew install --ignore-dependencies asio
 """

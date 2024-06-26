@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import platform
+from subprocess import run
 from pathlib import Path
 from setuptools import setup
 from pybind11.setup_helpers import Pybind11Extension, build_ext
@@ -10,7 +11,7 @@ include_dirs = [
     "src",
     os.path.join("vroom", "src"),
     os.path.join("vroom", "include"),
-    os.path.join("vroom", "include", "cxxopts", "include")
+    os.path.join("vroom", "include", "cxxopts", "include"),
 ]
 libraries = []
 library_dirs = []
@@ -47,8 +48,11 @@ else:  # anything *nix
 
     if platform.system() == "Darwin":
         # Homebrew puts include folders in weird places.
-        include_dirs.append("/usr/local/opt/openssl@1.1/include")
-        extra_link_args.insert(0, "-L/usr/local/opt/openssl@1.1/lib")
+        prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]
+        include_dirs.append(f"{prefix}/opt/openssl@1.1/include")
+        include_dirs.append(f"{prefix}/include")
+        extra_link_args.insert(0, f"-L{prefix}/lib")
+        extra_link_args.insert(0, f"-L{prefix}/opt/openssl@1.1/lib")
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
