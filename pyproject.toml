@@ -26,6 +26,7 @@ test-command = 'python -c "import vroom"'
 build = "cp3{9,10,11,12}-*"
 skip = "*musllinux*"
 archs = "native"
+manylinux-x86_64-image = "manylinux_2_28_x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = """
@@ -33,7 +34,10 @@ dnf update -y
 dnf module enable -y mariadb-devel
 dnf install -y openssl-devel asio-devel
 """
-archs = ["auto", "aarch64"]
+archs = [
+  "auto",
+  # "aarch64"
+]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
