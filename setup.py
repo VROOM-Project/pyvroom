@@ -51,7 +51,6 @@ else:  # anything *nix
         prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]
         include_dirs.append(f"{prefix}/include")
         extra_link_args.insert(0, f"-L{prefix}/lib")
-        assert 0, (prefix, include_dirs, extra_link_args)
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
