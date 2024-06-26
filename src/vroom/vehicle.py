@@ -11,8 +11,9 @@ from .time_window import TimeWindow
 
 from . import _vroom
 
-MAX_UINT = int(numpy.iinfo(numpy.uintp).max)
+MAX_UINT = int(numpy.iinfo(numpy.uint).max)
 MAX_INT = int(numpy.iinfo(numpy.intp).max)
+MAX_UINT32 = int(numpy.iinfo(numpy.uint32).max)
 
 
 class VehicleCosts(_vroom.VehicleCosts):
@@ -91,6 +92,10 @@ class Vehicle(_vroom.Vehicle):
             the default.
         max_tasks:
             The maximum number of tasks this vehicle can perform.
+        max_travel_time:
+            An integer defining the maximum travel time for this vehicle.
+        max_distance:
+            An integer defining the maximum distance for this vehicle.
         steps:
             Set of custom steps this vehicle should take.
 
@@ -113,8 +118,9 @@ class Vehicle(_vroom.Vehicle):
         description: str = "",
         costs: VehicleCosts = VehicleCosts(),
         speed_factor: float = 1.0,
-        max_tasks: int = MAX_UINT,
+        max_tasks: Optional[int] = MAX_UINT,
         max_travel_time: Optional[int] = None,
+        max_distance: Optional[int] = MAX_UINT32,
         steps: Sequence[VehicleStep] = (),
     ) -> None:
         self._speed_factor = float(speed_factor)
@@ -133,6 +139,7 @@ class Vehicle(_vroom.Vehicle):
             speed_factor=self._speed_factor,
             max_tasks=max_tasks,
             max_travel_time=max_travel_time,
+            max_distance=max_distance,
             steps=steps,
         )
         assert isinstance(self.capacity, Amount)
@@ -170,6 +177,7 @@ class Vehicle(_vroom.Vehicle):
             ("speed_factor", 1.0),
             ("max_tasks", MAX_UINT),
             ("max_travel_time", _vroom.scale_to_user_duration(MAX_INT)),
+            ("max_distance", MAX_UINT32),
             ("steps", []),
         ]:
             attribute = getattr(self, name)
@@ -236,6 +244,10 @@ class Vehicle(_vroom.Vehicle):
     @property
     def max_travel_time(self) -> str:
         return _vroom.scale_to_user_duration(self._max_travel_time)
+
+    @property
+    def max_distance(self) -> str:
+        return self._max_distance
 
     @property
     def steps(self) -> List[VehicleStep]:

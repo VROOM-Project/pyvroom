@@ -1,4 +1,5 @@
 """The computed solutions."""
+
 from typing import Any, Dict, Union
 from pathlib import Path
 import io
@@ -23,6 +24,7 @@ class Solution(_vroom.Solution):
     """
 
     _geometry: bool = False
+    _distances: bool = False
 
     @property
     def routes(self) -> pandas.DataFrame:
@@ -57,6 +59,8 @@ class Solution(_vroom.Solution):
             The identifier for the task that was performed.
         description:
             Text description provided to this step.
+        distance:
+            Total route distance.
         """
         array = numpy.asarray(self._routes_numpy())
         frame = pandas.DataFrame(
@@ -72,9 +76,9 @@ class Solution(_vroom.Solution):
                 "service": array["service"],
                 "waiting_time": array["waiting_time"],
                 "location_index": array["location_index"],
-                "longitude": pandas.array(array["longitude"]),
-                "latitude": pandas.array(array["latitude"]),
-                "id": pandas.array(array["id"], dtype="Int64"),
+                "longitude": pandas.array(array["longitude"].tolist()),
+                "latitude": pandas.array(array["latitude"].tolist()),
+                "id": pandas.array(array["id"].tolist(), dtype="Int64"),
                 "description": array["description"].astype("U40"),
             }
         )
@@ -83,7 +87,7 @@ class Solution(_vroom.Solution):
                 del frame[column]
             else:
                 frame.loc[frame[column] == NA_SUBSTITUTE, column] = pandas.NA
-        if self._geometry:
+        if self._geometry or self._distances:
             frame["distance"] = array["distance"]
         return frame
 
@@ -91,7 +95,7 @@ class Solution(_vroom.Solution):
         """Convert solution into VROOM compatible dictionary."""
         stream = io.StringIO()
         with redirect_stdout(stream):
-            if self._geometry:
+            if self._geometry or self._distances:
                 self._geometry_solution_json()
             else:
                 self._solution_json()
@@ -101,7 +105,7 @@ class Solution(_vroom.Solution):
         """Store solution into VROOM compatible JSON file."""
         with open(filepath, "w") as handler:
             with redirect_stdout(handler):
-                if self._geometry:
+                if self._geometry or self._distances:
                     self._geometry_solution_json()
                 else:
                     self._solution_json()

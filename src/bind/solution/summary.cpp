@@ -8,7 +8,7 @@ void init_summary(py::module_ &m) {
 
   py::class_<vroom::Summary>(m, "Summary")
       .def(py::init<>())
-      .def(py::init<unsigned, unsigned, unsigned>())
+      .def(py::init<unsigned, unsigned, const vroom::Amount &>())
       .def_readwrite("cost", &vroom::Summary::cost)
       .def_readonly("routes", &vroom::Summary::routes)
       .def_readonly("unassigned", &vroom::Summary::unassigned)

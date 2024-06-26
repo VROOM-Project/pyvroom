@@ -109,8 +109,7 @@ class Break(_vroom.Break):
 
     def is_valid_start(self, time: int):
         """Check if break has a valid start time."""
-        return self._is_valid_start(
-            time=_vroom.scale_from_user_duration(time))
+        return self._is_valid_start(time=_vroom.scale_from_user_duration(time))
 
     def __repr__(self) -> str:
         args = [f"{self.id}"]
@@ -121,5 +120,5 @@ class Break(_vroom.Break):
         if self.description:
             args.append(f"description={self.description!r}")
         if self.max_load:
-            args.append(f"max_load={[int(load) for load in numpy.asarray(self.max_load)]}")
+            args.append(f"max_load={list(numpy.asarray(self.max_load))}")
         return f"vroom.{self.__class__.__name__}({', '.join(args)})"
