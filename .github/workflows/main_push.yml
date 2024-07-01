@@ -15,8 +15,10 @@ jobs:
         include:
           - image: ubuntu-latest
             platform: linux
-          - image: macos-latest
-            platform: macos
+          - image: macos-13
+            platform: macos-intel
+          - image: macos-14
+            platform: macos-arm
           - image: windows-latest
             platform: windows
 
@@ -52,10 +54,10 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.15.0
+    - uses: pypa/cibuildwheel@v2.19.1
       env:
         MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: '*cp37*'
+        CIBW_BUILD: '*cp39*'
 
     - name: Verify clean directory
       run: git diff --exit-code

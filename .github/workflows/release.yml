@@ -33,8 +33,10 @@ jobs:
         include:
           - image: ubuntu-latest
             platform: linux
-          - image: macos-latest
-            platform: macos
+          - image: macos-13
+            platform: macos-intel
+          - image: macos-14
+            platform: macos-arm
           - image: windows-latest
             platform: windows
 
@@ -60,7 +62,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install Conan
-      if: matrix.image == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
+      if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       run: |
         pip install pip --upgrade
         pip install conan<2.0.0
@@ -70,23 +72,24 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - name: Install llvm@18 and link asio on macOS
-      if: matrix.platform == 'macos'
-      run: |
-        brew install llvm@18
-        echo "$(brew --prefix)/opt/llvm/bin" >> $GITHUB_PATH
-        echo "LDFLAGS=-L$(brew --prefix)/opt/llvm/lib -L$(brew --prefix)/opt/llvm/lib/c++ -L/opt/homebrew/lib -Wl,-rpath,$(brew --prefix)/opt/llvm/lib/c++" >> "$GITHUB_ENV"
-        echo "CPPFLAGS=-I$(brew --prefix)/opt/llvm/include -I/opt/homebrew/include -fexperimental-library" >> "$GITHUB_ENV"
-        echo "CC=clang" >> "$GITHUB_ENV"
-        echo "CXX=clang++" >> "$GITHUB_ENV"
-        echo "OBJC=clang" >> "$GITHUB_ENV"
-        echo "CC_LD=lld" >> "$GITHUB_ENV"
-        echo "CXX_LD=lld" >> "$GITHUB_ENV"
-        echo "OBJC_LD=lld" >> "$GITHUB_ENV"
-        
-    - uses: pypa/cibuildwheel@v2.18.1
+    - name: Set up QEMU
+      if: matrix.platform == 'linux'
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: all
+
+    - name: Build wheels
+      if: matrix.platform != 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.1
       env:
-        MACOSX_DEPLOYMENT_TARGET: 14
+        MACOSX_DEPLOYMENT_TARGET: 13.0
+        CIBW_ARCHS_LINUX: x86_64 aarch64
+
+    - name: Build wheels
+      if: matrix.platform == 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.1
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 14.0
 
     - name: Verify clean directory
       run: git diff --exit-code

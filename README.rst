@@ -110,6 +110,16 @@ Installation of the pre-compiled releases should be as simple as:
 
   pip install pyvroom
 
+The current minimal requirements are as follows:
+
+* Python at least version 3.9.
+* Intel MacOS (or Rosetta2) at least version 13.0.
+* Apple Silicon MacOS at least version 14.0.
+* Windows on AMD64.
+* Linux on x86_64 and Aarch64 given glibc at least version 2.28.
+
+Outside this it might be possible to build your own binaries.
+
 Building from source
 ====================
 
@@ -128,8 +138,20 @@ Building the source distributions requires:
     pip install -r pyvroom/build-requirements.txt
 
 * Install ``asio`` headers, and ``openssl`` and ``crypto`` libraries and headers.
-  On Linux and macOS this involve using package managers like ``apt``, ``yum``
-  or ``brew``. The exact package name may vary a bit between systems.
+  For mac, this would be::
+
+    brew install openssl@1.1
+    brew install asio
+
+  For RHEL::
+
+    yum module enable mariadb-devel:10.3
+    yum install -y openssl-devel asio
+
+  For Musllinux::
+
+    apk add asio-dev
+    apk add openssl-dev
 
 * The installation can then be done with:
 
