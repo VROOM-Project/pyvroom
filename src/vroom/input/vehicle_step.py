@@ -466,7 +466,7 @@ class VehicleStep(
             if step_type._step_type in (_vroom.STEP_TYPE.START, _vroom.STEP_TYPE.END):
                 assert id == 0
                 id = None
-            
+
             service_at = step_type._forced_service._service_at
             service_after = step_type._forced_service._service_after
             service_before = step_type._forced_service._service_before

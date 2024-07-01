@@ -1,4 +1,5 @@
 """VROOM input definition."""
+
 from __future__ import annotations
 from typing import Dict, Optional, Sequence, Set, Union
 from pathlib import Path
@@ -30,6 +31,7 @@ class Input(_vroom.Input):
     """
 
     _geometry: bool = False
+    _distances: bool = False
 
     def __init__(
         self,
@@ -75,8 +77,9 @@ class Input(_vroom.Input):
             args.append(f"router={self._router}")
         return f"{self.__class__.__name__}({', '.join(args)})"
 
-    @staticmethod
+    @classmethod
     def from_json(
+        cls,
         filepath: Path,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
@@ -107,7 +110,7 @@ class Input(_vroom.Input):
         if geometry is None:
             geometry = servers is not None
         if geometry:
-            self._set_geometry(True)
+            cls._set_geometry(True)
         instance = Input(servers=servers, router=router)
         with open(filepath) as handle:
             instance._from_json(handle.read(), geometry)
@@ -287,6 +290,27 @@ class Input(_vroom.Input):
             matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
         self._set_durations_matrix(profile, matrix_input)
 
+    def set_distances_matrix(
+        self,
+        profile: str,
+        matrix_input: ArrayLike,
+    ) -> None:
+        """Set distances matrix.
+
+        Args:
+            profile:
+                Name of the transportation category profile in question.
+                Typically "car", "truck", etc.
+            matrix_input:
+                A square matrix consisting of distances between each location of
+                interest. Diagonal is canonically set to 0.
+        """
+        assert isinstance(profile, str)
+        if not isinstance(matrix_input, _vroom.Matrix):
+            matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
+        self._set_distances_matrix(profile, matrix_input)
+        self._distances = True
+
     def set_costs_matrix(
         self,
         profile: str,
@@ -317,7 +341,7 @@ class Input(_vroom.Input):
                 exploration_level=exploration_level,
                 nb_threads=nb_threads,
             )
-
         )
         solution._geometry = self._geometry
+        solution._distances = self._distances
         return solution

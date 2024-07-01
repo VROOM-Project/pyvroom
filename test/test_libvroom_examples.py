@@ -15,6 +15,13 @@ def test_example_with_custom_matrix():
                       [197, 2256, 0, 1102],
                       [1299, 3153, 1102, 0]],
     )
+    problem_instance.set_distances_matrix(
+        profile="car",
+        matrix_input=[[0, 21040, 1970, 12990],
+                      [21030, 0, 22550, 31520],
+                      [1970, 22560, 0, 11020],
+                      [12990, 31530, 11020, 0]],
+    )
     problem_instance.add_vehicle([vroom.Vehicle(7, start=0, end=0),
                                   vroom.Vehicle(8, start=2, end=2)])
     problem_instance.add_job([vroom.Job(id=1414, location=0),
@@ -37,3 +44,5 @@ def test_example_with_custom_matrix():
     assert numpy.all(routes.arrival == [0, 2104, 4207, 4207,
                                         0, 1102, 2204, 2204])
     assert numpy.all(routes.location_index == [0, 1, 0, 0, 2, 3, 2, 2])
+    assert numpy.all(routes.distance == [0, 21040, 42070, 42070,
+                                         0, 11020, 22040, 22040])

@@ -1,8 +1,7 @@
 """Time window for when a delivery/pickup/task is possible."""
+
 from __future__ import annotations
 from typing import Any, Optional, Sequence, Union
-
-import numpy
 
 from . import _vroom
 

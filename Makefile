@@ -26,4 +26,4 @@ format:
 	@echo format python code with black
 	@python -m black src/vroom
 	@echo format c++ code with clang-format
-	@find src -type f -name '*.cpp' | xargs -I{} clang-format-10 -i -style=file {}
+	@find src -type f -name '*.cpp' | xargs -I{} clang-format-14 -i -style=file {}

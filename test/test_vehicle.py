@@ -19,6 +19,10 @@ def test_repr():
             == "vroom.Vehicle(3, end=7, speed_factor=2.0)")
     assert (repr(vroom.Vehicle(3, start=7, max_tasks=17))
             == "vroom.Vehicle(3, start=7, max_tasks=17)")
+    assert (repr(vroom.Vehicle(3, start=7, max_distance=17))
+            == "vroom.Vehicle(3, start=7, max_distance=17)")
+    assert (repr(vroom.Vehicle(3, start=7, max_travel_time=17))
+            == "vroom.Vehicle(3, start=7, max_travel_time=17)")
     assert (repr(vroom.Vehicle(3, end=7, steps=[vroom.VehicleStep("single", 3)]))
             == """vroom.Vehicle(3, end=7, \
 steps=[vroom.VehicleStepStart(), vroom.VehicleStepSingle(3), vroom.VehicleStepEnd()])""")

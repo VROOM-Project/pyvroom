@@ -33,11 +33,10 @@ void init_solution(py::module_ &m) {
 
   py::class_<vroom::Solution>(m, "Solution")
       .def(py::init([](vroom::Solution s) { return s; }))
-      .def(py::init<unsigned, std::string>())
-      .def(py::init([](unsigned code, unsigned amount_size,
+      .def(py::init([](const vroom::Amount &zero_amount,
                        std::vector<vroom::Route> &routes,
                        std::vector<vroom::Job> &unassigned) {
-        return new vroom::Solution(code, amount_size, std::move(routes),
+        return new vroom::Solution(zero_amount, std::move(routes),
                                    std::move(unassigned));
       }))
       .def("_routes_numpy",
@@ -72,14 +71,18 @@ void init_solution(py::module_ &m) {
                  strncpy(ptr[idx].type, type.c_str(), 9);
                  strncpy(ptr[idx].description, step.description.c_str(), 40);
 
-                 ptr[idx].longitude = step.location.has_coordinates()
-                                          ? step.location.lon()
-                                          : NA_SUBSTITUTE;
-                 ptr[idx].latitude = step.location.has_coordinates()
-                                         ? step.location.lat()
-                                         : NA_SUBSTITUTE;
-                 ptr[idx].location_index = step.location.user_index()
-                                               ? step.location.index()
+                 ptr[idx].longitude =
+                     step.location.has_value() &&
+                             step.location.value().has_coordinates()
+                         ? step.location.value().coordinates().lon
+                         : NA_SUBSTITUTE;
+                 ptr[idx].latitude =
+                     step.location.has_value() &&
+                             step.location.value().has_coordinates()
+                         ? step.location.value().coordinates().lat
+                         : NA_SUBSTITUTE;
+                 ptr[idx].location_index = step.location.has_value()
+                                               ? step.location.value().index()
                                                : NA_SUBSTITUTE;
 
                  ptr[idx].id = (step.step_type == vroom::STEP_TYPE::JOB or
@@ -103,16 +106,14 @@ void init_solution(py::module_ &m) {
            [](vroom::Solution solution) {
              py::scoped_ostream_redirect stream(
                  std::cout, py::module_::import("sys").attr("stdout"));
-             vroom::io::write_to_json(solution, false, "");
+             vroom::io::write_to_json(solution, "", false);
            })
       .def("_geometry_solution_json",
            [](vroom::Solution solution) {
              py::scoped_ostream_redirect stream(
                  std::cout, py::module_::import("sys").attr("stdout"));
-             vroom::io::write_to_json(solution, true, "");
+             vroom::io::write_to_json(solution, "", true);
            })
-      .def_readwrite("code", &vroom::Solution::code)
-      .def_readwrite("error", &vroom::Solution::error)
       .def_readonly("summary", &vroom::Solution::summary)
       .def_readonly("_routes", &vroom::Solution::routes)
       .def_readonly("unassigned", &vroom::Solution::unassigned);
