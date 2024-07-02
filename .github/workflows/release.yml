@@ -2,8 +2,10 @@ name: release
 
 on:
   push:
-    branches:
-      - mac-os-test
+    tags:
+      - '*'
+    branches-ignore:
+      - '*'
 
 jobs:
   build_sdist:
