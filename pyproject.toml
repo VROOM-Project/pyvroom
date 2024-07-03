@@ -48,4 +48,6 @@ apk add openssl-dev
 before-all = """
 brew install openssl@1.1
 brew install --ignore-dependencies asio
+brew install llvm@18
+brew link --overwrite -f llvm@18 
 """
