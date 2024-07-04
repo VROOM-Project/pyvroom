@@ -89,7 +89,7 @@ jobs:
       if: matrix.platform != 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.1
       env:
-        MACOSX_DEPLOYMENT_TARGET: 13.6
+        MACOSX_DEPLOYMENT_TARGET: 14.0
         CIBW_ARCHS_LINUX: x86_64 aarch64
         CC: clang
         CXX: clang++
