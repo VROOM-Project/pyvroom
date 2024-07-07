@@ -51,13 +51,9 @@ else:  # anything *nix
         prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]
         include_dirs.append(f"{prefix}/opt/openssl@1.1/include")
         include_dirs.append(f"{prefix}/include")
-        include_dirs.append(f"{prefix}/opt/llvm/include")
         extra_link_args.insert(0, f"-L{prefix}/lib")
         extra_link_args.insert(0, f"-L{prefix}/opt/openssl@1.1/lib")
-        extra_link_args.insert(0, f"-L{prefix}/opt/llvm/lib")
-        extra_link_args.insert(0, f"-L{prefix}/opt/llvm/lib/c++")
-        extra_link_args.append(f"-Wl,-rpath,{prefix}/opt/llvm/lib/c++")  
-        extra_compile_args.append("-fexperimental-library")    
+        extra_link_args.append(f"-Wl,-ld_classic")  
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))

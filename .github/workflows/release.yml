@@ -2,10 +2,8 @@ name: release
 
 on:
   push:
-    tags:
-      - '*'
-    branches-ignore:
-      - '*'
+    branches:
+      - mac-os-test
 
 jobs:
   build_sdist:
@@ -78,38 +76,21 @@ jobs:
       with:
         platforms: all
 
-
-    - name: Link LLVM@18
-      if: matrix.platform == 'macos-intel'
-      run: |
-        echo "$(brew --prefix)/opt/llvm/bin" >> $GITHUB_PATH
-
-
     - name: Build wheels
       if: matrix.platform != 'macos-arm'
-      uses: pypa/cibuildwheel@v2.19.1
+      uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 13.0
-        CIBW_ARCHS_LINUX: x86_64 aarch64
-        CC: clang
-        CXX: clang++
-        OBJC: clang
-        CC_LD: lld
-        CXX_LD: lld
-        OBJC_LD: lld
-
-
+        CC: gcc-13
+        CXX: g++-13
+        
     - name: Build wheels
       if: matrix.platform == 'macos-arm'
-      uses: pypa/cibuildwheel@v2.19.1
+      uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 14.0
-        CC: clang
-        CXX: clang++
-        OBJC: clang
-        CC_LD: lld
-        CXX_LD: lld
-        OBJC_LD: lld
+        CC: gcc-13
+        CXX: g++-13
 
     - name: Verify clean directory
       run: git diff --exit-code
