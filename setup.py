@@ -53,6 +53,7 @@ else:  # anything *nix
         include_dirs.append(f"{prefix}/include")
         extra_link_args.insert(0, f"-L{prefix}/lib")
         extra_link_args.insert(0, f"-L{prefix}/opt/openssl@1.1/lib")
+        extra_link_args.append(f"-Wl,-ld_classic")  
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
@@ -76,6 +77,7 @@ ext_modules = [
         libraries=libraries,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
+        cxx_std=20
     ),
 ]
 

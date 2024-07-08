@@ -109,8 +109,7 @@ class Break(_vroom.Break):
 
     def is_valid_start(self, time: int):
         """Check if break has a valid start time."""
-        return self._is_valid_start(
-            time=_vroom.scale_from_user_duration(time))
+        return self._is_valid_start(time=_vroom.scale_from_user_duration(time))
 
     def __repr__(self) -> str:
         args = [f"{self.id}"]

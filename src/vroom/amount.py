@@ -1,4 +1,5 @@
 """An array of integers describing multidimensional quantities."""
+
 from __future__ import annotations
 from typing import Sequence, Union
 
@@ -41,7 +42,7 @@ class Amount(_vroom.Amount):
 
     def __init__(
         self,
-        amount: Union[Amount, Sequence[int]] = (),
+        amount: Union[Amount, Sequence[int], numpy.ndarray] = (),
     ) -> None:
         """
         Initialize.

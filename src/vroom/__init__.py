@@ -1,4 +1,5 @@
 """Vehicle routing open-source optimization machine (VROOM)."""
+
 import sys
 from typing import Optional, Sequence
 from ._vroom import _main, JOB_TYPE, STEP_TYPE  # type: ignore
