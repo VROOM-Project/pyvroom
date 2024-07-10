@@ -54,10 +54,21 @@ jobs:
         conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
         conan install --build=openssl --install-folder conan_build .
 
-    - uses: pypa/cibuildwheel@v2.19.1
+    - name: Build wheels
+      if: matrix.platform != 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.2
       env:
-        MACOSX_DEPLOYMENT_TARGET: 10.14
-        CIBW_BUILD: '*cp39*'
+        MACOSX_DEPLOYMENT_TARGET: 13.0
+        CC: gcc-13
+        CXX: g++-13
+
+    - name: Build wheels
+      if: matrix.platform == 'macos-arm'
+      uses: pypa/cibuildwheel@v2.19.2
+      env:
+        MACOSX_DEPLOYMENT_TARGET: 14.0
+        CC: gcc-13
+        CXX: g++-13
 
     - name: Verify clean directory
       run: git diff --exit-code
