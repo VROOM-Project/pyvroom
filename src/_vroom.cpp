@@ -42,7 +42,7 @@
 #include "structures/typedefs.h"
 
 #include "structures/generic/edge.cpp"
-#include "structures/generic/matrix.cpp"
+#include "structures/generic/matrix.h"
 #include "structures/generic/undirected_graph.cpp"
 
 #include "structures/vroom/cost_wrapper.cpp"
