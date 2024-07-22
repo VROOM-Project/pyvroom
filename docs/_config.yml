@@ -1,0 +1,16 @@
+---
+title: Pyvroom
+author: Jonathan Feinberg
+logo: vroom.svg
+repository:
+    url: https://github.com/VROOM-Project/pyvroom
+    path_to_book: docs
+    branch: main
+html:
+    use_repository_button: true
+sphinx:
+    extra_extensions:
+        - sphinx.ext.autosummary
+        - sphinx_copybutton
+    config:
+        autosummary_generate: true
