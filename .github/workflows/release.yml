@@ -83,16 +83,16 @@ jobs:
       uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 13.0
-        CC: gcc-13
-        CXX: g++-13
+        CC: gcc-14
+        CXX: g++-14
 
     - name: Build wheels
       if: matrix.platform == 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 14.0
-        CC: gcc-13
-        CXX: g++-13
+        CC: gcc-14
+        CXX: g++-14
 
     - name: Verify clean directory
       run: git diff --exit-code
