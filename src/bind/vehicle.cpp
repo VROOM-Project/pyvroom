@@ -7,7 +7,7 @@ namespace py = pybind11;
 void init_vehicle(py::module_ &m) {
 
   py::class_<vroom::VehicleCosts>(m, "VehicleCosts")
-      .def(py::init<vroom::UserCost, vroom::UserCost>(),
+      .def(py::init<vroom::UserCost, vroom::UserCost, vroom::UserCost>(),
            "VehicleCost constructor.", py::arg("fixed") = 0,
            py::arg("per_hour") = 3600, py::arg("per_km") = 0)
       .def_readonly("_fixed", &vroom::VehicleCosts::fixed)
