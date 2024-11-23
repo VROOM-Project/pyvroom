@@ -2,6 +2,7 @@
 #include <map>
 
 #include <pybind11/operators.h>
+#include <pybind11/chrono.h>
 
 #include "structures/cl_args.cpp"
 #include "structures/vroom/input/input.cpp"
@@ -24,7 +25,6 @@ void init_input(py::module_ &m) {
       .def_readonly("vehicles", &vroom::Input::vehicles)
       .def("_from_json", &vroom::io::parse, py::arg("json_string"),
            py::arg("geometry"))
-      /* .def("_set_amount_size", &vroom::Input::set_amount_size) */
       .def("_set_geometry", &vroom::Input::set_geometry)
       .def("_add_job", &vroom::Input::add_job)
       .def("_add_shipment", &vroom::Input::add_shipment)

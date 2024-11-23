@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Dict, Optional, Sequence, Set, Union
 from pathlib import Path
+from datetime import timedelta
 
 from numpy.typing import ArrayLike
 import numpy
@@ -38,6 +39,8 @@ class Input(_vroom.Input):
         amount_size: Optional[int] = None,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
+        apply_TSPFix: bool = False,
+        geometry: bool = False,
     ) -> None:
         """Class initializer.
 
@@ -53,6 +56,10 @@ class Input(_vroom.Input):
             router:
                 If servers is used, define what kind of server is provided.
                 See `vroom.ROUTER` enum for options.
+            apply_TSPFix:
+                Experimental local search operator.
+            geometry:
+                Add detailed route geometry and distance.
         """
         if servers is None:
             servers = {}
@@ -62,9 +69,16 @@ class Input(_vroom.Input):
         self._amount_size = amount_size
         self._servers = servers
         self._router = router
-        _vroom.Input.__init__(self, servers=servers, router=router)
+        _vroom.Input.__init__(
+            self,
+            servers=servers,
+            router=router,
+            apply_TSPFix=apply_TSPFix,
+        )
         if amount_size is not None:
             self._set_amount_size(amount_size)
+        if geometry:
+            self.set_geometry()
 
     def __repr__(self) -> str:
         """String representation."""
@@ -117,6 +131,7 @@ class Input(_vroom.Input):
         return instance
 
     def set_geometry(self):
+        """Add detailed route geometry and distance."""
         self._geometry = True
         return self._set_geometry(True)
 
@@ -333,13 +348,32 @@ class Input(_vroom.Input):
 
     def solve(
         self,
-        exploration_level: int,
-        nb_threads: int,
+        nb_searches,
+        depth,
+        nb_threads: int = 4,
+        timeout: Optional[timedelta] = None,
+        h_params = (),
     ) -> Solution:
+        """Solve routing problem.
+
+        Args:
+            nb_searches:
+            depth:
+            nb_threads:
+                The number of available threads.
+            timeout:
+                Stop the solving process after a given amount of time.
+            h_params:
+        """
+        assert isinstance(timeout, (None, timedelta)), (
+            f"unknown timeout type: {timeout}")
         solution = Solution(
             self._solve(
-                exploration_level=exploration_level,
-                nb_threads=nb_threads,
+                nb_searches=nb_searches,
+                depth=depth,
+                nb_threads=int(nb_threads),
+                timeout=timeout,
+                h_params=list(h_params),
             )
         )
         solution._geometry = self._geometry

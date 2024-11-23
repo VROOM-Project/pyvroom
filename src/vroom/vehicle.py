@@ -24,19 +24,22 @@ class VehicleCosts(_vroom.VehicleCosts):
             A fixed price for the vehicle to be utilized.
         per_hour:
             The price per hour to utilize the vehicle.
+        per_km:
+            The price per kilometer to utilize the vehicle.
 
     Examples:
         >>> vroom.VehicleCosts()
         VehicleCosts()
-        >>> vroom.VehicleCosts(fixed=100, per_hour=50)
-        VehicleCosts(fixed=100, per_hour=50)
+        >>> vroom.VehicleCosts(fixed=100, per_hour=50, per_km=25)
+        VehicleCosts(fixed=100, per_hour=50, per_km=25)
     """
 
-    def __init__(self, fixed: int = 0, per_hour: int = 3600):
+    def __init__(self, fixed: int = 0, per_hour: int = 3600, per_km: int = 0):
         _vroom.VehicleCosts.__init__(
             self,
             fixed=int(fixed),
             per_hour=int(per_hour),
+            per_km=int(per_km),
         )
 
     @property
@@ -47,11 +50,15 @@ class VehicleCosts(_vroom.VehicleCosts):
     def per_hour(self) -> int:
         return self._per_hour
 
+    @property
+    def per_km(self) -> int:
+        return self._per_km
+
     def __bool__(self) -> bool:
-        return self.fixed != 0 or self.per_hour != 3600
+        return self.fixed != 0 or self.per_hour != 3600 or self.per_km != 0
 
     def __repr__(self):
-        args = f"fixed={self.fixed}, per_hour={self.per_hour}" if self else ""
+        args = f"fixed={self.fixed}, per_hour={self.per_hour}, per_km={self.per_km}" if self else ""
         return f"{self.__class__.__name__}({args})"
 
 
@@ -231,6 +238,7 @@ class Vehicle(_vroom.Vehicle):
         return VehicleCosts(
             fixed=self._costs._fixed,
             per_hour=self._costs._per_hour,
+            per_km=self._costs._per_km,
         )
 
     @property
