@@ -13,17 +13,18 @@ void init_input(py::module_ &m) {
 
   py::class_<vroom::Input>(m, "Input")
       .def(
-          py::init([](const vroom::io::Servers &servers, vroom::ROUTER router) {
-            return new vroom::Input(servers, router);
+          py::init([](const vroom::io::Servers &servers, vroom::ROUTER router, bool apply_TSPFix) {
+            return new vroom::Input(servers, router, apply_TSPFix);
           }),
           "Class initializer.",
           py::arg("servers") = std::map<std::string, vroom::io::Servers>(),
-          py::arg("router") = vroom::ROUTER::OSRM)
+          py::arg("router") = vroom::ROUTER::OSRM,
+          py::arg("apply_TSPFix") = false)
       .def_readonly("jobs", &vroom::Input::jobs)
       .def_readonly("vehicles", &vroom::Input::vehicles)
       .def("_from_json", &vroom::io::parse, py::arg("json_string"),
            py::arg("geometry"))
-      .def("_set_amount_size", &vroom::Input::set_amount_size)
+      /* .def("_set_amount_size", &vroom::Input::set_amount_size) */
       .def("_set_geometry", &vroom::Input::set_geometry)
       .def("_add_job", &vroom::Input::add_job)
       .def("_add_shipment", &vroom::Input::add_shipment)
@@ -51,9 +52,12 @@ void init_input(py::module_ &m) {
       .def("has_homogeneous_locations",
            &vroom::Input::has_homogeneous_locations)
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
+      .def("has_homogeneous_costs", &vroom::Input::has_homogeneous_costs)
       // .def("vehicle_ok_with_job", &vroom::Input::vehicle_ok_with_job)
       .def("_solve", &vroom::Input::solve, "Solve problem.",
-           py::arg("exploration_level"), py::arg("nb_threads") = 1,
+           py::arg("nb_searches"),
+           py::arg("depth"),
+           py::arg("nb_threads") = 1,
            py::arg("timeout") = vroom::Timeout(),
            py::arg("h_param") = std::vector<vroom::HeuristicParameters>())
       .def("check", &vroom::Input::check);
