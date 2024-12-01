@@ -96,7 +96,7 @@ Usage with a routing engine
 
   >>> sol = problem_instance.solve(exploration_level=5, nb_threads=4)
   >>> print(sol.summary.duration)
-  2714
+  4041
 
 Installation
 ------------

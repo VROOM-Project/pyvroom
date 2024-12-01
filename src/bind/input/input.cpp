@@ -44,7 +44,6 @@ void init_input(py::module_ &m) {
               vroom::Matrix<vroom::UserCost> &m) {
              self.set_costs_matrix(profile, std::move(m));
            })
-      .def("zero_amount", &vroom::Input::zero_amount)
       .def("has_skills", &vroom::Input::has_skills)
       .def("has_jobs", &vroom::Input::has_jobs)
       .def("has_shipments", &vroom::Input::has_shipments)
@@ -53,7 +52,6 @@ void init_input(py::module_ &m) {
            &vroom::Input::has_homogeneous_locations)
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
       .def("has_homogeneous_costs", &vroom::Input::has_homogeneous_costs)
-      // .def("vehicle_ok_with_job", &vroom::Input::vehicle_ok_with_job)
       .def("_solve", &vroom::Input::solve, "Solve problem.",
            py::arg("nb_searches"),
            py::arg("depth"),
