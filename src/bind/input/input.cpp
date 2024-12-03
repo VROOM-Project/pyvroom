@@ -53,8 +53,7 @@ void init_input(py::module_ &m) {
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
       .def("has_homogeneous_costs", &vroom::Input::has_homogeneous_costs)
       .def("_solve", &vroom::Input::solve, "Solve problem.",
-           py::arg("nb_searches"),
-           py::arg("depth"),
+           py::arg("exploration_level"),
            py::arg("nb_threads") = 1,
            py::arg("timeout") = vroom::Timeout(),
            py::arg("h_param") = std::vector<vroom::HeuristicParameters>())
