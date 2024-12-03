@@ -52,10 +52,12 @@ void init_input(py::module_ &m) {
            &vroom::Input::has_homogeneous_locations)
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
       .def("has_homogeneous_costs", &vroom::Input::has_homogeneous_costs)
-      .def("_solve", &vroom::Input::solve, "Solve problem.",
-           py::arg("exploration_level"),
-           py::arg("nb_threads") = 1,
-           py::arg("timeout") = vroom::Timeout(),
-           py::arg("h_param") = std::vector<vroom::HeuristicParameters>())
+      .def("_solve",
+          [](vroom::Input &self, unsigned exploration_level, unsigned nb_threads, const vroom::Timeout& timeout, const std::vector<vroom::HeuristicParameters> h_param) {
+            return self.solve(exploration_level, nb_threads, timeout, h_param);
+          },
+          "Solve routing problem",
+          py::arg("exploration_level"), py::arg("nb_threads"), py::arg("timeout"), py::arg("h_param")
+          )
       .def("check", &vroom::Input::check);
 }
