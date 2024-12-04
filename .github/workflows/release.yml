@@ -80,7 +80,7 @@ jobs:
 
     - name: Set version
       run: |
-        sed -i 's/^version = 0\.1\.0$/version =${{ github.ref_name }}/' setup.cfg
+        sed -i 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
 
     - name: Build wheels
       if: matrix.platform != 'macos-arm'
@@ -97,10 +97,6 @@ jobs:
         MACOSX_DEPLOYMENT_TARGET: 14.0
         CC: gcc-14
         CXX: g++-14
-
-    - name: Verify clean directory
-      run: git diff --exit-code
-      shell: bash
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
