@@ -79,6 +79,12 @@ jobs:
         platforms: all
 
     - name: Set version
+      if: matrix.platform != 'macos-arm' && matrix.platform != 'macos-intel'
+      run: |
+        sed -i 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
+
+    - name: Set version
+      if: matrix.platform == 'macos-arm' || matrix.platform == 'macos-intel'
       run: |
         sed -i 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
 
