@@ -137,8 +137,8 @@ PYBIND11_MODULE(_vroom, m) {
       .def(py::init<vroom::HEURISTIC, vroom::INIT, float>());
 
   py::class_<vroom::Server>(m, "Server")
-      .def(py::init<std::string &, std::string &>(),
-           py::arg("host") = "0.0.0.0", py::arg("port") = "5000");
+      .def(py::init<std::string &, std::string &, std::string &>(),
+           py::arg("host") = "0.0.0.0", py::arg("port") = "5000", py::arg("path") = "");
 
   py::class_<vroom::Violations>(m, "Violations")
       .def(py::init<>())
