@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import Dict, Optional, Sequence, Set, Union
 from pathlib import Path
+from datetime import timedelta
 
 from numpy.typing import ArrayLike
 import numpy
@@ -35,16 +36,14 @@ class Input(_vroom.Input):
 
     def __init__(
         self,
-        amount_size: Optional[int] = None,
         servers: Optional[Dict[str, Union[str, _vroom.Server]]] = None,
         router: _vroom.ROUTER = _vroom.ROUTER.OSRM,
+        apply_TSPFix: bool = False,
+        geometry: bool = False,
     ) -> None:
         """Class initializer.
 
         Args:
-            amount_size:
-                The size of the job to be transported. Used to verify all jobs
-                have the same size limit.
             servers:
                 Assuming no custom duration matrix is provided (from
                 `set_durations_matrix`), use this dict to configure the
@@ -53,24 +52,30 @@ class Input(_vroom.Input):
             router:
                 If servers is used, define what kind of server is provided.
                 See `vroom.ROUTER` enum for options.
+            apply_TSPFix:
+                Experimental local search operator.
+            geometry:
+                Add detailed route geometry and distance.
         """
         if servers is None:
             servers = {}
         for key, server in servers.items():
             if isinstance(server, str):
                 servers[key] = _vroom.Server(*server.split(":"))
-        self._amount_size = amount_size
         self._servers = servers
         self._router = router
-        _vroom.Input.__init__(self, servers=servers, router=router)
-        if amount_size is not None:
-            self._set_amount_size(amount_size)
+        _vroom.Input.__init__(
+            self,
+            servers=servers,
+            router=router,
+            apply_TSPFix=apply_TSPFix,
+        )
+        if geometry:
+            self.set_geometry()
 
     def __repr__(self) -> str:
         """String representation."""
         args = []
-        if self._amount_size is not None:
-            args.append(f"amount_size={self._amount_size}")
         if self._servers:
             args.append(f"servers={self._servers}")
         if self._router != _vroom.ROUTER.OSRM:
@@ -117,20 +122,9 @@ class Input(_vroom.Input):
         return instance
 
     def set_geometry(self):
+        """Add detailed route geometry and distance."""
         self._geometry = True
         return self._set_geometry(True)
-
-    def set_amount_size(self, *amount_sizes: int) -> None:
-        """Add amount sizes."""
-        sizes = set(amount_sizes)
-        if self._amount_size is not None:
-            sizes.add(self._amount_size)
-        if len(sizes) > 1:
-            raise _vroom.VroomInputException(f"Inconsistent capacity lengths: {sizes}")
-        if self._amount_size is None:
-            size = sizes.pop()
-            self._amount_size = size
-            self._set_amount_size(size)
 
     def add_job(
         self,
@@ -157,14 +151,9 @@ class Input(_vroom.Input):
         jobs = [job] if isinstance(job, (Job, Shipment)) else job
         for job_ in jobs:
             if isinstance(job_, Job):
-                if job_._pickup:
-                    self.set_amount_size(len(job_._pickup))
-                if job_._delivery:
-                    self.set_amount_size(len(job_._delivery))
                 self._add_job(job_)
 
             elif isinstance(job_, Shipment):
-                self.set_amount_size(len(job_.amount))
                 self._add_shipment(
                     _vroom.Job(
                         id=job_.pickup.id,
@@ -221,7 +210,6 @@ class Input(_vroom.Input):
                 The job priority level, where 0 is the most
                 important and 100 is the least important.
         """
-        self.set_amount_size(len(amount))
         if skills is None:
             skills = set()
         self._add_shipment(
@@ -266,7 +254,6 @@ class Input(_vroom.Input):
         vehicles = [vehicle] if isinstance(vehicle, _vroom.Vehicle) else vehicle
         if not vehicles:
             return
-        self.set_amount_size(*[len(vehicle_.capacity) for vehicle_ in vehicles])
         for vehicle_ in vehicles:
             self._add_vehicle(vehicle_)
 
@@ -334,12 +321,28 @@ class Input(_vroom.Input):
     def solve(
         self,
         exploration_level: int,
-        nb_threads: int,
+        nb_threads: int = 4,
+        timeout: Optional[timedelta] = None,
+        h_param = (),
     ) -> Solution:
+        """Solve routing problem.
+
+        Args:
+            exploration_level:
+                The exploration level to use. Number between 1 and 5.
+            nb_threads:
+                The number of available threads.
+            timeout:
+                Stop the solving process after a given amount of time.
+        """
+        assert timeout is None or isinstance(timeout, (None, timedelta)), (
+            f"unknown timeout type: {timeout}")
         solution = Solution(
             self._solve(
-                exploration_level=exploration_level,
-                nb_threads=nb_threads,
+                exploration_level=int(exploration_level),
+                nb_threads=int(nb_threads),
+                timeout=timeout,
+                h_param=list(h_param),
             )
         )
         solution._geometry = self._geometry

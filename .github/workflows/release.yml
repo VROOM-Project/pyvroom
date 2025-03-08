@@ -20,7 +20,7 @@ jobs:
       - name: Check metadata
         run: pipx run twine check dist/*
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           path: dist/*.tar.gz
 
@@ -78,25 +78,31 @@ jobs:
       with:
         platforms: all
 
+    - name: Set version
+      if: matrix.platform != 'macos-arm' && matrix.platform != 'macos-intel'
+      run: |
+        sed -i 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
+
+    - name: Set version
+      if: matrix.platform == 'macos-arm' || matrix.platform == 'macos-intel'
+      run: |
+        sed -i "" 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
+
     - name: Build wheels
       if: matrix.platform != 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 13.0
-        CC: gcc-13
-        CXX: g++-13
+        CC: gcc-14
+        CXX: g++-14
 
     - name: Build wheels
       if: matrix.platform == 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.2
       env:
         MACOSX_DEPLOYMENT_TARGET: 14.0
-        CC: gcc-13
-        CXX: g++-13
-
-    - name: Verify clean directory
-      run: git diff --exit-code
-      shell: bash
+        CC: gcc-14
+        CXX: g++-14
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3

@@ -29,7 +29,6 @@ void init_enums(py::module_ &m) {
   py::enum_<vroom::HEURISTIC>(m, "HEURISTIC")
       .value("BASIC", vroom::HEURISTIC::BASIC)
       .value("DYNAMIC", vroom::HEURISTIC::DYNAMIC)
-      .value("INIT_ROUTES", vroom::HEURISTIC::INIT_ROUTES)
       .export_values();
 
   py::enum_<vroom::INIT>(m, "INIT")
