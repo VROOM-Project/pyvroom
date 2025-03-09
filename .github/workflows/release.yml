@@ -3,26 +3,26 @@ name: release
 on:
   push:
     tags:
-      - '*'
+    - '*'
     branches-ignore:
-      - '*'
+    - '*'
 
 jobs:
   build_sdist:
     name: sdist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Build sdist
-        run: pipx run build --sdist
+    - name: Build sdist
+      run: pipx run build --sdist
 
-      - name: Check metadata
-        run: pipx run twine check dist/*
+    - name: Check metadata
+      run: pipx run twine check dist/*
 
-      - uses: actions/upload-artifact@v4
-        with:
-          path: dist/*.tar.gz
+    - uses: actions/upload-artifact@v4
+      with:
+        path: dist/*.tar.gz
 
   build_wheels:
     name: ${{ matrix.platform }}
@@ -31,14 +31,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image: ubuntu-latest
-            platform: linux
-          - image: macos-13
-            platform: macos-intel
-          - image: macos-14
-            platform: macos-arm
-          - image: windows-latest
-            platform: windows
+        - image: ubuntu-latest
+          platform: linux
+        - image: macos-13
+          platform: macos-intel
+        - image: macos-14
+          platform: macos-arm
+        - image: windows-latest
+          platform: windows
 
     steps:
     - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
       uses: actions/setup-python@v5
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
       with:
-        python-version: '3.x'
+        python-version: 3.x
 
     - name: Install Conan
       if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
@@ -105,7 +105,7 @@ jobs:
         CXX: g++-14
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: wheelhouse/*.whl
 
@@ -117,7 +117,7 @@ jobs:
     steps:
     - uses: actions/setup-python@v5
 
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: artifact
         path: dist
