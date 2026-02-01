@@ -33,9 +33,9 @@ jobs:
         include:
         - image: ubuntu-latest
           platform: linux
-        - image: macos-13
+        - image: macos-15-intel
           platform: macos-intel
-        - image: macos-14
+        - image: macos-15
           platform: macos-arm
         - image: windows-latest
           platform: windows
@@ -92,17 +92,17 @@ jobs:
       if: matrix.platform != 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.2
       env:
-        MACOSX_DEPLOYMENT_TARGET: 13.0
-        CC: gcc-14
-        CXX: g++-14
+        # MACOSX_DEPLOYMENT_TARGET: 13.0
+        CC: gcc-15
+        CXX: g++-15
 
     - name: Build wheels
       if: matrix.platform == 'macos-arm'
       uses: pypa/cibuildwheel@v2.19.2
       env:
-        MACOSX_DEPLOYMENT_TARGET: 14.0
-        CC: gcc-14
-        CXX: g++-14
+        # MACOSX_DEPLOYMENT_TARGET: 14.0
+        CC: gcc-15
+        CXX: g++-15
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
