@@ -64,6 +64,7 @@ jobs:
       if: matrix.platform != 'macos-arm'
       uses: pypa/cibuildwheel@v3.3.1
       env:
+        MACOSX_DEPLOYMENT_TARGET: 15.0
         CC: gcc-15
         CXX: g++-15
 
@@ -71,6 +72,7 @@ jobs:
       if: matrix.platform == 'macos-arm'
       uses: pypa/cibuildwheel@v3.3.1
       env:
+        MACOSX_DEPLOYMENT_TARGET: 15.0
         CC: gcc-15
         CXX: g++-15
 
