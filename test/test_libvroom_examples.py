@@ -46,3 +46,23 @@ def test_example_with_custom_matrix():
     assert numpy.all(routes.location_index == [0, 1, 0, 0, 2, 3, 2, 2])
     assert numpy.all(routes.distance == [0, 21040, 42070, 42070,
                                          0, 11020, 22040, 22040])
+
+
+def test_plan_mode_check():
+    """Test plan mode (Input.check()) when built with USE_LIBGLPK."""
+    problem_instance = vroom.Input()
+    problem_instance.set_durations_matrix(
+        profile="car",
+        matrix_input=[[0, 2104, 197, 1299],
+                      [2103, 0, 2255, 3152],
+                      [197, 2256, 0, 1102],
+                      [1299, 3153, 1102, 0]],
+    )
+    problem_instance.add_vehicle([vroom.Vehicle(7, start=0, end=0),
+                                  vroom.Vehicle(8, start=2, end=2)])
+    problem_instance.add_job([vroom.Job(id=1414, location=0),
+                              vroom.Job(id=1515, location=1),
+                              vroom.Job(id=1616, location=2),
+                              vroom.Job(id=1717, location=3)])
+    # Plan mode: check and set ETAs (requires libglpk at build time)
+    problem_instance.check()
