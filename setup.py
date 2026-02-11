@@ -69,6 +69,14 @@ if conanfile:
         libraries.extend(dep["libs"])
         libraries.extend(dep["system_libs"])
         library_dirs.extend(dep["lib_paths"])
+        # So the linker finds Conan-built libs (fixes macOS/Windows when using Conan)
+        for lib_path in dep["lib_paths"]:
+            extra_link_args.insert(0, f"-L{lib_path}")
+    if platform.system() == "Darwin":
+        # Embed rpath so the dynamic loader finds Conan libs at runtime (e.g. libglpk.dylib)
+        for dep in conan_deps:
+            for lib_path in dep["lib_paths"]:
+                extra_link_args.append(f"-Wl,-rpath,{lib_path}")
 else:
     logging.warning("Conan not installed and/or no conan build detected. Assuming dependencies are installed.")
 
