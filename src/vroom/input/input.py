@@ -17,7 +17,7 @@ from ..vehicle import Vehicle
 
 
 class Input(_vroom.Input):
-    """VROOM input defintion.
+    """VROOM input definition.
 
     Main instance for adding jobs, shipments, vehicles, and cost and duration
     matrice defining a routing problem. Duration matrices is if not provided
