@@ -53,7 +53,8 @@ def test_plan_mode_check():
 
     Plan mode validates predefined vehicle routes (steps) and sets ETAs.
     Uses the same problem as test_example_with_custom_matrix with vehicles
-    that have predefined steps matching the optimal solution.
+    that have predefined steps matching the optimal solution. Jobs must be
+    added before vehicles so that vehicle steps can reference job ids.
     """
     problem_instance = vroom.Input()
     problem_instance.set_durations_matrix(
@@ -63,6 +64,11 @@ def test_plan_mode_check():
                       [197, 2256, 0, 1102],
                       [1299, 3153, 1102, 0]],
     )
+    # Jobs first: vehicle steps reference these job ids
+    problem_instance.add_job([vroom.Job(id=1414, location=0),
+                              vroom.Job(id=1515, location=1),
+                              vroom.Job(id=1616, location=2),
+                              vroom.Job(id=1717, location=3)])
     problem_instance.add_vehicle([
         vroom.Vehicle(
             7,
@@ -87,9 +93,5 @@ def test_plan_mode_check():
             ],
         ),
     ])
-    problem_instance.add_job([vroom.Job(id=1414, location=0),
-                              vroom.Job(id=1515, location=1),
-                              vroom.Job(id=1616, location=2),
-                              vroom.Job(id=1717, location=3)])
     # Plan mode: check feasibility and set ETAs (requires libglpk at build time)
     problem_instance.check()
