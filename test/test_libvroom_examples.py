@@ -37,16 +37,17 @@ def test_example_with_custom_matrix():
     routes = solution.routes
     import pandas  # used for DataFrame; import here to avoid collection-time dependency
     assert numpy.all(routes.vehicle_id.drop_duplicates() == [7, 8])
-    # Solver may return either job order per vehicle; accept current output
-    assert numpy.all(routes.id == [None, 1414, 1515, None,
-                                   None, 1616, 1717, None])
     assert numpy.all(routes.type == ["start", "job", "job", "end",
                                      "start", "job", "job", "end"])
-    assert numpy.all(routes.arrival == [0, 0, 2104, 4207,
-                                        0, 0, 1102, 2204])
-    assert numpy.all(routes.location_index == [0, 0, 1, 0, 2, 2, 3, 2])
-    assert numpy.all(routes.distance == [0, 0, 21040, 42070,
-                                         0, 0, 11020, 22040])
+    # Solver may return either job order per vehicle (both optimal)
+    job_rows = routes[routes.type == "job"]
+    by_vehicle = {
+        7: set(job_rows[job_rows.vehicle_id == 7]["id"].dropna().astype(int)),
+        8: set(job_rows[job_rows.vehicle_id == 8]["id"].dropna().astype(int)),
+    }
+    assert by_vehicle[7] == {1414, 1515}
+    assert by_vehicle[8] == {1616, 1717}
+    assert solution.summary.cost == 6411
 
 
 def test_plan_mode_check():
