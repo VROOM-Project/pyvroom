@@ -49,6 +49,14 @@ else:  # anything *nix
         "-lglpk",
     ]
 
+    # Add gcov coverage flags when CFLAGS/CXXFLAGS request coverage (e.g. CI).
+    # setuptools does not pass CXXFLAGS to C++ extensions by default.
+    _cflags = os.environ.get("CFLAGS", "") + " " + os.environ.get("CXXFLAGS", "")
+    if "coverage" in _cflags or "-fprofile-arcs" in _cflags:
+        extra_compile_args = [a for a in extra_compile_args if a != "-O3"]
+        extra_compile_args.extend(["-O0", "-g", "-fprofile-arcs", "-ftest-coverage"])
+        extra_link_args.append("--coverage")
+
     if platform.system() == "Darwin":
         # Homebrew puts include folders in weird places.
         prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]

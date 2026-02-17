@@ -41,9 +41,11 @@ jobs:
     - name: "Install pyvroom"
       env:
         CXX: g++-14
+        # Request gcov coverage; setup.py adds -fprofile-arcs -ftest-coverage for C++ (setuptools does not use CXXFLAGS by default)
+        CXXFLAGS: "--coverage -O0 -g"
       run: |
         # Because `pip install -e .` does not play nice with gcov, we go old school:
-        CFLAGS="-coverage" python setup.py build_ext --inplace
+        python setup.py build_ext --inplace
         python setup.py develop
 
     - name: "Run tests"
