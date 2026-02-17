@@ -22,6 +22,7 @@ jobs:
 
     - uses: actions/upload-artifact@v6
       with:
+        overwrite: true
         path: dist/*.tar.gz
 
   build_wheels:
@@ -107,7 +108,8 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v6
       with:
-        path: '*/*/pyvroom-*.whl'
+        overwrite: true
+        path: '*/pyvroom-*.whl'
 
   upload:
     name: upload
