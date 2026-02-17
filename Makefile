@@ -13,9 +13,9 @@ develop:
 test:
 	coverage run -m pytest --doctest-modules README.rst test src/vroom
 	mkdir -p coverage
-	coverage xml -o coverage/coverage.xml
+	-coverage xml -o coverage/coverage.xml
 	GCOV_DIR=$$(find build -maxdepth 2 -type d -name src 2>/dev/null | head -1); \
-	if [ -n "$$GCOV_DIR" ]; then gcov -abcfumlpr -o "$$GCOV_DIR" src/_vroom.cpp; fi
+	if [ -n "$$GCOV_DIR" ]; then gcov -abcfumlpr -o "$$GCOV_DIR" src/_vroom.cpp || true; fi
 	-mv *.gcov coverage 2>/dev/null || true
 
 lint:
