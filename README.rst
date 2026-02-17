@@ -66,12 +66,12 @@ Basic usage
   >>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id"]]
      vehicle_id   type  arrival  location_index    id
   0          47  start        0               0  <NA>
-  1          47    job     2104               1  1515
-  2          47    job     4207               0  1414
+  1          47    job        0               0  1414
+  2          47    job     2104               1  1515
   3          47    end     4207               0  <NA>
   4          48  start        0               2  <NA>
-  5          48    job     1102               3  1717
-  6          48    job     2204               2  1616
+  5          48    job        0               2  1616
+  6          48    job     1102               3  1717
   7          48    end     2204               2  <NA>
 
 Usage with a routing engine
