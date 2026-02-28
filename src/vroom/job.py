@@ -65,6 +65,14 @@ class JobBaseclass:
         """Time window for when job can be delivered."""
         return [TimeWindow(tw) for tw in self._time_windows]
 
+    @property
+    def setup_per_type(self) -> dict[str, int]:
+        return self._setup_per_type
+
+    @property
+    def service_per_type(self) -> dict[str, int]:
+        return self._service_per_type
+
     def __repr__(self) -> str:
         attributes = self._get_attributes()
         args = [f"{self.id}"]
