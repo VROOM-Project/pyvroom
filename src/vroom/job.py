@@ -14,18 +14,20 @@ class JobBaseclass:
 
     _id: int
     _location: Location
-    _setup: int
-    _service: int
+    _default_setup: int
+    _default_service: int
     _time_windows: Sequence[TimeWindow]
     _description: str
+    _setup_per_type: dict[str, int]
+    _service_per_type: dict[str, int]
 
     def _get_attributes(self) -> Dict[str, Any]:
         """Arguments to be used in repr view."""
         return {
             "id": self.id,
             "location": self.location,
-            "setup": self.setup,
-            "service": self.service,
+            "default_setup": self.default_setup,
+            "default_service": self.default_service,
             "time_windows": self.time_windows,
             "description": self.description,
         }
@@ -70,10 +72,10 @@ class JobBaseclass:
             args.append(f"{self.location.coords}")
         else:
             args.append(f"{self.location}")
-        if attributes["setup"]:
-            args.append(f"setup={attributes['setup']}")
-        if attributes["service"]:
-            args.append(f"service={attributes['service']}")
+        if attributes["default_setup"]:
+            args.append(f"default_setup={attributes['default_setup']}")
+        if attributes["default_service"]:
+            args.append(f"default_service={attributes['default_service']}")
         if attributes.get("amount", False):
             args.append(f"amount={numpy.asarray(attributes['amount']).tolist()}")
         if attributes.get("delivery", False):
@@ -85,6 +87,10 @@ class JobBaseclass:
             args.append(f"time_windows={windows}")
         if attributes["description"]:
             args.append(f"description={attributes['description']!r}")
+        if attributes["setup_per_type"]:
+            args.append(f"setup_per_type={attributes['setup_per_type']}")
+        if attributes["service_per_type"]:
+            args.append(f"service_per_type={attributes['service_per_type']}")
         return f"vroom.{self.__class__.__name__}({', '.join(args)})"
 
 
@@ -100,8 +106,8 @@ class Job(_vroom.Job, JobBaseclass):
         self,
         id: int,
         location: Union[Location, int, Sequence[float]],
-        setup: int = 0,
-        service: int = 0,
+        default_setup: int = 0,
+        default_service: int = 0,
         delivery: Amount = Amount(),
         pickup: Amount = Amount(),
         skills: Optional[Set[int]] = None,
@@ -120,10 +126,10 @@ class Job(_vroom.Job, JobBaseclass):
                 Location of the job. If interger, value interpreted as an the
                 column in duration matrix. If pair of numbers, value
                 interpreted as longitude and latitude coordinates respectively.
-            setup:
+            default_setup:
                 The cost of preparing the vehicle before actually going out for
                 a job.
-            service:
+            default_service:
                 The time (in secondes) it takes to pick up/deliver shipment
                 when at customer.
             delivery:
@@ -159,8 +165,8 @@ class Job(_vroom.Job, JobBaseclass):
             self,
             id=int(id),
             location=Location(location),
-            default_setup=int(setup),
-            default_service=int(service),
+            default_setup=int(default_setup),
+            default_service=int(default_service),
             delivery=Amount(delivery),
             pickup=Amount(pickup),
             skills=set(skills or []),
@@ -217,10 +223,12 @@ class ShipmentStep(JobBaseclass):
         self,
         id: int,
         location: Union[Location, int, Sequence[float]],
-        setup: int = 0,
-        service: int = 0,
+        default_setup: int = 0,
+        default_service: int = 0,
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
+        setup_per_type: dict[str, int] | None = None,
+        service_per_type: dict[str, int] | None = None,
     ) -> None:
         """
         Args:
@@ -231,10 +239,10 @@ class ShipmentStep(JobBaseclass):
                 Location of the job. If interger, value interpreted as an the
                 column in duration matrix. If pair of numbers, value
                 interpreted as longitude and latitude coordinates respectively.
-            setup:
+            default_setup:
                 The cost of preparing the vehicle before actually going out for
                 a job.
-            service:
+            default_service:
                 The time (in secondes) it takes to pick up/deliver shipment
                 when at customer.
             time_windows:
@@ -242,13 +250,19 @@ class ShipmentStep(JobBaseclass):
                 Defaults to have not restraints.
             description:
                 Optional string descriping the job.
+            setup_per_type:
+                Object mapping vehicle types to job setup duration values.
+            service_per_type:
+                Object mapping vehicle types to job service duration values.
         """
         self._id = int(id)
         self._location = Location(location)
-        self._setup = _vroom.scale_from_user_duration(int(setup))
-        self._service = _vroom.scale_from_user_duration(int(service))
+        self._default_setup = _vroom.scale_from_user_duration(int(default_setup))
+        self._default_service = _vroom.scale_from_user_duration(int(default_service))
         self._time_windows = [TimeWindow(tw) for tw in time_windows] or [TimeWindow()]
         self._description = str(description)
+        self._setup_per_type = setup_per_type or {}
+        self._service_per_type = service_per_type or {}
 
 
 class Shipment:
