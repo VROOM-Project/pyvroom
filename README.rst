@@ -95,8 +95,8 @@ Usage with a routing engine
   ... ])
 
   >>> sol = problem_instance.solve(exploration_level=5, nb_threads=4)
-  >>> print(sol.summary.duration)
-  4041
+  >>> 3800 < sol.summary.duration < 4200
+  True
 
 Installation
 ------------

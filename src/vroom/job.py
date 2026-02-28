@@ -30,6 +30,8 @@ class JobBaseclass:
             "default_service": self.default_service,
             "time_windows": self.time_windows,
             "description": self.description,
+            "setup_per_type": self.setup_per_type,
+            "service_per_type": self.service_per_type,
         }
 
     @property

@@ -22,7 +22,7 @@ jobs:
 
     - uses: actions/upload-artifact@v6
       with:
-        overwrite: true
+        name: 'artifact-source'
         path: dist/*.tar.gz
 
   build_wheels:
@@ -108,7 +108,7 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v6
       with:
-        overwrite: true
+        name: 'artifact-${{ matrix.platform }}'
         path: '*/pyvroom-*.whl'
 
   upload:
@@ -119,10 +119,13 @@ jobs:
     steps:
     - uses: actions/setup-python@v5
 
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
-        name: artifact
+        pattern: "artifact-*"
+        merge-multiple: true
         path: dist
+
+    - run: ls -R dist
 
     - uses: pypa/gh-action-pypi-publish@v1.8.10
       with:
