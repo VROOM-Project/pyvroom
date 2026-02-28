@@ -92,7 +92,7 @@ class Job(_vroom.Job, JobBaseclass):
     """A regular one-stop job with both a deliver and pickup that has to be performed.
 
     Examples:
-        >>> vroom.Job(0, [4., 5.], delivery=[4], pickup=[7])
+        >>> vroom.Job(0, [4.0, 5.0], delivery=[4], pickup=[7])
         vroom.Job(0, (4.0, 5.0), delivery=[4], pickup=[7])
     """
 
@@ -108,6 +108,8 @@ class Job(_vroom.Job, JobBaseclass):
         priority: int = 0,
         time_windows: Sequence[TimeWindow] = (),
         description: str = "",
+        setup_per_type: dict[str, int] | None = None,
+        service_per_type: dict[str, int] | None = None,
     ) -> None:
         """
         Args:
@@ -140,6 +142,10 @@ class Job(_vroom.Job, JobBaseclass):
                 Defaults to have not restraints.
             description:
                 Optional string descriping the job.
+            setup_per_type:
+                Object mapping vehicle types to job setup duration values.
+            service_per_type:
+                Object mapping vehicle types to job service duration values.
         """
         if not pickup:
             if not delivery:
@@ -153,14 +159,16 @@ class Job(_vroom.Job, JobBaseclass):
             self,
             id=int(id),
             location=Location(location),
-            setup=int(setup),
-            service=int(service),
+            default_setup=int(setup),
+            default_service=int(service),
             delivery=Amount(delivery),
             pickup=Amount(pickup),
             skills=set(skills or []),
             priority=int(priority),
             tws=[TimeWindow(tw) for tw in time_windows] or [TimeWindow()],
             description=str(description),
+            setup_per_type=setup_per_type or {},
+            service_per_type=service_per_type or {},
         )
 
     @property
@@ -201,7 +209,7 @@ class ShipmentStep(JobBaseclass):
     """A delivery job that has to be performed.
 
     Examples:
-        >>> vroom.ShipmentStep(0, [4., 5.])
+        >>> vroom.ShipmentStep(0, [4.0, 5.0])
         vroom.ShipmentStep(0, (4.0, 5.0))
     """
 
@@ -247,9 +255,11 @@ class Shipment:
     """A shipment that has to be performed.
 
     Examples:
-        >>> pickup = vroom.ShipmentStep(0, [4., 5.])
-        >>> delivery = vroom.ShipmentStep(1, [5., 4.])
-        >>> vroom.Shipment(pickup, delivery, amount=[7])  # doctest: +NORMALIZE_WHITESPACE
+        >>> pickup = vroom.ShipmentStep(0, [4.0, 5.0])
+        >>> delivery = vroom.ShipmentStep(1, [5.0, 4.0])
+        >>> vroom.Shipment(
+        ...     pickup, delivery, amount=[7]
+        ... )  # doctest: +NORMALIZE_WHITESPACE
         vroom.Shipment(vroom.ShipmentStep(0, (4.0, 5.0)),
                        vroom.ShipmentStep(1, (5.0, 4.0)),
                        amount=[7])
