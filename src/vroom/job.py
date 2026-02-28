@@ -49,12 +49,12 @@ class JobBaseclass:
         return Location(self._location)
 
     @property
-    def service(self) -> int:
-        return _vroom.scale_to_user_duration(self._service)
+    def default_service(self) -> int:
+        return _vroom.scale_to_user_duration(self._default_service)
 
     @property
-    def setup(self) -> int:
-        return _vroom.scale_to_user_duration(self._setup)
+    def default_setup(self) -> int:
+        return _vroom.scale_to_user_duration(self._default_setup)
 
     @property
     def time_windows(self) -> List[TimeWindow]:
