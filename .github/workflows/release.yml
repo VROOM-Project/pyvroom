@@ -35,14 +35,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        # - image: ubuntu-latest
-        #   platform: linux
+        - image: ubuntu-latest
+          platform: linux
         - image: macos-15-intel
           platform: macos-intel
         - image: macos-15
           platform: macos-arm
-        # - image: windows-latest
-        #   platform: windows
+        - image: windows-latest
+          platform: windows
 
     steps:
     - uses: actions/checkout@v6
@@ -127,8 +127,10 @@ jobs:
         pattern: "artifact-*"
         merge-multiple: true
 
-    - run: |
-        ls *
+    - name: place files
+      run: |
+        mkdir -p dist/
+        mv -v pyvroom-*.tar.gz wheelhouse/pyvroom-*.whl dist/
 
     - uses: pypa/gh-action-pypi-publish@v1.13.0
       with:
