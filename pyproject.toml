@@ -1,4 +1,5 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
     "setuptools>=45",
     "setuptools-scm[simple]>=9.2",
@@ -6,7 +7,36 @@ requires = [
     "pybind11>=2.8.0",
 ]
 
-build-backend = "setuptools.build_meta"
+[project]
+authors = [ { name = "Jonathan Feinberg", email = "jonathf@gmail.com" } ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = ["numpy", "pandas"]
+description = "Vehicle routing open-source optimization machine (VROOM)"
+dynamic = ["version"]
+license = "BSD-2-Clause"
+maintainers = [ { name = "Jonathan Feinberg", email = "jonathf@gmail.com" } ]
+name = "pyvroom"
+readme = "README.rst"
+requires-python = ">= 3.10"
+
+[project.urls]
+Homepage = "https://vroom-project.org"
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/VROOM-Project/pyvroom"
+Issues = "https://github.com/VROOM-Project/pyvroom"
+# Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = {file = "version"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.black]
 line-length = 105
@@ -47,3 +77,12 @@ apk add openssl-dev
 before-all = """
 brew install --ignore-dependencies asio
 """
+
+
+[tool.flake8]
+# ignore some errors to play nicely with black
+ignore = ["E203", "E266", "E501", "W503", "F403", "E722", "F405"]
+per-file-ignores = ["__init__.py:F401"]
+max-complexity = 15
+max-line-length = 105
+exclude = [".*", "__pycache__", "*build", "dist", "wheelhouse"]
