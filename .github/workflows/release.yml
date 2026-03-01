@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Write version file
-      run: echo "${GITHUB_REF_NAME}" | tee version
+      run: sed -i 's/^version = "0\.1\.0"$/version = "${{ github.ref_name }}"/' pyproject.toml
 
     - name: Build sdist
       run: pipx run build --sdist
@@ -85,12 +85,12 @@ jobs:
     - name: Set version
       if: matrix.platform != 'macos-arm' && matrix.platform != 'macos-intel'
       run: |
-        sed -i 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
+        sed -i 's/^version = "0\.1\.0"$/version = "${{ github.ref_name }}"/' pyproject.toml
 
     - name: Set version
       if: matrix.platform == 'macos-arm' || matrix.platform == 'macos-intel'
       run: |
-        sed -i "" 's/^version = 0\.1\.0$/version = ${{ github.ref_name }}/' setup.cfg
+        sed -i "" 's/^version = "0\.1\.0"$/version = "${{ github.ref_name }}"/' pyproject.toml
 
     - name: Build wheels
       if: matrix.platform != 'macos-arm'

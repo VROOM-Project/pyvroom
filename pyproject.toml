@@ -17,25 +17,22 @@ classifiers = [
 ]
 dependencies = ["numpy", "pandas"]
 description = "Vehicle routing open-source optimization machine (VROOM)"
-dynamic = ["version"]
 license = "BSD-2-Clause"
 maintainers = [ { name = "Jonathan Feinberg", email = "jonathf@gmail.com" } ]
 name = "pyvroom"
 readme = "README.rst"
 requires-python = ">= 3.10"
+version = "0.1.0"
 
 [project.scripts]
 vroom = "vroom:main"
 
 [project.urls]
-Homepage = "https://vroom-project.org"
+# Changelog = "https://github.com/VROOM-Project/pyvroom"
 # Documentation = "https://readthedocs.org"
+Homepage = "https://vroom-project.org"
+Issues = "https://github.com/VROOM-Project/pyvroom/issues"
 Repository = "https://github.com/VROOM-Project/pyvroom"
-Issues = "https://github.com/VROOM-Project/pyvroom"
-# Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
-
-[tool.setuptools.dynamic]
-version = {file = "version"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
