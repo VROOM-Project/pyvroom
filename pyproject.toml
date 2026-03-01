@@ -24,6 +24,9 @@ name = "pyvroom"
 readme = "README.rst"
 requires-python = ">= 3.10"
 
+[project.scripts]
+vroom = "vroom:main"
+
 [project.urls]
 Homepage = "https://vroom-project.org"
 # Documentation = "https://readthedocs.org"
