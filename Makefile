@@ -12,10 +12,10 @@ develop:
 
 test:
 	coverage run -m pytest --doctest-modules README.rst test src/vroom
-	mkdir -p coverage
-	coverage xml -o coverage/coverage.xml
-	gcov -abcfumlpr -o build/temp*/src src/_vroom.cpp
-	mv *.gcov coverage
+	#mkdir -p coverage
+	#coverage xml -o coverage/coverage.xml
+	#gcov -abcfumlpr -o build/temp*/src src/_vroom.cpp
+	#mv *.gcov coverage
 
 lint:
 	python -m black --check src/vroom
