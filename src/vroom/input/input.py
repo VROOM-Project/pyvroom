@@ -227,8 +227,8 @@ class Input(_vroom.Input):
                 id=pickup.id,
                 type=_vroom.JOB_TYPE.PICKUP,
                 location=pickup.location,
-                setup=pickup.setup,
-                service=pickup.service,
+                default_setup=pickup.default_setup,
+                default_service=pickup.default_service,
                 amount=amount,
                 skills=skills,
                 priority=priority,
@@ -241,8 +241,8 @@ class Input(_vroom.Input):
                 id=delivery.id,
                 type=_vroom.JOB_TYPE.DELIVERY,
                 location=delivery.location,
-                setup=delivery.setup,
-                service=delivery.service,
+                default_setup=delivery.default_setup,
+                default_service=delivery.default_service,
                 amount=amount,
                 skills=skills,
                 priority=priority,
@@ -279,8 +279,8 @@ class Input(_vroom.Input):
         """Set durations matrix.
 
         Args:
-            profile:
-                Name of the transportation category profile in question.
+            profile
+                name of the transportation category profile in question.
                 Typically "car", "truck", etc.
             matrix_input:
                 A square matrix consisting of duration between each location of
