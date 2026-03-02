@@ -61,20 +61,19 @@ manylinux-aarch64-image = "quay.io/pypa/manylinux_2_34_aarch64"
 before-all = """
 dnf update -y
 dnf module enable -y mariadb-devel
-dnf install -y openssl-devel asio-devel
+dnf install -y openssl-devel asio-devel glpk-devel glpk-utils
 """
 archs = ["x86_64", "aarch64"]
 
 [[tool.cibuildwheel.overrides]]
 select = "*musllinux*"
 before-all = """
-apk add asio-dev
-apk add openssl-dev
+apk add asio-dev openssl-dev glpk-dev glpk-utils
 """
 [tool.cibuildwheel.macos]
 
 before-all = """
-brew install --ignore-dependencies asio
+brew install --ignore-dependencies asio glpk
 """
 
 
