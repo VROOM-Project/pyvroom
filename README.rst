@@ -140,18 +140,16 @@ Building the source distributions requires:
 * Install ``asio`` headers, and ``openssl`` and ``crypto`` libraries and headers.
   For mac, this would be::
 
-    brew install openssl@1.1
-    brew install asio
+    brew install openssl@1.1 asio glpk
 
   For RHEL::
 
-    yum module enable mariadb-devel:10.3
-    yum install -y openssl-devel asio
+    dnf module enable mariadb-devel:10.3
+    dnf install -y openssl-devel asio glpk-devel glpk-utils
 
   For Musllinux::
 
-    apk add asio-dev
-    apk add openssl-dev
+    apk add asio-dev openssl-dev glpk-dev glpk-utils
 
 * The installation can then be done with:
 
@@ -168,7 +166,7 @@ To install using Conan, do the following:
 .. code:: bash
 
   cd pyvroom/
-  conan install --build=openssl --install-folder conan_build .
+  conan install --build=missing --install-folder conan_build .
 
 Documentation
 -------------
