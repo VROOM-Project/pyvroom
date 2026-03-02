@@ -33,29 +33,30 @@ jobs:
     - name: "Install pyvroom"
       env:
         CXX: g++-14
+        CXXFLAGS: "--coverage -O0 -g"
       run: |
         # Because `pip install -e .` does not play nice with gcov, we go old school:
-        CFLAGS="-coverage" python setup.py build_ext --inplace
+        python setup.py build_ext --inplace
         python setup.py develop
 
     - name: "Run tests"
       run: make test
 
-    # - name: "Upload python coverage"
-    #   uses: codecov/codecov-action@v4
-    #   with:
-    #     token: ${{ secrets.codecov_token }}
-    #     files: 'coverage/coverage.xml'
-    #     flags: python
-    #     fail_ci_if_error: true
-    #
-    # - name: "Upload binding coverage"
-    #   uses: codecov/codecov-action@v4
-    #   with:
-    #     token: ${{ secrets.codecov_token }}
-    #     files: 'coverage/*.gcov'
-    #     flags: binding
-    #     fail_ci_if_error: true
+    - name: "Upload python coverage"
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.codecov_token }}
+        files: 'coverage/coverage.xml'
+        flags: python
+        fail_ci_if_error: true
+
+    - name: "Upload binding coverage"
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.codecov_token }}
+        files: 'coverage/*.gcov'
+        flags: binding
+        fail_ci_if_error: true
 
     - name: Verify clean directory
       run: git diff --exit-code
