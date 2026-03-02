@@ -11,7 +11,7 @@ develop:
 	python -m pip install -e .
 
 test:
-	coverage run -m pytest --doctest-modules README.rst test src/vroom
+	coverage run -m pytest --doctest-modules test src/vroom
 	mkdir -p coverage
 	coverage xml -o coverage/coverage.xml
 	GCOV_DIR=$$(find build -maxdepth 2 -type d -name src 2>/dev/null | head -1); \
