@@ -1,4 +1,6 @@
 """Reproduce the libvroom_example as tests."""
+
+import pytest
 import numpy
 import pandas
 
@@ -10,39 +12,111 @@ def test_example_with_custom_matrix():
 
     problem_instance.set_durations_matrix(
         profile="car",
-        matrix_input=[[0, 2104, 197, 1299],
-                      [2103, 0, 2255, 3152],
-                      [197, 2256, 0, 1102],
-                      [1299, 3153, 1102, 0]],
+        matrix_input=[
+            [0, 2104, 197, 1299],
+            [2103, 0, 2255, 3152],
+            [197, 2256, 0, 1102],
+            [1299, 3153, 1102, 0],
+        ],
     )
     problem_instance.set_distances_matrix(
         profile="car",
-        matrix_input=[[0, 21040, 1970, 12990],
-                      [21030, 0, 22550, 31520],
-                      [1970, 22560, 0, 11020],
-                      [12990, 31530, 11020, 0]],
+        matrix_input=[
+            [0, 21040, 1970, 12990],
+            [21030, 0, 22550, 31520],
+            [1970, 22560, 0, 11020],
+            [12990, 31530, 11020, 0],
+        ],
     )
-    problem_instance.add_vehicle([vroom.Vehicle(7, start=0, end=0),
-                                  vroom.Vehicle(8, start=2, end=2)])
-    problem_instance.add_job([vroom.Job(id=1414, location=0),
-                              vroom.Job(id=1515, location=1),
-                              vroom.Job(id=1616, location=2),
-                              vroom.Job(id=1717, location=3)])
-    solution = problem_instance.solve(
-        exploration_level=5, nb_threads=4)
+    problem_instance.add_vehicle(
+        [vroom.Vehicle(7, start=0, end=0), vroom.Vehicle(8, start=2, end=2)]
+    )
+    problem_instance.add_job(
+        [
+            vroom.Job(id=1414, location=0),
+            vroom.Job(id=1515, location=1),
+            vroom.Job(id=1616, location=2),
+            vroom.Job(id=1717, location=3),
+        ]
+    )
+    solution = problem_instance.solve(exploration_level=5, nb_threads=4)
 
     assert solution.summary.cost == 6411
     assert solution.summary.unassigned == 0
     assert solution.unassigned == []
 
     routes = solution.routes
+
+    # Solver may return either job order per vehicle (both optimal)
+    job_rows = routes[routes.type == "job"]
+    assert set(job_rows.loc[job_rows.vehicle_id == 7, "id"]) == {1414, 1515}
+    assert set(job_rows.loc[job_rows.vehicle_id == 8, "id"]) == {1616, 1717}
+    assert solution.summary.cost == 6411
+
     assert numpy.all(routes.vehicle_id.drop_duplicates() == [7, 8])
-    assert numpy.all(routes.id == [None, 1515, 1414, None,
-                                   None, 1717, 1616, None])
-    assert numpy.all(routes.type == ["start", "job", "job", "end",
-                                     "start", "job", "job", "end"])
-    assert numpy.all(routes.arrival == [0, 2104, 4207, 4207,
-                                        0, 1102, 2204, 2204])
+    assert numpy.all(routes.id == [None, 1515, 1414, None, None, 1717, 1616, None])
+    assert numpy.all(
+        routes.type == ["start", "job", "job", "end", "start", "job", "job", "end"]
+    )
+    assert numpy.all(routes.arrival == [0, 2104, 4207, 4207, 0, 1102, 2204, 2204])
     assert numpy.all(routes.location_index == [0, 1, 0, 0, 2, 3, 2, 2])
-    assert numpy.all(routes.distance == [0, 21040, 42070, 42070,
-                                         0, 11020, 22040, 22040])
+    assert numpy.all(
+        routes.distance == [0, 21040, 42070, 42070, 0, 11020, 22040, 22040]
+    )
+
+
+def test_plan_mode_check():
+    """Test plan mode (Input.check()) when built with USE_LIBGLPK.
+
+    Plan mode validates predefined vehicle routes (steps) and sets ETAs.
+    Uses the same problem as test_example_with_custom_matrix with vehicles
+    that have predefined steps matching the optimal solution. Jobs must be
+    added before vehicles so that vehicle steps can reference job ids.
+    """
+    problem_instance = vroom.Input()
+    problem_instance.set_durations_matrix(
+        profile="car",
+        matrix_input=[
+            [0, 2104, 197, 1299],
+            [2103, 0, 2255, 3152],
+            [197, 2256, 0, 1102],
+            [1299, 3153, 1102, 0],
+        ],
+    )
+    # Jobs first: vehicle steps reference these job ids
+    problem_instance.add_job(
+        [
+            vroom.Job(id=1414, location=0),
+            vroom.Job(id=1515, location=1),
+            vroom.Job(id=1616, location=2),
+            vroom.Job(id=1717, location=3),
+        ]
+    )
+    problem_instance.add_vehicle(
+        [
+            vroom.Vehicle(
+                7,
+                start=0,
+                end=0,
+                steps=[
+                    vroom.VehicleStep("start"),
+                    vroom.VehicleStep("single", 1515),
+                    vroom.VehicleStep("single", 1414),
+                    vroom.VehicleStep("end"),
+                ],
+            ),
+            vroom.Vehicle(
+                8,
+                start=2,
+                end=2,
+                steps=[
+                    vroom.VehicleStep("start"),
+                    vroom.VehicleStep("single", 1717),
+                    vroom.VehicleStep("single", 1616),
+                    vroom.VehicleStep("end"),
+                ],
+            ),
+        ]
+    )
+    assert problem_instance.check()
+
