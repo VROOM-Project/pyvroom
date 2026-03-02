@@ -15,7 +15,7 @@ test:
 	mkdir -p coverage
 	coverage xml -o coverage/coverage.xml
 	GCOV_DIR=$$(find build -maxdepth 2 -type d -name src 2>/dev/null | head -1); \
-	gcov -abcfumlpr -o "$$GCOV_DIR" src/_vroom.cpp
+	gcov -abcfumlpr -o "$$GCOV_DIR" src/_vroom.cpp || true
 	mv *.gcov coverage
 
 lint:
