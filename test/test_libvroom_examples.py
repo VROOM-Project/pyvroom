@@ -1,5 +1,6 @@
 """Reproduce the libvroom_example as tests."""
 import numpy
+import pandas
 
 import vroom
 
@@ -35,7 +36,6 @@ def test_example_with_custom_matrix():
     assert solution.unassigned == []
 
     routes = solution.routes
-    import pandas  # used for DataFrame; import here to avoid collection-time dependency
     assert numpy.all(routes.vehicle_id.drop_duplicates() == [7, 8])
     assert numpy.all(routes.type == ["start", "job", "job", "end",
                                      "start", "job", "job", "end"])
