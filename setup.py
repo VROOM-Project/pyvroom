@@ -23,7 +23,7 @@ if platform.system() == "Windows":
         "-DWIN32_LEAN_AND_MEAN",
         "-DASIO_STANDALONE",
         "-DUSE_PYTHON_BINDINGS",
-        "-DUSE_ROUTING=true"
+        "-DUSE_ROUTING=true",
     ]
     extra_link_args = []
 
@@ -38,7 +38,7 @@ else:  # anything *nix
         "-DASIO_STANDALONE",
         "-DNDEBUG",
         "-DUSE_PYTHON_BINDINGS",
-        "-DUSE_ROUTING=true"
+        "-DUSE_ROUTING=true",
     ]
     extra_link_args = [
         "-lpthread",
@@ -48,12 +48,14 @@ else:  # anything *nix
 
     if platform.system() == "Darwin":
         # Homebrew puts include folders in weird places.
-        prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[:-1]
+        prefix = run(["brew", "--prefix"], capture_output=True).stdout.decode("utf-8")[
+            :-1
+        ]
         include_dirs.append(f"{prefix}/opt/openssl@1.1/include")
         include_dirs.append(f"{prefix}/include")
         extra_link_args.insert(0, f"-L{prefix}/lib")
         extra_link_args.insert(0, f"-L{prefix}/opt/openssl@1.1/lib")
-        extra_link_args.append(f"-Wl,-ld_classic")  
+        extra_link_args.append(f"-Wl,-ld_classic")
 
 # try conan dependency resolution
 conanfile = tuple(Path(__file__).parent.resolve().rglob("conanbuildinfo.json"))
@@ -67,7 +69,9 @@ if conanfile:
         libraries.extend(dep["system_libs"])
         library_dirs.extend(dep["lib_paths"])
 else:
-    logging.warning("Conan not installed and/or no conan build detected. Assuming dependencies are installed.")
+    logging.warning(
+        "Conan not installed and/or no conan build detected. Assuming dependencies are installed."
+    )
 
 ext_modules = [
     Pybind11Extension(
@@ -77,7 +81,7 @@ ext_modules = [
         libraries=libraries,
         extra_compile_args=extra_compile_args,
         extra_link_args=extra_link_args,
-        cxx_std=20
+        cxx_std=20,
     ),
 ]
 
@@ -86,6 +90,4 @@ setup(
     ext_modules=ext_modules,
     ext_package="vroom",
     include_dirs=include_dirs,
-    use_scm_version=True,
-    entry_points={"console_scripts": ["vroom=vroom:main"]},
 )

@@ -141,12 +141,16 @@ class Input(_vroom.Input):
         Example:
             >>> problem_instance = vroom.Input()
             >>> problem_instance.add_job(vroom.Job(1, location=1))
-            >>> problem_instance.add_job([
-            ...     vroom.Job(2, location=2),
-            ...     vroom.Shipment(vroom.ShipmentStep(3, location=3),
-            ...                    vroom.ShipmentStep(4, location=4)),
-            ...     vroom.Job(5, location=5),
-            ... ])
+            >>> problem_instance.add_job(
+            ...     [
+            ...         vroom.Job(2, location=2),
+            ...         vroom.Shipment(
+            ...             vroom.ShipmentStep(3, location=3),
+            ...             vroom.ShipmentStep(4, location=4),
+            ...         ),
+            ...         vroom.Job(5, location=5),
+            ...     ]
+            ... )
         """
         jobs = [job] if isinstance(job, (Job, Shipment)) else job
         for job_ in jobs:
@@ -159,30 +163,36 @@ class Input(_vroom.Input):
                         id=job_.pickup.id,
                         type=_vroom.JOB_TYPE.PICKUP,
                         location=job_.pickup.location,
-                        setup=job_.pickup.setup,
-                        service=job_.pickup.service,
+                        default_setup=job_.pickup.default_setup,
+                        default_service=job_.pickup.default_service,
                         amount=job_.amount,
                         skills=job_.skills,
                         priority=job_.priority,
                         tws=job_.pickup.time_windows,
                         description=job_.pickup.description,
+                        setup_per_type=job_.pickup.setup_per_type,
+                        service_per_type=job_.pickup.service_per_type,
                     ),
                     _vroom.Job(
                         id=job_.delivery.id,
                         type=_vroom.JOB_TYPE.DELIVERY,
                         location=job_.delivery.location,
-                        setup=job_.delivery.setup,
-                        service=job_.delivery.service,
+                        default_setup=job_.delivery.default_setup,
+                        default_service=job_.delivery.default_service,
                         amount=job_.amount,
                         skills=job_.skills,
                         priority=job_.priority,
                         tws=job_.delivery.time_windows,
                         description=job_.delivery.description,
+                        setup_per_type=job_.delivery.setup_per_type,
+                        service_per_type=job_.delivery.service_per_type,
                     ),
                 )
 
             else:
-                raise _vroom.VroomInputException(f"Wrong type for {job_}; vroom.JobSingle expected.")
+                raise _vroom.VroomInputException(
+                    f"Wrong type for {job_}; vroom.JobSingle expected."
+                )
 
     def add_shipment(
         self,
@@ -217,25 +227,29 @@ class Input(_vroom.Input):
                 id=pickup.id,
                 type=_vroom.JOB_TYPE.PICKUP,
                 location=pickup.location,
-                setup=pickup.setup,
-                service=pickup.service,
+                default_setup=pickup.default_setup,
+                default_service=pickup.default_service,
                 amount=amount,
                 skills=skills,
                 priority=priority,
                 tws=pickup.time_windows,
                 description=pickup.description,
+                setup_per_type=pickup.setup_per_type,
+                service_per_type=pickup.service_per_type,
             ),
             _vroom.Job(
                 id=delivery.id,
                 type=_vroom.JOB_TYPE.DELIVERY,
                 location=delivery.location,
-                setup=delivery.setup,
-                service=delivery.service,
+                default_setup=delivery.default_setup,
+                default_service=delivery.default_service,
                 amount=amount,
                 skills=skills,
                 priority=priority,
                 tws=delivery.time_windows,
                 description=delivery.description,
+                setup_per_type=delivery.setup_per_type,
+                service_per_type=delivery.service_per_type,
             ),
         )
 
@@ -265,8 +279,8 @@ class Input(_vroom.Input):
         """Set durations matrix.
 
         Args:
-            profile:
-                Name of the transportation category profile in question.
+            profile
+                name of the transportation category profile in question.
                 Typically "car", "truck", etc.
             matrix_input:
                 A square matrix consisting of duration between each location of
@@ -323,7 +337,7 @@ class Input(_vroom.Input):
         exploration_level: int,
         nb_threads: int = 4,
         timeout: Optional[timedelta] = None,
-        h_param = (),
+        depth: Optional[int] = None,
     ) -> Solution:
         """Solve routing problem.
 
@@ -336,13 +350,14 @@ class Input(_vroom.Input):
                 Stop the solving process after a given amount of time.
         """
         assert timeout is None or isinstance(timeout, (None, timedelta)), (
-            f"unknown timeout type: {timeout}")
+            f"unknown timeout type: {timeout}"
+        )
         solution = Solution(
             self._solve(
                 exploration_level=int(exploration_level),
                 nb_threads=int(nb_threads),
                 timeout=timeout,
-                h_param=list(h_param),
+                # depth?
             )
         )
         solution._geometry = self._geometry
