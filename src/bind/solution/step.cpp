@@ -8,8 +8,9 @@ void init_step(py::module_ &m) {
 
   py::class_<vroom::Step>(m, "Step")
       .def(py::init<vroom::STEP_TYPE, vroom::Location, vroom::Amount>())
-      .def(py::init<vroom::Job, vroom::Duration, vroom::Amount>())
+      .def(py::init<vroom::Job, vroom::UserDuration, vroom::UserDuration, vroom::Amount>())
       .def(py::init<vroom::Break, vroom::Amount>())
+      .def("_departure", &vroom::Step::departure)
       .def_readonly("_step_type", &vroom::Step::step_type)
       .def_readonly("_job_type", &vroom::Step::job_type)
       .def_readonly("_location", &vroom::Step::location)

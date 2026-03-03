@@ -23,6 +23,10 @@ void init_input(py::module_ &m) {
           py::arg("apply_TSPFix") = false)
       .def_readonly("jobs", &vroom::Input::jobs)
       .def_readonly("vehicles", &vroom::Input::vehicles)
+      .def_readonly("job_id_to_rank", &vroom::Input::job_id_to_rank)
+      .def_readonly("pickup_id_to_rank", &vroom::Input::pickup_id_to_rank)
+      .def_readonly("delivery_id_to_rank", &vroom::Input::delivery_id_to_rank)
+      .def_readonly("compatible_vehicles_for_job", &vroom::Input::compatible_vehicles_for_job)
       .def("_from_json", &vroom::io::parse, py::arg("json_string"),
            py::arg("geometry"))
       .def("_set_geometry", &vroom::Input::set_geometry)
@@ -44,20 +48,36 @@ void init_input(py::module_ &m) {
               vroom::Matrix<vroom::UserCost> &m) {
              self.set_costs_matrix(profile, std::move(m));
            })
+      .def("zero_amount", &vroom::Input::zero_amount)
+      .def("apply_TSPFix", &vroom::Input::apply_TSPFix)
+      .def("is_used_several_times", &vroom::Input::is_used_several_times)
       .def("has_skills", &vroom::Input::has_skills)
       .def("has_jobs", &vroom::Input::has_jobs)
       .def("has_shipments", &vroom::Input::has_shipments)
+      .def("report_distances", &vroom::Input::report_distances)
       .def("get_cost_upper_bound", &vroom::Input::get_cost_upper_bound)
+      .def("all_locations_have_coords", &vroom::Input::all_locations_have_coords)
+      .def("jobs_vehicles_evals", &vroom::Input::jobs_vehicles_evals)
       .def("has_homogeneous_locations",
            &vroom::Input::has_homogeneous_locations)
       .def("has_homogeneous_profiles", &vroom::Input::has_homogeneous_profiles)
       .def("has_homogeneous_costs", &vroom::Input::has_homogeneous_costs)
+      .def("has_initial_routes", &vroom::Input::has_initial_routes)
+      .def("vehicle_ok_with_job", &vroom::Input::has_initial_routes)
+      .def("vehicle_ok_with_vehicle", &vroom::Input::has_initial_routes)
       .def("_solve",
-          [](vroom::Input &self, unsigned exploration_level, unsigned nb_threads, const vroom::Timeout& timeout, const std::vector<vroom::HeuristicParameters> h_param) {
-            return self.solve(exploration_level, nb_threads, timeout, h_param);
+          [](vroom::Input &self, unsigned exploration_level, unsigned nb_threads, const vroom::Timeout& timeout) {
+            return self.solve(exploration_level, nb_threads, timeout);
           },
           "Solve routing problem",
-          py::arg("exploration_level"), py::arg("nb_threads"), py::arg("timeout"), py::arg("h_param")
+          py::arg("exploration_level"), py::arg("nb_threads"), py::arg("timeout")
+          )
+      .def("_solve",
+          [](vroom::Input &self, unsigned nb_searches, unsigned depth, unsigned nb_threads, const vroom::Timeout& timeout) {
+            return self.solve(nb_searches, depth, nb_threads, timeout);
+          },
+          "Solve routing problem",
+          py::arg("nb_searches"), py::arg("depth"), py::arg("nb_threads"), py::arg("timeout")
           )
       .def("check", &vroom::Input::check, "Check solution feasability", py::arg("nb_thread") = 1);
 }

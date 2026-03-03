@@ -28,7 +28,7 @@ jobs:
 
     - uses: actions/setup-python@v5
       with:
-        python-version: "3.9"
+        python-version: "3.10"
 
     - name: "Install system dependencies"
       run: sudo apt update -y && sudo apt install -y libssl-dev libasio-dev libglpk-dev glpk-utils
@@ -41,7 +41,6 @@ jobs:
     - name: "Install pyvroom"
       env:
         CXX: g++-14
-        # Request gcov coverage; setup.py adds -fprofile-arcs -ftest-coverage for C++ (setuptools does not use CXXFLAGS by default)
         CXXFLAGS: "--coverage -O0 -g"
       run: |
         # Because `pip install -e .` does not play nice with gcov, we go old school:

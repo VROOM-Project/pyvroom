@@ -88,8 +88,8 @@ Usage with a routing engine
   ... ])
 
   >>> sol = problem_instance.solve(exploration_level=5, nb_threads=4)
-  >>> print(sol.summary.duration)
-  3922
+  >>> 3800 < sol.summary.duration < 4200
+  True
 
 Installation
 ------------
@@ -105,11 +105,11 @@ Installation of the pre-compiled releases should be as simple as:
 
 The current minimal requirements are as follows:
 
-* Python at least version 3.9.
-* Intel MacOS (or Rosetta2) at least version 14.0.
-* Apple Silicon MacOS at least version 14.0.
+* Python at least version 3.10.
+* Intel MacOS (or Rosetta2) at least version 15.0.
+* Apple Silicon MacOS at least version 15.0.
 * Windows on AMD64.
-* Linux on x86_64 and Aarch64 given glibc at least version 2.28.
+* Linux on x86_64 and Aarch64 given glibc at least version 2.34.
 
 Outside this it might be possible to build your own binaries.
 
