@@ -1,0 +1,5 @@
+---
+format: jb-book
+root: readme
+chapters:
+    - file: documentation

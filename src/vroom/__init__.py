@@ -23,7 +23,7 @@ from .input.vehicle_step import (
     VehicleStepDelivery,
     VEHICLE_STEP_TYPE,
 )
-
+from .solution.solution import Solution
 
 def main(argv: Optional[Sequence[str]] = None) -> None:
     """Run VROOM command line interface."""

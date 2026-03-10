@@ -1,5 +1,6 @@
-Python Vehicle Routing Open-source Optimization Machine
-=======================================================
+=======
+PyVROOM
+=======
 
 |gh_action| |codecov| |pypi|
 
@@ -34,9 +35,8 @@ Basic usage
 .. code:: python
 
   >>> import vroom
-
+  >>>
   >>> problem_instance = vroom.Input()
-
   >>> problem_instance.set_durations_matrix(
   ...     profile="car",
   ...     matrix_input=[[0, 2104, 197, 1299],
@@ -44,26 +44,23 @@ Basic usage
   ...                   [197, 2256, 0, 1102],
   ...                   [1299, 3153, 1102, 0]],
   ... )
-
   >>> problem_instance.add_vehicle([vroom.Vehicle(47, start=0, end=0),
   ...                               vroom.Vehicle(48, start=2, end=2)])
-
   >>> problem_instance.add_job([vroom.Job(1414, location=0),
   ...                           vroom.Job(1515, location=1),
   ...                           vroom.Job(1616, location=2),
   ...                           vroom.Job(1717, location=3)])
-
   >>> solution = problem_instance.solve(exploration_level=5, nb_threads=4)
-
+  >>>
   >>> solution.summary.cost
   6411
-
   >>> solution.routes.columns
   Index(['vehicle_id', 'type', 'arrival', 'duration', 'setup', 'service',
          'waiting_time', 'location_index', 'id', 'description'],
         dtype='object')
 
-  >>> solution.routes[["vehicle_id", "type", "arrival", "location_index", "id"]]
+  >>> solution.routes[[
+  ...     "vehicle_id", "type", "arrival", "location_index", "id"]]
      vehicle_id   type  arrival  location_index    id
   0          47  start        0               0  <NA>
   1          47    job     2104               1  1515
@@ -80,13 +77,13 @@ Usage with a routing engine
 .. code:: python
 
   >>> import vroom
-
+  >>>
   >>> problem_instance = vroom.Input(
   ...     servers={"auto": "valhalla1.openstreetmap.de:443"},
   ...     router=vroom._vroom.ROUTER.VALHALLA
   ... )
-
-  >>> problem_instance.add_vehicle(vroom.Vehicle(1, start=(2.44, 48.81), profile="auto"))
+  >>> problem_instance.add_vehicle(
+  ...     vroom.Vehicle(1, start=(2.44, 48.81), profile="auto"))
 
   >>> problem_instance.add_job([
   ...     vroom.Job(1, location=(2.44, 48.81)),
@@ -169,14 +166,3 @@ To install using Conan, do the following:
 
   cd pyvroom/
   conan install --build=openssl --install-folder conan_build .
-
-Documentation
--------------
-
-The code is currently only documented with Pydoc. This means that the best way
-to learn Pyvroom for now is to either look at the source code or use ``dir()``
-and ``help()`` to navigate the interface.
-
-It is also useful to take a look at the
-`VROOM API documentation <https://github.com/VROOM-Project/vroom/blob/master/docs/API.md>`_.
-The interface there is mostly the same.
