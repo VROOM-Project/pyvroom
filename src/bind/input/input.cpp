@@ -79,5 +79,5 @@ void init_input(py::module_ &m) {
           "Solve routing problem",
           py::arg("nb_searches"), py::arg("depth"), py::arg("nb_threads"), py::arg("timeout")
           )
-      .def("check", &vroom::Input::check, "Check solution feasability", py::arg("nb_thread") = 1);
+      .def("check", &vroom::Input::check, "Check solution feasibility", py::arg("nb_thread") = 1);
 }
