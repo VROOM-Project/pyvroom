@@ -59,9 +59,6 @@ def test_plan_mode_check():
     added before vehicles so that vehicle steps can reference job ids.
     """
     import pytest
-
-    if not hasattr(vroom.Input, "check"):
-        pytest.skip("Plan mode (Input.check) not available (build without USE_LIBGLPK)")
     problem_instance = vroom.Input()
     problem_instance.set_durations_matrix(
         profile="car",
