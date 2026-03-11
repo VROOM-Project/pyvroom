@@ -96,4 +96,4 @@ def test_plan_mode_check():
             ],
         ),
     ])
-    assert problem_instance.check(), "no feasable route possible."
+    assert problem_instance.check(), "no feasible route possible."
