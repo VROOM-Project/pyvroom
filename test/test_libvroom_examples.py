@@ -96,8 +96,4 @@ def test_plan_mode_check():
             ],
         ),
     ])
-    # Plan mode: check feasibility and set ETAs (requires libglpk at build time)
-    try:
-        problem_instance.check()
-    except Exception as e:
-        pytest.skip(f"Plan mode check() failed (e.g. input not valid for plan mode): {e}")
+    assert problem_instance.check(), "no feasable route possible."
