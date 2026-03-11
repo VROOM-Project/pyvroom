@@ -1,4 +1,5 @@
 """Reproduce the libvroom_example as tests."""
+import pytest
 import numpy
 import pandas
 
@@ -58,7 +59,6 @@ def test_plan_mode_check():
     that have predefined steps matching the optimal solution. Jobs must be
     added before vehicles so that vehicle steps can reference job ids.
     """
-    import pytest
     problem_instance = vroom.Input()
     problem_instance.set_durations_matrix(
         profile="car",
