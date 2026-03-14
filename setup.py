@@ -24,6 +24,7 @@ if platform.system() == "Windows":
         "-DASIO_STANDALONE",
         "-DUSE_PYTHON_BINDINGS",
         "-DUSE_ROUTING=true",
+        "-DUSE_LIBGLPK=true",
     ]
     extra_link_args = []
 
@@ -39,12 +40,22 @@ else:  # anything *nix
         "-DNDEBUG",
         "-DUSE_PYTHON_BINDINGS",
         "-DUSE_ROUTING=true",
+        "-DUSE_LIBGLPK=true",
     ]
     extra_link_args = [
         "-lpthread",
         "-lssl",
         "-lcrypto",
+        "-lglpk",
     ]
+
+    # Add gcov coverage flags when CFLAGS/CXXFLAGS request coverage (e.g. CI).
+    # setuptools does not pass CXXFLAGS to C++ extensions by default.
+    _cflags = os.environ.get("CFLAGS", "") + " " + os.environ.get("CXXFLAGS", "")
+    if "coverage" in _cflags or "-fprofile-arcs" in _cflags:
+        extra_compile_args = [a for a in extra_compile_args if a != "-O3"]
+        extra_compile_args.extend(["-O0", "-g", "-fprofile-arcs", "-ftest-coverage"])
+        extra_link_args.append("--coverage")
 
     if platform.system() == "Darwin":
         # Homebrew puts include folders in weird places.
@@ -68,6 +79,14 @@ if conanfile:
         libraries.extend(dep["libs"])
         libraries.extend(dep["system_libs"])
         library_dirs.extend(dep["lib_paths"])
+        # So the linker finds Conan-built libs (fixes macOS/Windows when using Conan)
+        for lib_path in dep["lib_paths"]:
+            extra_link_args.insert(0, f"-L{lib_path}")
+    if platform.system() == "Darwin":
+        # Embed rpath so the dynamic loader finds Conan libs at runtime (e.g. libglpk.dylib)
+        for dep in conan_deps:
+            for lib_path in dep["lib_paths"]:
+                extra_link_args.append(f"-Wl,-rpath,{lib_path}")
 else:
     logging.warning(
         "Conan not installed and/or no conan build detected. Assuming dependencies are installed."

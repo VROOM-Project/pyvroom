@@ -62,6 +62,7 @@ before-all = """
 dnf update -y
 dnf module enable -y mariadb-devel
 dnf install -y openssl-devel asio-devel
+dnf install -y glpk-devel glpk-utils
 """
 archs = ["x86_64", "aarch64"]
 
@@ -70,11 +71,13 @@ select = "*musllinux*"
 before-all = """
 apk add asio-dev
 apk add openssl-dev
+apk add glpk
 """
 [tool.cibuildwheel.macos]
 
 before-all = """
 brew install --ignore-dependencies asio
+brew install glpk
 """
 
 
