@@ -1,2 +1,4 @@
 include README.rst
 recursive-include vroom *
+prune vroom/.git
+recursive-exclude vroom .git .gitignore .gitmodules

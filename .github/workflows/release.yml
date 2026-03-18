@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
+      with:
+        submodules: recursive
 
     - name: Write version file
       run: sed -i 's/^version = "0\.1\.0"$/version = "${{ github.ref_name }}"/' pyproject.toml
