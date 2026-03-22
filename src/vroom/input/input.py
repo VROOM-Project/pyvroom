@@ -332,6 +332,33 @@ class Input(_vroom.Input):
             matrix_input = _vroom.Matrix(numpy.asarray(matrix_input, dtype="uint32"))
         self._set_costs_matrix(profile, matrix_input)
 
+    def check(
+        self,
+        nb_threads: int = 1,
+    ) -> Solution:
+        """Check predefined vehicle routes and compute ETAs.
+
+        Validates the feasibility of predefined vehicle steps
+        (plan mode) and sets estimated times of arrival for each
+        step.  Returns a full Solution with routes, arrivals, and
+        any violations.
+
+        Vehicles must have predefined steps (``VehicleStep``)
+        assigned before calling this method.
+
+        Args:
+            nb_threads:
+                The number of threads to use.
+
+        Returns:
+            A Solution containing per-step ETAs and any
+            violations.
+        """
+        solution = Solution(self._check(nb_thread=int(nb_threads)))
+        solution._geometry = self._geometry
+        solution._distances = self._distances
+        return solution
+
     def solve(
         self,
         exploration_level: int,
