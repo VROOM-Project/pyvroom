@@ -96,4 +96,10 @@ def test_plan_mode_check():
             ],
         ),
     ])
-    assert problem_instance.check(), "no feasible route possible."
+    solution = problem_instance.check()
+    assert solution, "no feasible route possible."
+    routes = solution.routes
+    assert not routes.empty, "check() should return routes with ETAs"
+    assert "arrival" in routes.columns
+    assert "duration" in routes.columns
+    assert set(routes["vehicle_id"].unique()) == {7, 8}
