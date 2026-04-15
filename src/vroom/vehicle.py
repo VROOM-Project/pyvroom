@@ -58,7 +58,11 @@ class VehicleCosts(_vroom.VehicleCosts):
         return self.fixed != 0 or self.per_hour != 3600 or self.per_km != 0
 
     def __repr__(self):
-        args = f"fixed={self.fixed}, per_hour={self.per_hour}, per_km={self.per_km}" if self else ""
+        args = (
+            f"fixed={self.fixed}, per_hour={self.per_hour}, per_km={self.per_km}"
+            if self
+            else ""
+        )
         return f"{self.__class__.__name__}({args})"
 
 
@@ -105,6 +109,8 @@ class Vehicle(_vroom.Vehicle):
             An integer defining the maximum distance for this vehicle.
         steps:
             Set of custom steps this vehicle should take.
+        type:
+            A string describing the vehicle type.
 
     Examples:
         >>> vroom.Vehicle(1, end=1)
@@ -129,6 +135,7 @@ class Vehicle(_vroom.Vehicle):
         max_travel_time: Optional[int] = None,
         max_distance: Optional[int] = MAX_UINT32,
         steps: Sequence[VehicleStep] = (),
+        type: str = "",
     ) -> None:
         self._speed_factor = float(speed_factor)
         _vroom.Vehicle.__init__(
@@ -139,7 +146,9 @@ class Vehicle(_vroom.Vehicle):
             profile=str(profile),
             capacity=Amount(capacity),
             skills=(set([]) if skills is None else skills),
-            time_window=(TimeWindow() if time_window is None else TimeWindow(time_window)),
+            time_window=(
+                TimeWindow() if time_window is None else TimeWindow(time_window)
+            ),
             breaks=[Break(break_) for break_ in breaks],
             description=str(description),
             costs=costs,
@@ -148,6 +157,7 @@ class Vehicle(_vroom.Vehicle):
             max_travel_time=max_travel_time,
             max_distance=max_distance,
             steps=steps,
+            type_str=type,
         )
         assert isinstance(self.capacity, Amount)
 
@@ -177,6 +187,8 @@ class Vehicle(_vroom.Vehicle):
             args.append(f"time_window={self.time_window.start, self.time_window.end}")
         if self.costs:
             args.append(f"costs={self.costs}")
+        if self.type_str:
+            args.append(f"type_str={self.type_str}")
 
         for name, default in [
             ("breaks", []),
@@ -260,6 +272,10 @@ class Vehicle(_vroom.Vehicle):
     @property
     def steps(self) -> List[VehicleStep]:
         return [VehicleStep(step) for step in self._steps]
+
+    @property
+    def type(self) -> str:
+        self._type_str
 
     def has_same_locations(self, vehicle: Vehicle) -> bool:
         return self._has_same_locations(vehicle)
