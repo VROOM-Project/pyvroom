@@ -376,9 +376,7 @@ class Input(_vroom.Input):
             timeout:
                 Stop the solving process after a given amount of time.
         """
-        assert timeout is None or isinstance(timeout, (None, timedelta)), (
-            f"unknown timeout type: {timeout}"
-        )
+        assert timeout is None or isinstance(timeout, timedelta), f"unknown timeout type: {timeout}"
         solution = Solution(
             self._solve(
                 exploration_level=int(exploration_level),
